@@ -40,12 +40,12 @@ type TConfig = {
 
 export const config: TConfig = {
   html: {
-    title: "John Doe — 3D Portfolio",
-    fullName: "John Doe",
-    email: "johndoe@mail.com",
+    title: "Raghvendra Singh",
+    fullName: "Raghvendra Singh",
+    email: "raghvendrasingh1811@gmail.com",
   },
   hero: {
-    name: "John Doe",
+    name: "Raghvendra Singh",
     p: ["I develop 3D visuals, user", "interfaces and web applications"],
   },
   contact: {
