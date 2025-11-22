@@ -1,4 +1,4 @@
-# Raghvendra Singh
+# Raghav Tech Portfolio
 
 A modern 3D portfolio website built with React.js, TypeScript, and Three.js.
 
