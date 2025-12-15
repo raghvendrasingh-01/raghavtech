@@ -67,11 +67,13 @@ export const config: TConfig = {
     about: {
       p: "Introduction",
       h2: "Overview.",
-      content: `I'm a skilled software developer with experience in TypeScript and
-      JavaScript, and expertise in frameworks like React, Node.js, and
-      Three.js. I'm a quick learner and collaborate closely with clients to
-      create efficient, scalable, and user-friendly solutions that solve
-      real-world problems. Let's work together to bring your ideas to life!`,
+      content: `💡 Passionate Computer Science student with strong foundations in Data Structures & Algorithms (DSA) and hands-on expertise in Java.
+
+🌐 Skilled in Web Development and building AI-powered solutions, with a focus on Agentic AI. Experienced in integrating and orchestrating multiple AI systems such as ChatGPT, Perplexity, VEO, Gemini, AssemblyAI, ElevenLabs, Supabase, and more through their APIs.
+
+⚡ Interests lie in creating intelligent, scalable, and practical applications that bridge AI with real-world problem-solving.
+
+🚀 Always eager to learn, explore new technologies, and collaborate on innovative projects.`,
     },
     experience: {
       p: "What I have done so far",
