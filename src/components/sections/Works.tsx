@@ -49,11 +49,27 @@ const ProjectCard: React.FC<{ index: number } & TProject> = ({
                 onClick={handleClick}
                 className="black-gradient flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
               >
-                <img
-                  src={github}
-                  alt="github"
-                  className="h-1/2 w-1/2 object-contain"
-                />
+                {sourceCodeLink.startsWith('/') ? (
+                  <svg 
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                ) : (
+                  <img
+                    src={github}
+                    alt="github"
+                    className="h-1/2 w-1/2 object-contain"
+                  />
+                )}
               </div>
             </div>
           </div>
