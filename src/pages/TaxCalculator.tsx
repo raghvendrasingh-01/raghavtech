@@ -324,6 +324,184 @@ int main() {
 }`}
             </pre>
           </div>
+
+          {/* Working Information Section */}
+          <div className="bg-tertiary rounded-2xl p-8 shadow-xl mt-8">
+            <h2 className="text-white text-3xl font-bold mb-6">How It Works</h2>
+            
+            <div className="text-gray-300 space-y-6">
+              <p className="text-lg">
+                The program helps users calculate their income tax liability by choosing between two different tax calculation methods available in India.
+              </p>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">Two Tax Regimes:</h3>
+                <ul className="list-disc list-inside space-y-2 ml-4">
+                  <li><strong className="text-purple-400">Old Regime:</strong> Lower standard deduction but allows various exemptions and deductions</li>
+                  <li><strong className="text-purple-400">New Regime:</strong> Higher standard deduction but no exemptions allowed</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">Standard Deduction:</h3>
+                <p>Amount automatically subtracted from income before tax calculation:</p>
+                <ul className="list-disc list-inside space-y-2 ml-4 mt-2">
+                  <li>Old Regime: ₹50,000</li>
+                  <li>New Regime: ₹75,000</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">Section 87A Rebate:</h3>
+                <p>Special benefit for low-income taxpayers:</p>
+                <ul className="list-disc list-inside space-y-2 ml-4 mt-2">
+                  <li>Old Regime: No tax up to ₹5.5 lakhs</li>
+                  <li>New Regime: No tax up to ₹12.75 lakhs</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">Old Regime Tax Slabs:</h3>
+                <div className="bg-primary rounded-lg p-4">
+                  <ul className="space-y-2">
+                    <li>Up to ₹2.5 lakhs: <span className="text-green-400">0%</span></li>
+                    <li>₹2.5L to ₹5L: <span className="text-yellow-400">5%</span></li>
+                    <li>₹5L to ₹10L: <span className="text-orange-400">20%</span></li>
+                    <li>Above ₹10L: <span className="text-red-400">30%</span></li>
+                  </ul>
+                  <p className="mt-3 text-sm text-gray-400">Standard Deduction: ₹50,000</p>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">New Regime Tax Slabs:</h3>
+                <div className="bg-primary rounded-lg p-4">
+                  <ul className="space-y-2">
+                    <li>Up to ₹4 lakhs: <span className="text-green-400">0%</span></li>
+                    <li>₹4L to ₹8L: <span className="text-green-300">5%</span></li>
+                    <li>₹8L to ₹12L: <span className="text-yellow-400">10%</span></li>
+                    <li>₹12L to ₹16L: <span className="text-yellow-300">15%</span></li>
+                    <li>₹16L to ₹20L: <span className="text-orange-400">20%</span></li>
+                    <li>₹20L to ₹24L: <span className="text-orange-300">25%</span></li>
+                    <li>Above ₹24L: <span className="text-red-400">30%</span></li>
+                  </ul>
+                  <p className="mt-3 text-sm text-gray-400">Standard Deduction: ₹75,000</p>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">Example Calculation:</h3>
+                <p className="mb-2">For ₹10,00,000 income under New Regime:</p>
+                <div className="bg-primary rounded-lg p-4 font-mono text-sm">
+                  <pre className="whitespace-pre-wrap">
+{`Gross Income:           ₹10,00,000
+Standard Deduction:     -   ₹75,000
+Taxable Income:         ₹9,25,000
+
+Tax Calculation:
+₹0 to ₹4L:      ₹0      (0%)
+₹4L to ₹8L:     ₹20,000 (5% of ₹4L)
+₹8L to ₹9.25L:  ₹12,500 (10% of ₹1.25L)
+
+Base Tax:       ₹32,500
+Less: Rebate:   -₹32,500 (under Section 87A)
+Tax:            ₹0
+Cess (4%):      ₹0
+
+Total Tax:      ₹0`}
+                  </pre>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">Tax Comparison Table:</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full bg-primary rounded-lg">
+                    <thead>
+                      <tr className="border-b border-gray-700">
+                        <th className="p-3 text-left">Income (₹)</th>
+                        <th className="p-3 text-left">Old Regime Tax</th>
+                        <th className="p-3 text-left">New Regime Tax</th>
+                        <th className="p-3 text-left">Better Choice</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-gray-800">
+                        <td className="p-3">5,00,000</td>
+                        <td className="p-3">0</td>
+                        <td className="p-3">0</td>
+                        <td className="p-3 text-yellow-400">Both Same</td>
+                      </tr>
+                      <tr className="border-b border-gray-800">
+                        <td className="p-3">8,00,000</td>
+                        <td className="p-3">36,400</td>
+                        <td className="p-3">0</td>
+                        <td className="p-3 text-green-400">New Regime</td>
+                      </tr>
+                      <tr className="border-b border-gray-800">
+                        <td className="p-3">10,00,000</td>
+                        <td className="p-3">88,400</td>
+                        <td className="p-3">0</td>
+                        <td className="p-3 text-green-400">New Regime</td>
+                      </tr>
+                      <tr className="border-b border-gray-800">
+                        <td className="p-3">15,00,000</td>
+                        <td className="p-3">2,38,400</td>
+                        <td className="p-3">78,000</td>
+                        <td className="p-3 text-green-400">New Regime</td>
+                      </tr>
+                      <tr>
+                        <td className="p-3">20,00,000</td>
+                        <td className="p-3">3,88,400</td>
+                        <td className="p-3">1,82,000</td>
+                        <td className="p-3 text-green-400">New Regime</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">When to Choose Old Regime:</h3>
+                <ul className="list-disc list-inside space-y-2 ml-4">
+                  <li>If you have large deductions (80C, 80D, HRA, etc.)</li>
+                  <li>If your total deductions exceed the tax benefit of New Regime</li>
+                  <li>Generally better for income with many investments</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">When to Choose New Regime:</h3>
+                <ul className="list-disc list-inside space-y-2 ml-4">
+                  <li>If you have minimal or no deductions</li>
+                  <li>For income up to ₹12.75 lakhs (zero tax)</li>
+                  <li>Simpler calculation with higher exemption limit</li>
+                  <li>Better for most salaried employees without investments</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">Key Features:</h3>
+                <ul className="list-disc list-inside space-y-2 ml-4">
+                  <li>Interactive Input: User enters their income and selects preferred regime</li>
+                  <li>Automatic Calculations: Program handles all tax slab calculations</li>
+                  <li>Rebate Application: Automatically applies Section 87A benefits</li>
+                  <li>Cess Inclusion: Adds 4% Health and Education Cess</li>
+                  <li>Clear Summary: Shows breakdown of all tax components</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-white text-xl font-bold mb-3">Limitations:</h3>
+                <ul className="list-disc list-inside space-y-2 ml-4 text-gray-400">
+                  <li>Does not calculate surcharge (for very high income)</li>
+                  <li>Assumes no other deductions in Old Regime</li>
+                  <li>Simplified calculation for educational purposes</li>
+                  <li>Does not handle TDS (Tax Deducted at Source)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
