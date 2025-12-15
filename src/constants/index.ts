@@ -206,20 +206,7 @@ const projects: TProject[] = [
     name: "Tax Calculator",
     description:
       "Web-based platform that allows users to calculate income tax, compare tax slabs, and estimate deductions, providing a convenient and efficient solution for tax planning needs.",
-    tags: [
-      {
-        name: "react",
-        color: "blue-text-gradient",
-      },
-      {
-        name: "mongodb",
-        color: "green-text-gradient",
-      },
-      {
-        name: "tailwind",
-        color: "pink-text-gradient",
-      },
-    ],
+    tags: [],
     image: carrent,
     sourceCodeLink: "https://github.com/",
   },
