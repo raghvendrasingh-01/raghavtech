@@ -1,5 +1,6 @@
 import Tilt from "react-parallax-tilt";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 import { github } from "../../assets";
 import { SectionWrapper } from "../../hoc";
@@ -17,6 +18,16 @@ const ProjectCard: React.FC<{ index: number } & TProject> = ({
   image,
   sourceCodeLink,
 }) => {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    if (sourceCodeLink.startsWith('/')) {
+      navigate(sourceCodeLink);
+    } else {
+      window.open(sourceCodeLink, "_blank");
+    }
+  };
+
   return (
     <motion.div variants={fadeIn("up", "spring", index * 0.5, 0.75)}>
       <Tilt
@@ -35,7 +46,7 @@ const ProjectCard: React.FC<{ index: number } & TProject> = ({
             />
             <div className="card-img_hover absolute inset-0 m-3 flex justify-end">
               <div
-                onClick={() => window.open(sourceCodeLink, "_blank")}
+                onClick={handleClick}
                 className="black-gradient flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
               >
                 <img

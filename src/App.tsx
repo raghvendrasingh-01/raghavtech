@@ -1,4 +1,4 @@
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import {
   About,
@@ -11,6 +11,7 @@ import {
 } from "./components";
 import { useEffect } from "react";
 import { config } from "./constants/config";
+import TaxCalculator from "./pages/TaxCalculator";
 
 const App = () => {
   useEffect(() => {
@@ -21,19 +22,24 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className="bg-primary relative z-0">
-        <div className="bg-hero-pattern bg-cover bg-center bg-no-repeat">
-          <Navbar />
-          <Hero />
-        </div>
-        <About />
-        <Tech />
-        <Works />
-        <div className="relative z-0">
-          <Contact />
-          <StarsCanvas />
-        </div>
-      </div>
+      <Routes>
+        <Route path="/" element={
+          <div className="bg-primary relative z-0">
+            <div className="bg-hero-pattern bg-cover bg-center bg-no-repeat">
+              <Navbar />
+              <Hero />
+            </div>
+            <About />
+            <Tech />
+            <Works />
+            <div className="relative z-0">
+              <Contact />
+              <StarsCanvas />
+            </div>
+          </div>
+        } />
+        <Route path="/tax-calculator" element={<TaxCalculator />} />
+      </Routes>
     </BrowserRouter>
   );
 };
