@@ -40,10 +40,6 @@ export const navLinks: TNavLink[] = [
     title: "About",
   },
   {
-    id: "work",
-    title: "Work",
-  },
-  {
     id: "contact",
     title: "Contact",
   },
