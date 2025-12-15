@@ -67,13 +67,11 @@ export const config: TConfig = {
     about: {
       p: "Introduction",
       h2: "Overview.",
-      content: `💡 Passionate Computer Science student with strong foundations in Data Structures & Algorithms (DSA) and hands-on expertise in Java.
+      content: `I'm a passionate Computer Science student with a strong foundation in Data Structures & Algorithms (DSA) and hands-on expertise in Java. My journey combines the art of Web Development with the cutting-edge world of AI-powered solutions.
 
-🌐 Skilled in Web Development and building AI-powered solutions, with a focus on Agentic AI. Experienced in integrating and orchestrating multiple AI systems such as ChatGPT, Perplexity, VEO, Gemini, AssemblyAI, ElevenLabs, Supabase, and more through their APIs.
+I specialize in Agentic AI, seamlessly integrating and orchestrating multiple AI systems including ChatGPT, Perplexity, VEO, Gemini, AssemblyAI, ElevenLabs, Supabase, and more through their APIs. My approach focuses on creating intelligent, scalable, and practical applications that bridge AI with real-world problem-solving.
 
-⚡ Interests lie in creating intelligent, scalable, and practical applications that bridge AI with real-world problem-solving.
-
-🚀 Always eager to learn, explore new technologies, and collaborate on innovative projects.`,
+I thrive on learning new technologies, exploring innovative solutions, and collaborating on projects that push boundaries. Let's build something extraordinary together!`,
     },
     experience: {
       p: "What I have done so far",
