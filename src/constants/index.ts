@@ -28,7 +28,6 @@ import {
   starbucks,
   tesla,
   shopify,
-  carrent,
   threejs,
 } from "../assets";
 
