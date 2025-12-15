@@ -205,7 +205,7 @@ const projects: TProject[] = [
     description:
       "Web-based platform that allows users to calculate income tax, compare tax slabs, and estimate deductions, providing a convenient and efficient solution for tax planning needs.",
     tags: [],
-    image: carrent,
+    image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80",
     sourceCodeLink: "/tax-calculator",
   },
 ];
