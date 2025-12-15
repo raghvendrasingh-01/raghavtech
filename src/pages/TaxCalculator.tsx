@@ -130,53 +130,54 @@ Note: Calculations exclude surcharge
             Income Tax Calculator FY 25-26
           </h1>
 
-          <div className="bg-tertiary rounded-2xl p-8 shadow-xl">
-            <div className="mb-6">
-              <label className="text-white block mb-2 text-lg">
-                Enter your annual income (Rs):
-              </label>
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 shadow-2xl border-4 border-gray-700" style={{ boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 2px 4px 0 rgba(255, 255, 255, 0.1)' }}>
+            {/* Calculator Display Screen */}
+            <div className="mb-6 bg-gradient-to-b from-green-900 to-green-950 p-6 rounded-xl border-4 border-gray-600" style={{ boxShadow: 'inset 0 4px 6px rgba(0, 0, 0, 0.5)' }}>
+              <div className="text-green-400 font-mono text-sm mb-2">INCOME TAX CALCULATOR</div>
               <input
                 type="number"
                 value={income}
                 onChange={(e) => setIncome(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-primary text-white border border-gray-600 focus:border-purple-500 focus:outline-none"
-                placeholder="e.g., 1000000"
+                className="w-full bg-transparent text-green-300 text-3xl font-bold text-right outline-none font-mono"
+                placeholder="0"
+                style={{ textShadow: '0 0 10px rgba(34, 197, 94, 0.5)' }}
               />
+              <div className="text-green-500 text-xs mt-2 text-right font-mono">₹ ANNUAL INCOME</div>
             </div>
 
-            <div className="mb-6">
-              <label className="text-white block mb-3 text-lg">
-                Select Tax Regime:
-              </label>
-              <div className="space-y-3">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="radio"
-                    value="1"
-                    checked={regime === "1"}
-                    onChange={(e) => setRegime(e.target.value)}
-                    className="w-5 h-5 mr-3"
-                  />
-                  <span className="text-white text-base">Old Regime</span>
-                </label>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="radio"
-                    value="2"
-                    checked={regime === "2"}
-                    onChange={(e) => setRegime(e.target.value)}
-                    className="w-5 h-5 mr-3"
-                  />
-                  <span className="text-white text-base">New Regime</span>
-                </label>
-              </div>
+            {/* Regime Selection Buttons */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <button
+                onClick={() => setRegime("1")}
+                className={`py-4 px-6 rounded-xl font-bold text-lg transition-all transform active:scale-95 ${
+                  regime === "1"
+                    ? "bg-gradient-to-b from-purple-500 to-purple-700 text-white shadow-lg"
+                    : "bg-gradient-to-b from-gray-600 to-gray-700 text-gray-300 hover:from-gray-500 hover:to-gray-600"
+                }`}
+                style={{ boxShadow: regime === "1" ? '0 6px 0 #6b21a8, 0 8px 15px rgba(0,0,0,0.3)' : '0 4px 0 #374151, 0 6px 10px rgba(0,0,0,0.2)' }}
+              >
+                OLD REGIME
+              </button>
+              <button
+                onClick={() => setRegime("2")}
+                className={`py-4 px-6 rounded-xl font-bold text-lg transition-all transform active:scale-95 ${
+                  regime === "2"
+                    ? "bg-gradient-to-b from-purple-500 to-purple-700 text-white shadow-lg"
+                    : "bg-gradient-to-b from-gray-600 to-gray-700 text-gray-300 hover:from-gray-500 hover:to-gray-600"
+                }`}
+                style={{ boxShadow: regime === "2" ? '0 6px 0 #6b21a8, 0 8px 15px rgba(0,0,0,0.3)' : '0 4px 0 #374151, 0 6px 10px rgba(0,0,0,0.2)' }}
+              >
+                NEW REGIME
+              </button>
             </div>
 
+            {/* Calculate Button */}
             <button
               onClick={handleCalculate}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+              className="w-full bg-gradient-to-b from-green-500 to-green-700 hover:from-green-400 hover:to-green-600 text-white font-bold py-5 px-6 rounded-xl text-xl transition-all transform active:scale-95 active:translate-y-1"
+              style={{ boxShadow: '0 8px 0 #15803d, 0 10px 20px rgba(0,0,0,0.4)' }}
             >
-              Calculate Tax
+              CALCULATE TAX
             </button>
 
             {result && (
