@@ -81,7 +81,7 @@ const About = () => {
           </svg>
         </a>
         <a
-          href="https://instagram.com/raghvendrasingh01"
+          href="https://www.instagram.com/raghvendrasingh_01/"
           target="_blank"
           rel="noopener noreferrer"
           className="w-12 h-12 rounded-full bg-tertiary flex items-center justify-center hover:bg-pink-600 transition-colors"
