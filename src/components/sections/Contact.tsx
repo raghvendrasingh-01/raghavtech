@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import emailjs from "@emailjs/browser";
 
 import { EarthCanvas } from "../canvas";
 import { SectionWrapper } from "../../hoc";
@@ -12,11 +11,8 @@ const INITIAL_STATE = Object.fromEntries(
   Object.keys(config.contact.form).map((input) => [input, ""])
 );
 
-const emailjsConfig = {
-  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
-  templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-  accessToken: import.meta.env.VITE_EMAILJS_ACCESS_TOKEN,
-};
+// Get your free access key from https://web3forms.com/
+const WEB3FORMS_ACCESS_KEY = "1021e0a2-2d4b-480d-97c6-999ccbe6b40e";
 
 const Contact = () => {
   const formRef = useRef<React.LegacyRef<HTMLFormElement> | undefined>();
@@ -31,43 +27,47 @@ const Contact = () => {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement> | undefined) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement> | undefined) => {
     if (e === undefined) return;
     e.preventDefault();
     setLoading(true);
 
-    emailjs
-      .send(
-        emailjsConfig.serviceId,
-        emailjsConfig.templateId,
-        {
-          form_name: form.name,
-          to_name: config.html.fullName,
-          from_email: form.email,
-          to_email: config.html.email,
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          name: form.name,
+          email: form.email,
+          subject: form.subject,
           message: form.message,
-        },
-        emailjsConfig.accessToken
-      )
-      .then(
-        () => {
-          setLoading(false);
-          alert("Thank you. I will get back to you as soon as possible.");
+          to_email: config.html.email,
+        }),
+      });
 
-          setForm(INITIAL_STATE);
-        },
-        (error) => {
-          setLoading(false);
+      const result = await response.json();
 
-          console.log(error);
-          alert("Something went wrong.");
-        }
-      );
+      if (result.success) {
+        setLoading(false);
+        alert("Thank you. I will get back to you as soon as possible.");
+        setForm(INITIAL_STATE);
+      } else {
+        setLoading(false);
+        alert("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   return (
     <div
-      className={`flex flex-col-reverse gap-10 overflow-hidden xl:mt-12 xl:flex-row`}
+      className={`flex flex-col-reverse gap-10 xl:mt-12 xl:flex-row`}
     >
       <motion.div
         variants={slideIn("left", "tween", 0.2, 1)}
@@ -112,7 +112,7 @@ const Contact = () => {
 
       <motion.div
         variants={slideIn("right", "tween", 0.2, 1)}
-        className="h-[350px] md:h-[550px] xl:h-auto xl:flex-1"
+        className="h-[550px] md:h-[750px] xl:min-h-[750px] xl:flex-1"
       >
         <EarthCanvas />
       </motion.div>
