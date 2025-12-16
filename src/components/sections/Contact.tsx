@@ -42,7 +42,6 @@ const Contact = () => {
           access_key: WEB3FORMS_ACCESS_KEY,
           name: form.name,
           email: form.email,
-          subject: form.subject,
           message: form.message,
           to_email: config.html.email,
         }),

@@ -61,7 +61,6 @@ export const config: TConfig = {
         placeholder: "What's your name?",
       },
       email: { span: "Your Email", placeholder: "What's your email?" },
-      subject: { span: "Subject", placeholder: "What's the subject?" },
       message: {
         span: "Your Message",
         placeholder: "What do you want to say?",
