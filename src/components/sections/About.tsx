@@ -71,7 +71,7 @@ const About = () => {
           </svg>
         </a>
         <a
-          href="https://linkedin.com/in/raghvendrasingh01"
+          href="https://www.linkedin.com/in/raghvendra-singh-480ab536b/"
           target="_blank"
           rel="noopener noreferrer"
           className="w-12 h-12 rounded-full bg-tertiary flex items-center justify-center hover:bg-blue-600 transition-colors"
