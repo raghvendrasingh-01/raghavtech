@@ -24,10 +24,6 @@ type TConfig = {
         span: string;
         placeholder: string;
       };
-      subject: {
-        span: string;
-        placeholder: string;
-      };
       message: {
         span: string;
         placeholder: string;
