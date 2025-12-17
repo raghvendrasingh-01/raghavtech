@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Speed Test</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>⌨️ Typing Speed Test</h1>
+      <p class="subtitle">Test your typing skills</p>
+    </header>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <span class="stat-value" id="timer">60</span>
+        <span class="stat-label">seconds</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-value" id="wpm">0</span>
+        <span class="stat-label">WPM</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-value" id="accuracy">100</span>
+        <span class="stat-label">% accuracy</span>
+      </div>
+    </div>
+
+    <!-- Text Display Area -->
+    <div class="text-display" id="textDisplay">
+      <div class="text-content" id="textContent"></div>
+      <span class="caret" id="caret"></span>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-container">
+      <input 
+        type="text" 
+        id="inputField" 
+        class="input-field" 
+        placeholder="Start typing here..."
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+      >
+    </div>
+
+    <!-- Buttons -->
+    <div class="button-row" id="buttonRow">
+      <button class="btn btn-primary" id="restartBtn">
+        🔄 Restart
+      </button>
+    </div>
+
+    <!-- Result Modal -->
+    <div class="result-modal" id="resultModal">
+      <div class="result-content">
+        <h2>🎉 Time's Up!</h2>
+        <div class="result-stats">
+          <div class="result-stat">
+            <span class="result-value" id="finalWpm">0</span>
+            <span class="result-label">Words Per Minute</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-value" id="finalAccuracy">0</span>
+            <span class="result-label">% Accuracy</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-value" id="finalChars">0</span>
+            <span class="result-label">Characters Typed</span>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="tryAgainBtn">Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

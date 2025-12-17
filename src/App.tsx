@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { config } from "./constants/config";
 import TaxCalculator from "./pages/TaxCalculator";
 import PdfTools from "./pages/PdfTools";
+import Speed from "./pages/Speed";
 
 const App = () => {
   useEffect(() => {
@@ -41,6 +42,7 @@ const App = () => {
         } />
         <Route path="/tax-calculator" element={<TaxCalculator />} />
         <Route path="/pdf-tools" element={<PdfTools />} />
+        <Route path="/speed" element={<Speed />} />
       </Routes>
     </BrowserRouter>
   );

@@ -215,6 +215,14 @@ const projects: TProject[] = [
     image: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=500&q=80",
     sourceCodeLink: "/pdf-tools",
   },
+  {
+    name: "Speed Test",
+    description:
+      "A typing speed test app inspired by keybr.com and monkeytype.com. Test your WPM and accuracy with real-time feedback, caret cursor, and focus mode.",
+    tags: [],
+    image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80",
+    sourceCodeLink: "/speed",
+  },
 ];
 
 export { services, technologies, experiences, testimonials, projects };
