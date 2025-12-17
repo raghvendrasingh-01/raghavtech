@@ -12,6 +12,7 @@ import {
 import { useEffect } from "react";
 import { config } from "./constants/config";
 import TaxCalculator from "./pages/TaxCalculator";
+import PdfTools from "./pages/PdfTools";
 
 const App = () => {
   useEffect(() => {
@@ -39,6 +40,7 @@ const App = () => {
           </div>
         } />
         <Route path="/tax-calculator" element={<TaxCalculator />} />
+        <Route path="/pdf-tools" element={<PdfTools />} />
       </Routes>
     </BrowserRouter>
   );
