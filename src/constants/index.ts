@@ -216,6 +216,14 @@ const projects: TProject[] = [
     image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80",
     sourceCodeLink: "/speed",
   },
+  {
+    name: "Study Planner",
+    description:
+      "AI-powered study planner with adaptive scheduling, streak tracking, and 3D glassmorphic UI. Generate personalized study plans based on exam dates, subject difficulty, and daily availability.",
+    tags: [],
+    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=80",
+    sourceCodeLink: "/study-planner",
+  },
 ];
 
 export { services, technologies, experiences, testimonials, projects };
