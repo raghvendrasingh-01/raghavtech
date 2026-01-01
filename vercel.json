@@ -1,6 +1,31 @@
 {
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node@3.0.0",
+      "maxDuration": 10,
+      "memory": 1024
+    }
+  },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/api/merge", "destination": "/api/merge" },
+    { "source": "/api/split", "destination": "/api/split" },
+    { "source": "/api/compress", "destination": "/api/compress" },
+    { "source": "/api", "destination": "/api/index" },
     { "source": "/(.*)", "destination": "/" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" },
+        { "key": "Access-Control-Expose-Headers", "value": "X-Original-Size, X-New-Size, X-Message, Content-Disposition" }
+      ]
+    }
   ]
 }

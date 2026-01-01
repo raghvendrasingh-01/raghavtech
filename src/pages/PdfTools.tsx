@@ -51,7 +51,17 @@ const Icons = {
       <path d="M9 15l2 2 4-4" />
     </svg>
   ),
-  // PDF to Image icon
+  // Split icon (scissors)
+  Split: () => (
+    <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="6" cy="6" r="3" />
+      <circle cx="6" cy="18" r="3" />
+      <line x1="20" y1="4" x2="8.12" y2="15.88" />
+      <line x1="14.47" y1="14.48" x2="20" y2="20" />
+      <line x1="8.12" y1="8.12" x2="12" y2="12" />
+    </svg>
+  ),
+  // Image icon (used for PDF to Image)
   Image: () => (
     <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
       <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -131,24 +141,6 @@ const Icons = {
 // =====================
 const tools: Tool[] = [
   {
-    id: "pdf-to-word",
-    name: "PDF to Word",
-    icon: <Icons.FileWord />,
-    description: "Convert PDF documents to editable Word files",
-    acceptedFiles: ".pdf",
-    color: "from-blue-500 to-blue-600",
-    endpoint: "/convert/pdf-to-word",
-  },
-  {
-    id: "pdf-to-image",
-    name: "PDF to Image",
-    icon: <Icons.Image />,
-    description: "Convert PDF pages to high-quality images",
-    acceptedFiles: ".pdf",
-    color: "from-green-500 to-green-600",
-    endpoint: "/convert/pdf-to-image",
-  },
-  {
     id: "merge-pdf",
     name: "Merge PDFs",
     icon: <Icons.Merge />,
@@ -156,6 +148,15 @@ const tools: Tool[] = [
     acceptedFiles: ".pdf",
     color: "from-purple-500 to-purple-600",
     endpoint: "/merge",
+  },
+  {
+    id: "split-pdf",
+    name: "Split PDF",
+    icon: <Icons.Split />,
+    description: "Split PDF into individual pages",
+    acceptedFiles: ".pdf",
+    color: "from-green-500 to-green-600",
+    endpoint: "/split",
   },
   {
     id: "compress-pdf",
@@ -692,7 +693,9 @@ const PdfTools = () => {
             ? `Merge ${files.length} PDFs`
             : selectedTool?.id === "compress-pdf"
             ? "Compress PDF"
-            : `Convert to ${selectedTool?.id === "pdf-to-word" ? "Word" : "Image"}`}
+            : selectedTool?.id === "split-pdf"
+            ? "Split PDF"
+            : "Process PDF"}
         </button>
       )}
     </div>
