@@ -207,14 +207,7 @@ const projects: TProject[] = [
     image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80",
     sourceCodeLink: "/tax-calculator",
   },
-  {
-    name: "PDF Tools",
-    description:
-      "A comprehensive PDF toolkit that allows users to merge, split, compress, and convert PDF files. Features an intuitive interface for easy document management.",
-    tags: [],
-    image: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=500&q=80",
-    sourceCodeLink: "/pdf-tools",
-  },
+
   {
     name: "Speed Test",
     description:
