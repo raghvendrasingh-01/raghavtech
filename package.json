@@ -19,7 +19,6 @@
     "framer-motion": "^9.0.7",
     "jszip": "^3.10.1",
     "maath": "^0.10.7",
-    "pdf-lib": "^1.17.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-parallax-tilt": "^1.7.212",
