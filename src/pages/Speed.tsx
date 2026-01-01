@@ -328,10 +328,23 @@ const Speed: React.FC = () => {
     setCurrentText(generateLesson(lessonState));
   }, [lessonState.activeChars]);
 
+  // Auto-focus on mount
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, []);
+
   // Handle key visualization
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       setPressedKey(e.key);
+      
+      // Auto-focus the input when user starts typing (printable character)
+      if (!isFinished && e.key.length === 1 && inputRef.current) {
+        inputRef.current.focus();
+      }
     };
     const handleKeyUp = () => {
       setPressedKey("");
@@ -343,7 +356,7 @@ const Speed: React.FC = () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, []);
+  }, [isFinished]);
 
   // Timer
   useEffect(() => {
