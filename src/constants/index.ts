@@ -209,9 +209,9 @@ const projects: TProject[] = [
   },
 
   {
-    name: "Speed Test",
+    name: "Adaptive Typing Trainer",
     description:
-      "A typing speed test app inspired by keybr.com and monkeytype.com. Test your WPM and accuracy with real-time feedback, caret cursor, and focus mode.",
+      "A keybr-inspired typing practice app with adaptive learning algorithm. Features per-character accuracy tracking, progressive character unlocking, streak system, and 3D keyboard visualization.",
     tags: [],
     image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80",
     sourceCodeLink: "/speed",
