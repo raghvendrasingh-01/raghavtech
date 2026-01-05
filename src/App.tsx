@@ -14,6 +14,7 @@ import { config } from "./constants/config";
 import TaxCalculator from "./pages/TaxCalculator";
 import Speed from "./pages/Speed";
 import StudyPlanner from "./pages/StudyPlanner";
+import GradeFlow from "./pages/GradeFlow";
 
 const App = () => {
   useEffect(() => {
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/tax-calculator" element={<TaxCalculator />} />
         <Route path="/speed" element={<Speed />} />
         <Route path="/study-planner" element={<StudyPlanner />} />
+        <Route path="/grade-flow" element={<GradeFlow />} />
       </Routes>
     </BrowserRouter>
   );

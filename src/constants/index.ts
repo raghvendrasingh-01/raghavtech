@@ -224,6 +224,14 @@ const projects: TProject[] = [
     image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=80",
     sourceCodeLink: "/study-planner",
   },
+  {
+    name: "GradeFlow",
+    description:
+      "A comprehensive CGPA calculator and predictor with semester-wise tracking, grade management, and future CGPA prediction. Features beautiful glassmorphic UI with interactive semester cards.",
+    tags: [],
+    image: "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=500&q=80",
+    sourceCodeLink: "/grade-flow",
+  },
 ];
 
 export { services, technologies, experiences, testimonials, projects };
