@@ -1,6 +1,12 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { uploadSyllabusPDF, deleteSyllabusPDF, type UploadedPDF } from "../lib/supabase";
+import { 
+  uploadSyllabusPDF, 
+  deleteSyllabusPDF, 
+  saveStudyPlansToDb, 
+  loadStudyPlansFromDb,
+  type UploadedPDF 
+} from "../lib/supabase";
 
 // ============ TYPES ============
 interface Subject {
@@ -780,7 +786,7 @@ const SubjectInput: React.FC<{
 
 // ============ MAIN COMPONENT ============
 const StudyPlanner: React.FC = () => {
-  const [plansStorage, setPlansStorage] = useLocalStorage<PlansStorage>(STORAGE_KEY, { plans: [], activePlanId: null });
+  const [plansStorage, setPlansStorageInternal] = useLocalStorage<PlansStorage>(STORAGE_KEY, { plans: [], activePlanId: null });
   const [view, setView] = useState<"setup" | "dashboard" | "plans">("setup");
   const [setupData, setSetupData] = useState<SetupData>({
     planName: "",
@@ -790,17 +796,73 @@ const StudyPlanner: React.FC = () => {
   });
   const [error, setError] = useState<string>("");
   const [isLoaded, setIsLoaded] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<"synced" | "syncing" | "error" | "offline">("synced");
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Set initial view based on stored data after mount
+  // Wrapper to save to both localStorage and Supabase
+  const setPlansStorage = useCallback((value: PlansStorage | ((prev: PlansStorage) => PlansStorage)) => {
+    setPlansStorageInternal(prev => {
+      const newValue = value instanceof Function ? value(prev) : value;
+      
+      // Debounced save to database
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      
+      setSyncStatus("syncing");
+      saveTimeoutRef.current = setTimeout(async () => {
+        const success = await saveStudyPlansToDb(newValue);
+        setSyncStatus(success ? "synced" : "error");
+      }, 1000); // Debounce by 1 second
+      
+      return newValue;
+    });
+  }, [setPlansStorageInternal]);
+
+  // Load data from Supabase on mount
   useEffect(() => {
-    if (plansStorage.activePlanId) {
-      setView("dashboard");
-    } else if (plansStorage.plans.length > 0) {
-      setView("plans");
-    } else {
-      setView("setup");
-    }
-    setIsLoaded(true);
+    const loadFromDb = async () => {
+      setSyncStatus("syncing");
+      const dbData = await loadStudyPlansFromDb();
+      
+      if (dbData) {
+        // Use database data (source of truth)
+        setPlansStorageInternal(dbData as PlansStorage);
+        setSyncStatus("synced");
+        
+        // Set view based on loaded data
+        if (dbData.activePlanId) {
+          setView("dashboard");
+        } else if (dbData.plans.length > 0) {
+          setView("plans");
+        } else {
+          setView("setup");
+        }
+      } else {
+        // No database data - check localStorage (for migration)
+        if (plansStorage.activePlanId) {
+          setView("dashboard");
+          // Migrate localStorage data to database
+          saveStudyPlansToDb(plansStorage);
+        } else if (plansStorage.plans.length > 0) {
+          setView("plans");
+          saveStudyPlansToDb(plansStorage);
+        } else {
+          setView("setup");
+        }
+        setSyncStatus("synced");
+      }
+      
+      setIsLoaded(true);
+    };
+
+    loadFromDb();
+    
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Get active plan
@@ -1085,15 +1147,55 @@ const StudyPlanner: React.FC = () => {
           className="mb-8"
         >
           <div className="flex items-center justify-between mb-6">
-            <a
-              href="/"
-              className="flex items-center gap-2 text-white/60 hover:text-white transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Back to Portfolio
-            </a>
+            <div className="flex items-center gap-4">
+              <a
+                href="/"
+                className="flex items-center gap-2 text-white/60 hover:text-white transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Portfolio
+              </a>
+              {/* Sync Status Indicator */}
+              <div className="flex items-center gap-2 text-sm">
+                {syncStatus === "syncing" && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-1 text-yellow-400"
+                  >
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    >
+                      ⟳
+                    </motion.div>
+                    <span className="hidden sm:inline">Syncing...</span>
+                  </motion.div>
+                )}
+                {syncStatus === "synced" && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center gap-1 text-green-400"
+                  >
+                    <span>☁️</span>
+                    <span className="hidden sm:inline">Synced</span>
+                  </motion.div>
+                )}
+                {syncStatus === "error" && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-1 text-red-400"
+                  >
+                    <span>⚠️</span>
+                    <span className="hidden sm:inline">Sync failed</span>
+                  </motion.div>
+                )}
+              </div>
+            </div>
             <div className="flex items-center gap-2">
               {plansStorage.plans.length > 0 && view !== "plans" && (
                 <Button3D variant="secondary" onClick={goToPlansView} className="!px-4 !py-2 text-sm">

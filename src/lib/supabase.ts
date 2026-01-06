@@ -147,3 +147,79 @@ export async function deleteSyllabusPDF(filePath: string): Promise<boolean> {
     return false;
   }
 }
+
+// ============ STUDY PLANS DATABASE FUNCTIONS ============
+
+// Type for study plans storage (matches the component's PlansStorage interface)
+export interface PlansStorageDB {
+  plans: unknown[];
+  activePlanId: string | null;
+}
+
+/**
+ * Save study plans to database
+ * @param plansData - The plans storage object to save
+ * @returns Success status
+ */
+export async function saveStudyPlansToDb(plansData: PlansStorageDB): Promise<boolean> {
+  try {
+    if (!supabase) {
+      console.warn('Supabase is not configured');
+      return false;
+    }
+
+    // Upsert with a fixed ID (since we only need one record for personal use)
+    const { error } = await supabase
+      .from('study_plans')
+      .upsert({
+        id: 'main',
+        plan_data: plansData,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'id'
+      });
+
+    if (error) {
+      console.error('Failed to save study plans:', error);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Save study plans error:', err);
+    return false;
+  }
+}
+
+/**
+ * Load study plans from database
+ * @returns Plans storage object or null if not found
+ */
+export async function loadStudyPlansFromDb(): Promise<PlansStorageDB | null> {
+  try {
+    if (!supabase) {
+      console.warn('Supabase is not configured');
+      return null;
+    }
+
+    const { data, error } = await supabase
+      .from('study_plans')
+      .select('plan_data')
+      .eq('id', 'main')
+      .single();
+
+    if (error) {
+      // PGRST116 = no rows found, which is expected for first-time users
+      if (error.code !== 'PGRST116') {
+        console.error('Failed to load study plans:', error);
+      }
+      return null;
+    }
+
+    return data?.plan_data as PlansStorageDB || null;
+  } catch (err) {
+    console.error('Load study plans error:', err);
+    return null;
+  }
+}
+
