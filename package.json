@@ -15,6 +15,7 @@
     "@emailjs/browser": "^3.12.1",
     "@react-three/drei": "^9.99.4",
     "@react-three/fiber": "^8.15.16",
+    "@supabase/supabase-js": "^2.89.0",
     "busboy": "^1.6.0",
     "framer-motion": "^9.0.7",
     "jszip": "^3.10.1",

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { uploadSyllabusPDF, deleteSyllabusPDF, type UploadedPDF } from "../lib/supabase";
 
 // ============ TYPES ============
 interface Subject {
@@ -8,6 +9,7 @@ interface Subject {
   topics: string[];
   difficulty: "easy" | "medium" | "hard";
   color: string;
+  syllabusPdf?: UploadedPDF; // Optional PDF attachment
 }
 
 interface Task {
@@ -22,6 +24,8 @@ interface Task {
 }
 
 interface StudyPlan {
+  id: string;
+  name: string;
   subjects: Subject[];
   tasks: Task[];
   examDate: string;
@@ -32,7 +36,13 @@ interface StudyPlan {
   totalCompleted: number;
 }
 
+interface PlansStorage {
+  plans: StudyPlan[];
+  activePlanId: string | null;
+}
+
 interface SetupData {
+  planName: string;
   subjects: Subject[];
   examDate: string;
   dailyStudyTime: number;
@@ -97,10 +107,25 @@ const generateStudyPlan = (setup: SetupData): Task[] => {
 
   const tasks: Task[] = [];
   
-  // Calculate total weight based on difficulty and topics
-  const subjectWeights = subjects.map(s => ({
+  // For subjects with PDF but no topics, create a placeholder topic
+  const subjectsWithTopics = subjects.map(s => ({
     ...s,
-    weight: s.topics.length * DIFFICULTY_MULTIPLIER[s.difficulty]
+    topics: s.topics.length > 0 
+      ? s.topics 
+      : s.syllabusPdf 
+        ? [`Study ${s.name} (see PDF syllabus)`] 
+        : []
+  }));
+
+  // Filter out subjects that have no topics and no PDF
+  const validSubjects = subjectsWithTopics.filter(s => s.topics.length > 0);
+  
+  if (validSubjects.length === 0) return [];
+
+  // Calculate total weight based on difficulty and topics
+  const subjectWeights = validSubjects.map(s => ({
+    ...s,
+    weight: Math.max(1, s.topics.length) * DIFFICULTY_MULTIPLIER[s.difficulty]
   }));
   const totalWeight = subjectWeights.reduce((sum, s) => sum + s.weight, 0);
   
@@ -485,6 +510,8 @@ const SubjectInput: React.FC<{
   onRemove: () => void;
 }> = ({ subject, onChange, onRemove }) => {
   const [topicInput, setTopicInput] = useState("");
+  const [pdfUploadStatus, setPdfUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
+  const [pdfError, setPdfError] = useState<string>("");
 
   const addTopic = () => {
     if (topicInput.trim()) {
@@ -495,6 +522,71 @@ const SubjectInput: React.FC<{
 
   const removeTopic = (index: number) => {
     onChange({ ...subject, topics: subject.topics.filter((_, i) => i !== index) });
+  };
+
+  // PDF Upload Handler
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Reset states
+    setPdfError("");
+    setPdfUploadStatus("uploading");
+
+    // Client-side validation
+    if (file.type !== "application/pdf") {
+      setPdfError("Only PDF files are allowed");
+      setPdfUploadStatus("error");
+      return;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      setPdfError("File size must be less than 10MB");
+      setPdfUploadStatus("error");
+      return;
+    }
+
+    try {
+      const result = await uploadSyllabusPDF(file, subject.id);
+
+      if (result.success && result.data) {
+        onChange({ ...subject, syllabusPdf: result.data });
+        setPdfUploadStatus("success");
+      } else {
+        setPdfError(result.error || "Upload failed");
+        setPdfUploadStatus("error");
+      }
+    } catch {
+      setPdfError("An unexpected error occurred");
+      setPdfUploadStatus("error");
+    }
+
+    // Reset file input
+    e.target.value = "";
+  };
+
+  // Remove PDF Handler
+  const handleRemovePdf = async () => {
+    if (!subject.syllabusPdf) return;
+
+    const confirmed = window.confirm("Are you sure you want to remove this PDF?");
+    if (!confirmed) return;
+
+    // Delete from storage
+    await deleteSyllabusPDF(subject.syllabusPdf.path);
+
+    // Remove from subject
+    onChange({ ...subject, syllabusPdf: undefined });
+    setPdfUploadStatus("idle");
+    setPdfError("");
+  };
+
+  // Open PDF in new tab
+  const openPdf = () => {
+    if (subject.syllabusPdf?.url) {
+      window.open(subject.syllabusPdf.url, "_blank");
+    }
   };
 
   return (
@@ -549,7 +641,7 @@ const SubjectInput: React.FC<{
         </div>
 
         {/* Topics */}
-        <div>
+        <div className="mb-4">
           <label className="text-sm text-white/60 mb-2 block">Topics</label>
           <div className="flex gap-2 mb-3">
             <input
@@ -585,6 +677,102 @@ const SubjectInput: React.FC<{
             </AnimatePresence>
           </div>
         </div>
+
+        {/* PDF Upload Section */}
+        <div className="pt-4 border-t border-white/10">
+          <label className="text-sm text-white/60 mb-3 block flex items-center gap-2">
+            <span className="text-lg">📄</span>
+            OR Upload Syllabus PDF
+          </label>
+
+          {/* Show uploaded PDF or upload button */}
+          {subject.syllabusPdf ? (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30"
+            >
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white font-medium truncate text-sm">{subject.syllabusPdf.name}</p>
+                <p className="text-emerald-400 text-xs">✓ Uploaded successfully</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={openPdf}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 transition-colors flex items-center gap-1"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  Open
+                </button>
+                <button
+                  onClick={handleRemovePdf}
+                  className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-500/20 transition-colors"
+                  title="Remove PDF"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="space-y-3">
+              {/* Upload Input */}
+              <label className="relative flex items-center justify-center gap-3 p-4 rounded-xl border-2 border-dashed border-white/20 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all cursor-pointer group">
+                <input
+                  type="file"
+                  accept=".pdf,application/pdf"
+                  onChange={handlePdfUpload}
+                  disabled={pdfUploadStatus === "uploading"}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                />
+                {pdfUploadStatus === "uploading" ? (
+                  <>
+                    <motion.div
+                      className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full"
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                    />
+                    <span className="text-indigo-400 text-sm font-medium">Uploading...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-6 h-6 text-white/40 group-hover:text-indigo-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span className="text-white/60 group-hover:text-white/80 text-sm transition-colors">
+                      Click to upload PDF <span className="text-white/40">(max 10MB)</span>
+                    </span>
+                  </>
+                )}
+              </label>
+
+              {/* Error Message */}
+              <AnimatePresence>
+                {pdfUploadStatus === "error" && pdfError && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="text-rose-400 text-sm flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {pdfError}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+        </div>
       </GlassCard>
     </Card3D>
   );
@@ -592,28 +780,58 @@ const SubjectInput: React.FC<{
 
 // ============ MAIN COMPONENT ============
 const StudyPlanner: React.FC = () => {
-  const [plan, setPlan] = useLocalStorage<StudyPlan | null>(STORAGE_KEY, null);
-  const [view, setView] = useState<"setup" | "dashboard">(plan ? "dashboard" : "setup");
+  const [plansStorage, setPlansStorage] = useLocalStorage<PlansStorage>(STORAGE_KEY, { plans: [], activePlanId: null });
+  const [view, setView] = useState<"setup" | "dashboard" | "plans">("setup");
   const [setupData, setSetupData] = useState<SetupData>({
+    planName: "",
     subjects: [],
     examDate: "",
     dailyStudyTime: 120
   });
   const [error, setError] = useState<string>("");
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Update streak on load
+  // Set initial view based on stored data after mount
   useEffect(() => {
-    if (plan) {
+    if (plansStorage.activePlanId) {
+      setView("dashboard");
+    } else if (plansStorage.plans.length > 0) {
+      setView("plans");
+    } else {
+      setView("setup");
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Get active plan
+  const plan = useMemo(() => {
+    if (!plansStorage.activePlanId) return null;
+    return plansStorage.plans.find(p => p.id === plansStorage.activePlanId) || null;
+  }, [plansStorage]);
+
+  // Update plan helper
+  const updateActivePlan = useCallback((updater: (plan: StudyPlan) => StudyPlan) => {
+    if (!plansStorage.activePlanId) return;
+    setPlansStorage(prev => ({
+      ...prev,
+      plans: prev.plans.map(p => 
+        p.id === prev.activePlanId ? updater(p) : p
+      )
+    }));
+  }, [plansStorage.activePlanId, setPlansStorage]);
+
+  // Update streak check (runs after plan is available)
+  useEffect(() => {
+    if (plan && isLoaded) {
       const today = formatDate(new Date());
       const yesterday = addDays(today, -1);
       
-      if (plan.lastStudyDate !== today && plan.lastStudyDate !== yesterday) {
+      if (plan.lastStudyDate && plan.lastStudyDate !== today && plan.lastStudyDate !== yesterday) {
         // Streak broken
-        setPlan({ ...plan, streak: 0 });
+        updateActivePlan(p => ({ ...p, streak: 0 }));
       }
-      setView("dashboard");
     }
-  }, []);
+  }, [plan, isLoaded]);
 
   // Check reduced motion preference
   const prefersReducedMotion = useMemo(() => {
@@ -660,8 +878,9 @@ const StudyPlanner: React.FC = () => {
         setError("All subjects must have a name");
         return;
       }
-      if (subject.topics.length === 0) {
-        setError(`Add at least one topic for "${subject.name}"`);
+      // Allow either topics OR a PDF (at least one must be present)
+      if (subject.topics.length === 0 && !subject.syllabusPdf) {
+        setError(`Add at least one topic or upload a syllabus PDF for "${subject.name}"`);
         return;
       }
     }
@@ -691,6 +910,8 @@ const StudyPlanner: React.FC = () => {
     }
 
     const newPlan: StudyPlan = {
+      id: generateId(),
+      name: setupData.planName || `Study Plan ${plansStorage.plans.length + 1}`,
       subjects: setupData.subjects,
       tasks,
       examDate: setupData.examDate,
@@ -701,7 +922,11 @@ const StudyPlanner: React.FC = () => {
       totalCompleted: 0
     };
 
-    setPlan(newPlan);
+    setPlansStorage(prev => ({
+      plans: [...prev.plans, newPlan],
+      activePlanId: newPlan.id
+    }));
+    setSetupData({ planName: "", subjects: [], examDate: "", dailyStudyTime: 120 });
     setView("dashboard");
   };
 
@@ -711,13 +936,13 @@ const StudyPlanner: React.FC = () => {
     const today = formatDate(new Date());
     const wasStreakUpdatedToday = plan.lastStudyDate === today;
     
-    setPlan({
-      ...plan,
-      tasks: plan.tasks.map(t => t.id === taskId ? { ...t, completed: true } : t),
-      streak: wasStreakUpdatedToday ? plan.streak : plan.streak + 1,
+    updateActivePlan(p => ({
+      ...p,
+      tasks: p.tasks.map(t => t.id === taskId ? { ...t, completed: true } : t),
+      streak: wasStreakUpdatedToday ? p.streak : p.streak + 1,
       lastStudyDate: today,
-      totalCompleted: plan.totalCompleted + 1
-    });
+      totalCompleted: p.totalCompleted + 1
+    }));
   };
 
   const skipTask = (taskId: string) => {
@@ -749,13 +974,42 @@ const StudyPlanner: React.FC = () => {
       updatedTasks = [...updatedTasks, newTask];
     }
 
-    setPlan({ ...plan, tasks: updatedTasks });
+    updateActivePlan(p => ({ ...p, tasks: updatedTasks }));
   };
 
-  const resetPlan = () => {
-    setPlan(null);
-    setSetupData({ subjects: [], examDate: "", dailyStudyTime: 120 });
+  const deletePlan = (planId: string) => {
+    const confirmed = window.confirm("Are you sure you want to delete this plan?");
+    if (!confirmed) return;
+
+    setPlansStorage(prev => {
+      const newPlans = prev.plans.filter(p => p.id !== planId);
+      const newActivePlanId = prev.activePlanId === planId 
+        ? (newPlans.length > 0 ? newPlans[0].id : null)
+        : prev.activePlanId;
+      return { plans: newPlans, activePlanId: newActivePlanId };
+    });
+
+    if (plansStorage.plans.length <= 1) {
+      setView("setup");
+    }
+  };
+
+  const switchToPlan = (planId: string) => {
+    setPlansStorage(prev => ({ ...prev, activePlanId: planId }));
+    setView("dashboard");
+  };
+
+  const createNewPlan = () => {
+    setSetupData({ planName: "", subjects: [], examDate: "", dailyStudyTime: 120 });
     setView("setup");
+  };
+
+  const goToPlansView = () => {
+    if (plansStorage.plans.length > 0) {
+      setView("plans");
+    } else {
+      setView("setup");
+    }
   };
 
   // Calculate stats
@@ -798,6 +1052,22 @@ const StudyPlanner: React.FC = () => {
     visible: { opacity: 1, y: 0 }
   };
 
+  // Show loading screen while initializing
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <motion.div
+            className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto mb-4"
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          />
+          <p className="text-white/60">Loading Study Planner...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Background elements */}
@@ -824,11 +1094,18 @@ const StudyPlanner: React.FC = () => {
               </svg>
               Back to Portfolio
             </a>
-            {plan && (
-              <Button3D variant="danger" onClick={resetPlan} className="!px-4 !py-2 text-sm">
-                Reset Plan
-              </Button3D>
-            )}
+            <div className="flex items-center gap-2">
+              {plansStorage.plans.length > 0 && view !== "plans" && (
+                <Button3D variant="secondary" onClick={goToPlansView} className="!px-4 !py-2 text-sm">
+                  📚 All Plans ({plansStorage.plans.length})
+                </Button3D>
+              )}
+              {view === "dashboard" && (
+                <Button3D variant="primary" onClick={createNewPlan} className="!px-4 !py-2 text-sm">
+                  + New Plan
+                </Button3D>
+              )}
+            </div>
           </div>
           
           <div className="text-center">
@@ -842,12 +1119,127 @@ const StudyPlanner: React.FC = () => {
             <p className="text-white/60 text-lg">
               {view === "setup" 
                 ? "Create your personalized study plan" 
-                : "Track your progress and stay on track"}
+                : view === "plans"
+                ? "Select a plan or create a new one"
+                : plan?.name || "Track your progress and stay on track"}
             </p>
           </div>
         </motion.div>
 
         <AnimatePresence mode="wait">
+          {/* PLANS LIST VIEW */}
+          {view === "plans" && (
+            <motion.div
+              key="plans"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0, x: -100 }}
+              className="space-y-6"
+            >
+              <motion.div variants={itemVariants} className="flex items-center justify-between">
+                <h2 className="text-2xl font-semibold text-white flex items-center gap-2">
+                  <span className="text-2xl">📋</span> Your Study Plans
+                </h2>
+                <Button3D onClick={createNewPlan}>+ Create New Plan</Button3D>
+              </motion.div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {plansStorage.plans.map((p) => {
+                  const progress = p.tasks.length > 0 
+                    ? (p.tasks.filter(t => t.completed).length / p.tasks.length) * 100 
+                    : 0;
+                  const daysLeft = getDaysBetween(formatDate(new Date()), p.examDate);
+                  const isActive = p.id === plansStorage.activePlanId;
+
+                  return (
+                    <motion.div key={p.id} variants={itemVariants}>
+                      <Card3D>
+                        <GlassCard 
+                          className={`p-5 cursor-pointer transition-all ${isActive ? 'ring-2 ring-indigo-500' : ''}`} 
+                          depth={2}
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <div>
+                              <h3 className="font-semibold text-white text-lg">{p.name}</h3>
+                              <p className="text-white/40 text-sm">
+                                Created {p.generatedAt}
+                              </p>
+                            </div>
+                            {isActive && (
+                              <span className="px-2 py-1 rounded-full text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                                Active
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="space-y-3 mb-4">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-white/60">Subjects</span>
+                              <span className="text-white">{p.subjects.length}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-white/60">Days Left</span>
+                              <span className={`${daysLeft <= 7 ? 'text-rose-400' : 'text-white'}`}>
+                                {daysLeft > 0 ? daysLeft : 'Expired'}
+                              </span>
+                            </div>
+                            <div>
+                              <div className="flex items-center justify-between text-sm mb-1">
+                                <span className="text-white/60">Progress</span>
+                                <span className="text-white">{Math.round(progress)}%</span>
+                              </div>
+                              <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                <motion.div
+                                  className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${progress}%` }}
+                                  transition={{ duration: 0.5 }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <Button3D 
+                              variant="primary" 
+                              onClick={() => switchToPlan(p.id)}
+                              className="flex-1 !px-3 !py-2 text-sm"
+                            >
+                              {isActive ? 'View' : 'Open'}
+                            </Button3D>
+                            <Button3D 
+                              variant="danger" 
+                              onClick={() => deletePlan(p.id)}
+                              className="!px-3 !py-2 text-sm"
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </Button3D>
+                          </div>
+                        </GlassCard>
+                      </Card3D>
+                    </motion.div>
+                  );
+                })}
+
+                {plansStorage.plans.length === 0 && (
+                  <motion.div variants={itemVariants} className="col-span-full">
+                    <Card3D hover={false}>
+                      <GlassCard className="p-12 text-center">
+                        <p className="text-white/60 text-lg mb-4">
+                          You don't have any study plans yet
+                        </p>
+                        <Button3D onClick={createNewPlan}>Create Your First Plan</Button3D>
+                      </GlassCard>
+                    </Card3D>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          )}
+
           {/* SETUP VIEW */}
           {view === "setup" && (
             <motion.div
@@ -879,6 +1271,18 @@ const StudyPlanner: React.FC = () => {
                     <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                       <span className="text-2xl">⚙️</span> Study Settings
                     </h2>
+                    
+                    {/* Plan Name */}
+                    <div className="mb-6">
+                      <label className="text-sm text-white/60 mb-2 block">Plan Name</label>
+                      <input
+                        type="text"
+                        value={setupData.planName}
+                        onChange={(e) => setSetupData({ ...setupData, planName: e.target.value })}
+                        placeholder="e.g., Final Exams 2026, UPSC Prep, Board Exams..."
+                        className="w-full bg-slate-700/50 text-white px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                      />
+                    </div>
                     
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
@@ -1085,6 +1489,121 @@ const StudyPlanner: React.FC = () => {
                   })}
                 </div>
               </motion.div>
+
+              {/* Syllabus PDFs Section */}
+              {plan.subjects.some(s => s.syllabusPdf) && (
+                <motion.div variants={itemVariants}>
+                  <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-2">
+                    <span className="text-2xl">📄</span> Syllabus Documents
+                  </h2>
+                  
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {plan.subjects
+                      .filter(subject => subject.syllabusPdf)
+                      .map((subject) => (
+                        <Card3D key={subject.id}>
+                          <GlassCard className="p-5 group" depth={2}>
+                            {/* 3D Floating PDF Icon */}
+                            <motion.div
+                              className="relative mb-4"
+                              whileHover={{ scale: 1.05 }}
+                              transition={{ type: "spring", stiffness: 300 }}
+                            >
+                              <div 
+                                className="w-full h-32 rounded-xl flex items-center justify-center relative overflow-hidden"
+                                style={{ 
+                                  background: `linear-gradient(135deg, ${subject.color}20 0%, ${subject.color}10 100%)`,
+                                  boxShadow: `0 10px 40px ${subject.color}20`
+                                }}
+                              >
+                                {/* Decorative elements */}
+                                <div className="absolute inset-0 opacity-30">
+                                  <div className="absolute top-2 left-2 w-8 h-1 bg-white/20 rounded" />
+                                  <div className="absolute top-5 left-2 w-12 h-1 bg-white/10 rounded" />
+                                  <div className="absolute top-8 left-2 w-10 h-1 bg-white/10 rounded" />
+                                  <div className="absolute bottom-2 right-2 w-6 h-1 bg-white/10 rounded" />
+                                </div>
+                                
+                                {/* Main PDF Icon */}
+                                <motion.div
+                                  className="relative z-10"
+                                  animate={{ 
+                                    y: [0, -5, 0],
+                                    rotateY: [0, 5, 0, -5, 0]
+                                  }}
+                                  transition={{ 
+                                    repeat: Infinity, 
+                                    duration: 4,
+                                    ease: "easeInOut"
+                                  }}
+                                  style={{ transformStyle: "preserve-3d" }}
+                                >
+                                  <div 
+                                    className="w-16 h-20 rounded-lg flex items-center justify-center shadow-2xl"
+                                    style={{ 
+                                      background: `linear-gradient(145deg, ${subject.color} 0%, ${subject.color}cc 100%)`,
+                                      boxShadow: `0 15px 35px ${subject.color}40, 0 5px 15px rgba(0,0,0,0.3)`
+                                    }}
+                                  >
+                                    <span className="text-white font-bold text-xs">PDF</span>
+                                  </div>
+                                  {/* 3D Shadow effect */}
+                                  <div 
+                                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-12 h-3 rounded-full blur-md opacity-50"
+                                    style={{ backgroundColor: subject.color }}
+                                  />
+                                </motion.div>
+                                
+                                {/* Glow effect on hover */}
+                                <motion.div
+                                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                  style={{
+                                    background: `radial-gradient(circle at center, ${subject.color}30 0%, transparent 70%)`
+                                  }}
+                                />
+                              </div>
+                            </motion.div>
+                            
+                            {/* Subject Info */}
+                            <div className="flex items-center gap-2 mb-2">
+                              <div
+                                className="w-3 h-3 rounded-full"
+                                style={{ backgroundColor: subject.color }}
+                              />
+                              <h3 className="font-semibold text-white truncate">{subject.name}</h3>
+                            </div>
+                            
+                            {/* PDF Name */}
+                            <p className="text-white/60 text-sm truncate mb-4" title={subject.syllabusPdf?.name}>
+                              {subject.syllabusPdf?.name}
+                            </p>
+                            
+                            {/* Open PDF Button */}
+                            <motion.button
+                              onClick={() => window.open(subject.syllabusPdf?.url, '_blank')}
+                              className="w-full py-2.5 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-all"
+                              style={{ 
+                                backgroundColor: `${subject.color}20`,
+                                color: subject.color,
+                                border: `1px solid ${subject.color}30`
+                              }}
+                              whileHover={{ 
+                                scale: 1.02,
+                                backgroundColor: `${subject.color}30`
+                              }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                              Open Syllabus
+                            </motion.button>
+                          </GlassCard>
+                        </Card3D>
+                      ))}
+                  </div>
+                </motion.div>
+              )}
 
               {/* Upcoming Tasks Preview */}
               <motion.div variants={itemVariants}>
