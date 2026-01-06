@@ -830,22 +830,17 @@ const StudyPlanner: React.FC = () => {
         setPlansStorageInternal(dbData as PlansStorage);
         setSyncStatus("synced");
         
-        // Set view based on loaded data
-        if (dbData.activePlanId) {
-          setView("dashboard");
-        } else if (dbData.plans.length > 0) {
+        // Always show plans view first if there are any plans
+        if (dbData.plans.length > 0) {
           setView("plans");
         } else {
           setView("setup");
         }
       } else {
         // No database data - check localStorage (for migration)
-        if (plansStorage.activePlanId) {
-          setView("dashboard");
-          // Migrate localStorage data to database
-          saveStudyPlansToDb(plansStorage);
-        } else if (plansStorage.plans.length > 0) {
+        if (plansStorage.plans.length > 0) {
           setView("plans");
+          // Migrate localStorage data to database
           saveStudyPlansToDb(plansStorage);
         } else {
           setView("setup");
