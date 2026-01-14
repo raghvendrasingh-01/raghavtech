@@ -1,12 +1,19 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   uploadSyllabusPDF, 
-  deleteSyllabusPDF, 
-  saveStudyPlansToDb, 
-  loadStudyPlansFromDb,
-  type UploadedPDF 
+  deleteSyllabusPDF,
+  getUserStudyPlans,
+  createStudyPlan,
+  updateStudyPlan,
+  deleteStudyPlan as deleteStudyPlanFromDb,
+  setActivePlan,
+  type UploadedPDF,
+  type StudyPlanDB,
+  type StudyPlanData
 } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
 
 // ============ TYPES ============
 interface Subject {
@@ -42,11 +49,6 @@ interface StudyPlan {
   totalCompleted: number;
 }
 
-interface PlansStorage {
-  plans: StudyPlan[];
-  activePlanId: string | null;
-}
-
 interface SetupData {
   planName: string;
   subjects: Subject[];
@@ -59,8 +61,6 @@ const COLORS = [
   "#6366f1", "#8b5cf6", "#ec4899", "#f43f5e", "#f97316",
   "#eab308", "#22c55e", "#14b8a6", "#06b6d4", "#3b82f6"
 ];
-
-const STORAGE_KEY = "studyPlanner_v2";
 
 const DIFFICULTY_MULTIPLIER = { easy: 0.7, medium: 1, hard: 1.5 };
 
@@ -79,28 +79,6 @@ const addDays = (date: string, days: number) => {
   const d = new Date(date);
   d.setDate(d.getDate() + days);
   return formatDate(d);
-};
-
-// ============ STORAGE HOOKS ============
-const useLocalStorage = <T,>(key: string, initialValue: T): [T, (value: T | ((prev: T) => T)) => void] => {
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch {
-      return initialValue;
-    }
-  });
-
-  const setValue = useCallback((value: T | ((prev: T) => T)) => {
-    setStoredValue(prev => {
-      const valueToStore = value instanceof Function ? value(prev) : value;
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      return valueToStore;
-    });
-  }, [key]);
-
-  return [storedValue, setValue];
 };
 
 // ============ PLAN GENERATION ENGINE ============
@@ -786,7 +764,13 @@ const SubjectInput: React.FC<{
 
 // ============ MAIN COMPONENT ============
 const StudyPlanner: React.FC = () => {
-  const [plansStorage, setPlansStorageInternal] = useLocalStorage<PlansStorage>(STORAGE_KEY, { plans: [], activePlanId: null });
+  const { user, profile } = useAuth();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  
+  // State for multi-user plans
+  const [plans, setPlans] = useState<StudyPlanDB[]>([]);
+  const [activePlanId, setActivePlanId] = useState<string | null>(null);
   const [view, setView] = useState<"setup" | "dashboard" | "plans">("setup");
   const [setupData, setSetupData] = useState<SetupData>({
     planName: "",
@@ -799,83 +783,145 @@ const StudyPlanner: React.FC = () => {
   const [syncStatus, setSyncStatus] = useState<"synced" | "syncing" | "error" | "offline">("synced");
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Wrapper to save to both localStorage and Supabase
-  const setPlansStorage = useCallback((value: PlansStorage | ((prev: PlansStorage) => PlansStorage)) => {
-    setPlansStorageInternal(prev => {
-      const newValue = value instanceof Function ? value(prev) : value;
-      
-      // Debounced save to database
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-      
-      setSyncStatus("syncing");
-      saveTimeoutRef.current = setTimeout(async () => {
-        const success = await saveStudyPlansToDb(newValue);
-        setSyncStatus(success ? "synced" : "error");
-      }, 1000); // Debounce by 1 second
-      
-      return newValue;
-    });
-  }, [setPlansStorageInternal]);
-
-  // Load data from Supabase on mount
+  // Load plans from database on mount
   useEffect(() => {
-    const loadFromDb = async () => {
-      setSyncStatus("syncing");
-      const dbData = await loadStudyPlansFromDb();
+    const loadPlans = async () => {
+      if (!user) return;
       
-      if (dbData) {
-        // Use database data (source of truth)
-        setPlansStorageInternal(dbData as PlansStorage);
-        setSyncStatus("synced");
+      setSyncStatus("syncing");
+      try {
+        const userPlans = await getUserStudyPlans();
+        setPlans(userPlans);
         
-        // Always show plans view first if there are any plans
-        if (dbData.plans.length > 0) {
-          setView("plans");
+        // Check URL params for specific plan or new plan
+        const planIdFromUrl = searchParams.get('plan');
+        const isNewPlan = searchParams.get('new') === 'true';
+        
+        if (isNewPlan) {
+          setView("setup");
+        } else if (planIdFromUrl) {
+          // Load specific plan from URL
+          const plan = userPlans.find(p => p.id === planIdFromUrl);
+          if (plan) {
+            setActivePlanId(plan.id);
+            setView("dashboard");
+          } else {
+            // Plan not found, show plans list
+            setView(userPlans.length > 0 ? "plans" : "setup");
+          }
+        } else if (userPlans.length > 0) {
+          // Find active plan or show plans list
+          const activePlan = userPlans.find(p => p.is_active);
+          if (activePlan) {
+            setActivePlanId(activePlan.id);
+            setView("dashboard");
+          } else {
+            setView("plans");
+          }
         } else {
           setView("setup");
         }
-      } else {
-        // No database data - check localStorage (for migration)
-        if (plansStorage.plans.length > 0) {
-          setView("plans");
-          // Migrate localStorage data to database
-          saveStudyPlansToDb(plansStorage);
-        } else {
-          setView("setup");
-        }
+        
         setSyncStatus("synced");
+      } catch (err) {
+        console.error("Failed to load plans:", err);
+        setSyncStatus("error");
       }
       
       setIsLoaded(true);
     };
 
-    loadFromDb();
+    loadPlans();
     
     return () => {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, []);
+  }, [user, searchParams]);
 
-  // Get active plan
-  const plan = useMemo(() => {
-    if (!plansStorage.activePlanId) return null;
-    return plansStorage.plans.find(p => p.id === plansStorage.activePlanId) || null;
-  }, [plansStorage]);
+  // Get active plan data
+  const activePlanDB = useMemo(() => {
+    if (!activePlanId) return null;
+    return plans.find(p => p.id === activePlanId) || null;
+  }, [plans, activePlanId]);
 
-  // Update plan helper
+  // Convert database plan to local format for UI
+  const plan: StudyPlan | null = useMemo(() => {
+    if (!activePlanDB) return null;
+    return {
+      id: activePlanDB.id,
+      name: activePlanDB.name,
+      subjects: activePlanDB.plan_data.subjects || [],
+      tasks: activePlanDB.plan_data.tasks || [],
+      examDate: activePlanDB.exam_date || '',
+      dailyStudyTime: activePlanDB.plan_data.dailyStudyTime || 120,
+      generatedAt: activePlanDB.plan_data.generatedAt || activePlanDB.created_at,
+      streak: activePlanDB.plan_data.streak || 0,
+      lastStudyDate: activePlanDB.plan_data.lastStudyDate || '',
+      totalCompleted: activePlanDB.plan_data.totalCompleted || 0
+    };
+  }, [activePlanDB]);
+
+  // For backward compatibility with existing code
+  const plansStorage = useMemo(() => ({
+    plans: plans.map(p => ({
+      id: p.id,
+      name: p.name,
+      ...p.plan_data,
+      examDate: p.exam_date || ''
+    })) as StudyPlan[],
+    activePlanId
+  }), [plans, activePlanId]);
+
+  // Update plan in database with debouncing
   const updateActivePlan = useCallback((updater: (plan: StudyPlan) => StudyPlan) => {
-    if (!plansStorage.activePlanId) return;
-    setPlansStorage(prev => ({
-      ...prev,
-      plans: prev.plans.map(p => 
-        p.id === prev.activePlanId ? updater(p) : p
-      )
+    if (!activePlanId || !plan) return;
+    
+    const updatedPlan = updater(plan);
+    
+    // Update local state immediately
+    setPlans(prev => prev.map(p => {
+      if (p.id !== activePlanId) return p;
+      return {
+        ...p,
+        name: updatedPlan.name,
+        exam_date: updatedPlan.examDate || null,
+        plan_data: {
+          subjects: updatedPlan.subjects,
+          tasks: updatedPlan.tasks,
+          dailyStudyTime: updatedPlan.dailyStudyTime,
+          generatedAt: updatedPlan.generatedAt,
+          streak: updatedPlan.streak,
+          lastStudyDate: updatedPlan.lastStudyDate,
+          totalCompleted: updatedPlan.totalCompleted
+        }
+      };
     }));
-  }, [plansStorage.activePlanId, setPlansStorage]);
+    
+    // Debounced save to database
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    
+    setSyncStatus("syncing");
+    saveTimeoutRef.current = setTimeout(async () => {
+      const success = await updateStudyPlan(activePlanId, {
+        name: updatedPlan.name,
+        exam_date: updatedPlan.examDate || undefined,
+        plan_data: {
+          subjects: updatedPlan.subjects,
+          tasks: updatedPlan.tasks,
+          dailyStudyTime: updatedPlan.dailyStudyTime,
+          generatedAt: updatedPlan.generatedAt,
+          streak: updatedPlan.streak,
+          lastStudyDate: updatedPlan.lastStudyDate,
+          totalCompleted: updatedPlan.totalCompleted
+        }
+      });
+      setSyncStatus(success ? "synced" : "error");
+    }, 1000);
+  }, [activePlanId, plan]);
 
   // Update streak check (runs after plan is available)
   useEffect(() => {
@@ -921,7 +967,7 @@ const StudyPlanner: React.FC = () => {
     });
   };
 
-  const validateAndGenerate = () => {
+  const validateAndGenerate = async () => {
     setError("");
     
     // Validation
@@ -966,12 +1012,12 @@ const StudyPlanner: React.FC = () => {
       return;
     }
 
-    const newPlan: StudyPlan = {
-      id: generateId(),
-      name: setupData.planName || `Study Plan ${plansStorage.plans.length + 1}`,
+    setSyncStatus("syncing");
+    
+    // Create new plan in database
+    const planData: StudyPlanData = {
       subjects: setupData.subjects,
       tasks,
-      examDate: setupData.examDate,
       dailyStudyTime: setupData.dailyStudyTime,
       generatedAt: formatDate(new Date()),
       streak: 0,
@@ -979,11 +1025,26 @@ const StudyPlanner: React.FC = () => {
       totalCompleted: 0
     };
 
-    setPlansStorage(prev => ({
-      plans: [...prev.plans, newPlan],
-      activePlanId: newPlan.id
-    }));
+    const newPlan = await createStudyPlan({
+      name: setupData.planName || `Study Plan ${plans.length + 1}`,
+      plan_data: planData,
+      exam_date: setupData.examDate
+    });
+
+    if (!newPlan) {
+      setError("Failed to save study plan. Please try again.");
+      setSyncStatus("error");
+      return;
+    }
+
+    // Set as active plan
+    await setActivePlan(newPlan.id);
+    
+    // Update local state
+    setPlans(prev => [...prev, newPlan]);
+    setActivePlanId(newPlan.id);
     setSetupData({ planName: "", subjects: [], examDate: "", dailyStudyTime: 120 });
+    setSyncStatus("synced");
     setView("dashboard");
   };
 
@@ -1034,25 +1095,39 @@ const StudyPlanner: React.FC = () => {
     updateActivePlan(p => ({ ...p, tasks: updatedTasks }));
   };
 
-  const deletePlan = (planId: string) => {
+  const deletePlan = async (planId: string) => {
     const confirmed = window.confirm("Are you sure you want to delete this plan?");
     if (!confirmed) return;
 
-    setPlansStorage(prev => {
-      const newPlans = prev.plans.filter(p => p.id !== planId);
-      const newActivePlanId = prev.activePlanId === planId 
-        ? (newPlans.length > 0 ? newPlans[0].id : null)
-        : prev.activePlanId;
-      return { plans: newPlans, activePlanId: newActivePlanId };
-    });
-
-    if (plansStorage.plans.length <= 1) {
-      setView("setup");
+    setSyncStatus("syncing");
+    const success = await deleteStudyPlanFromDb(planId);
+    
+    if (success) {
+      const newPlans = plans.filter(p => p.id !== planId);
+      setPlans(newPlans);
+      
+      if (activePlanId === planId) {
+        const newActivePlanId = newPlans.length > 0 ? newPlans[0].id : null;
+        setActivePlanId(newActivePlanId);
+        if (newActivePlanId) {
+          await setActivePlan(newActivePlanId);
+        }
+      }
+      
+      if (newPlans.length === 0) {
+        setView("setup");
+      }
+      
+      setSyncStatus("synced");
+    } else {
+      setSyncStatus("error");
     }
   };
 
-  const switchToPlan = (planId: string) => {
-    setPlansStorage(prev => ({ ...prev, activePlanId: planId }));
+  const switchToPlan = async (planId: string) => {
+    await setActivePlan(planId);
+    setActivePlanId(planId);
+    setPlans(prev => prev.map(p => ({ ...p, is_active: p.id === planId })));
     setView("dashboard");
   };
 
@@ -1062,11 +1137,15 @@ const StudyPlanner: React.FC = () => {
   };
 
   const goToPlansView = () => {
-    if (plansStorage.plans.length > 0) {
+    if (plans.length > 0) {
       setView("plans");
     } else {
       setView("setup");
     }
+  };
+  
+  const goToDashboard = () => {
+    navigate('/dashboard');
   };
 
   // Calculate stats
@@ -1143,15 +1222,15 @@ const StudyPlanner: React.FC = () => {
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              <a
-                href="/"
+              <button
+                onClick={goToDashboard}
                 className="flex items-center gap-2 text-white/60 hover:text-white transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Back to Portfolio
-              </a>
+                Back to Dashboard
+              </button>
               {/* Sync Status Indicator */}
               <div className="flex items-center gap-2 text-sm">
                 {syncStatus === "syncing" && (
@@ -1192,9 +1271,9 @@ const StudyPlanner: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {plansStorage.plans.length > 0 && view !== "plans" && (
+              {plans.length > 0 && view !== "plans" && (
                 <Button3D variant="secondary" onClick={goToPlansView} className="!px-4 !py-2 text-sm">
-                  📚 All Plans ({plansStorage.plans.length})
+                  📚 All Plans ({plans.length})
                 </Button3D>
               )}
               {view === "dashboard" && (
@@ -1202,6 +1281,27 @@ const StudyPlanner: React.FC = () => {
                   + New Plan
                 </Button3D>
               )}
+              {/* User info and Logout */}
+              <div className="flex items-center gap-2 ml-2 pl-2 border-l border-white/10">
+                {(profile?.avatar_url || user?.user_metadata?.avatar_url) && (
+                  <img 
+                    src={profile?.avatar_url || user?.user_metadata?.avatar_url} 
+                    alt="Profile" 
+                    className="w-8 h-8 rounded-full border-2 border-white/20"
+                  />
+                )}
+                <Button3D 
+                  variant="secondary" 
+                  onClick={goToDashboard} 
+                  className="!px-3 !py-2 text-sm"
+                >
+                  <span className="hidden sm:inline">{profile?.full_name?.split(' ')[0] || user?.user_metadata?.full_name?.split(' ')[0] || 'Dashboard'}</span>
+                  <span className="sm:hidden">👤</span>
+                  <svg className="w-4 h-4 ml-1 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                </Button3D>
+              </div>
             </div>
           </div>
           
