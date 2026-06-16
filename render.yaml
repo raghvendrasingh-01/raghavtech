@@ -1,0 +1,54 @@
+# Render deployment blueprint for the AI Resume Screening System backend.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# This deploys ONLY the FastAPI backend. The frontend (this portfolio) is
+# deployed separately on Vercel — see DEPLOYMENT.md.
+#
+# After the service is live, copy its public URL (e.g.
+# https://resume-screening-api.onrender.com) and set it as VITE_RESUME_API_URL
+# in the Vercel project, then redeploy the frontend.
+
+services:
+  - type: web
+    name: resume-screening-api
+    runtime: python
+    # The backend lives in a subdirectory of this monorepo. Render runs the
+    # build/start commands from here, so requirements.txt and app/ resolve.
+    rootDir: resume-screening-system/backend
+
+    # Starter (512 MB) is the minimum. NOTE: this backend imports
+    # sentence-transformers + PyTorch and loads an embedding model on the first
+    # /analyze request, which can spike past 512 MB and OOM. If the service
+    # restarts or 502s on the first analysis, upgrade to `standard` (2 GB).
+    plan: starter
+
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
+    healthCheckPath: /health
+
+    envVars:
+      # Pin a Python version with prebuilt wheels for the ML stack. 3.14 has no
+      # torch wheels yet; 3.12 is the safe, wheel-friendly choice.
+      - key: PYTHON_VERSION
+        value: "3.12.8"
+
+      # Browser origins allowed to call this API. MUST include your deployed
+      # frontend origin or the browser will block responses (CORS).
+      # Set this in the Render dashboard to your real Vercel URL, e.g.
+      #   https://your-portfolio.vercel.app
+      - key: CORS_ORIGINS
+        sync: false
+
+      # Optional: allow Vercel preview deployments (hashed subdomains).
+      # Example value: https://.*\.vercel\.app
+      - key: CORS_ORIGIN_REGEX
+        sync: false
+
+      # Secret — set in the Render dashboard, never committed.
+      # Enables AI suggestions + chat. Get one at https://openrouter.ai/keys
+      - key: OPENROUTER_API_KEY
+        sync: false
+
+      - key: OPENROUTER_MODEL
+        value: openai/gpt-4o-mini

@@ -39,10 +39,21 @@ class Settings:
     # --- CORS ---
     # Origins allowed to call the API from a browser. Defaults cover the Vite
     # dev server on both localhost and 127.0.0.1.
+    #
+    # In production, set CORS_ORIGINS (comma-separated) to your deployed
+    # frontend origin(s), e.g.:
+    #   CORS_ORIGINS=https://your-portfolio.vercel.app
     CORS_ORIGINS: list[str] = _split_env(
         "CORS_ORIGINS",
         "http://localhost:5173,http://127.0.0.1:5173",
     )
+
+    # Optional regex matching additional allowed origins. Useful for Vercel
+    # preview deployments, which get a fresh hashed subdomain on every push,
+    # e.g. CORS_ORIGIN_REGEX=https://.*\.vercel\.app
+    # Empty (default) disables regex matching. Applied in addition to
+    # CORS_ORIGINS, never instead of it.
+    CORS_ORIGIN_REGEX: str = os.getenv("CORS_ORIGIN_REGEX", "")
 
     # --- NLP model (used from Step 4) ---
     # Lightweight, fast sentence-embedding model with strong general-purpose

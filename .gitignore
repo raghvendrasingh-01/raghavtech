@@ -1,2 +1,9 @@
 .vercel
 .env*
+# Track the documented template even though .env* is ignored above.
+!.env.example
+
+# Build output + dependencies should never be committed (they currently are —
+# see DEPLOYMENT.md "Repository hygiene" for the one-time cleanup commands).
+node_modules
+dist

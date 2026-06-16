@@ -38,6 +38,9 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.CORS_ORIGINS,
+        # Optional regex (e.g. Vercel preview URLs). `None` when unset so the
+        # behaviour is identical to before unless CORS_ORIGIN_REGEX is provided.
+        allow_origin_regex=settings.CORS_ORIGIN_REGEX or None,
         allow_credentials=False,
         allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["Content-Type"],
