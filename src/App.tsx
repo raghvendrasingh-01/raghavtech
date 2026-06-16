@@ -15,6 +15,7 @@ import TaxCalculator from "./pages/TaxCalculator";
 import Speed from "./pages/Speed";
 import StudyPlanner from "./pages/StudyPlanner";
 import GradeFlow from "./pages/GradeFlow";
+import ResumeScreener from "./pages/ResumeScreener";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { AuthProvider } from "./context/AuthContext";
@@ -66,6 +67,7 @@ const App = () => {
             } 
           />
           <Route path="/grade-flow" element={<GradeFlow />} />
+          <Route path="/resume-screener" element={<ResumeScreener />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

@@ -1,0 +1,21 @@
+# ---------------------------------------------------------------------------
+# AI Resume Screening System — Backend dependencies
+# ---------------------------------------------------------------------------
+# This is the canonical dependency manifest for the FastAPI backend.
+#
+# NOTE: the "NLP / ML" group pulls in PyTorch and model wheels (~hundreds of
+# MB). A fresh `pip install -r requirements.txt` reproduces the full environment.
+# ---------------------------------------------------------------------------
+
+# --- Web / API ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20      # required by FastAPI for file uploads / form data
+pdfminer.six==20240706        # robust PDF text extraction (Step 3)
+httpx==0.28.1                 # async HTTP client for OpenRouter AI suggestions
+
+# --- NLP / ML ---
+sentence-transformers==3.3.1  # semantic similarity via embeddings (Step 4)
+# Skill extraction (Step 5) uses a curated skill bank with regex alias matching
+# — no spaCy/model download required.
+# AI suggestions use OpenRouter over HTTP (httpx above) — no extra SDK needed.

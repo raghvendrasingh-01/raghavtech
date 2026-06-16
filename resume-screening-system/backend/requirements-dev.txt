@@ -1,0 +1,6 @@
+# Development / testing dependencies (install on top of requirements.txt):
+#   pip install -r requirements-dev.txt
+-r requirements.txt
+
+pytest==8.3.4
+httpx==0.28.1   # required by FastAPI's TestClient

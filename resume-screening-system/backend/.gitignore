@@ -1,0 +1,33 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Secrets / environment ---
+.env
+.env.*
+!.env.example
+
+# --- Virtual environments ---
+venv/
+.venv/
+env/
+
+# --- Model / HF caches (downloaded in Steps 4-5) ---
+.cache/
+models/
+*.bin
+*.safetensors
+
+# --- Uploaded files / scratch ---
+uploads/
+tmp/
+
+# --- OS / editor ---
+.DS_Store
+.idea/
+.vscode/

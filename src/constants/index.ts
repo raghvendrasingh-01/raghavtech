@@ -232,6 +232,14 @@ const projects: TProject[] = [
     image: "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=500&q=80",
     sourceCodeLink: "/grade-flow",
   },
+  {
+    name: "AI Resume Screening System",
+    description:
+      "Full-stack AI tool (FastAPI + React) that screens a résumé PDF against a job description. Extracts text with pdfminer, computes a semantic match score using sentence-transformers embeddings, and highlights missing skills via NLP-based skill extraction.",
+    tags: [],
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&q=80",
+    sourceCodeLink: "/resume-screener",
+  },
 ];
 
 export { services, technologies, experiences, testimonials, projects };

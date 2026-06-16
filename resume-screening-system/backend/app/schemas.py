@@ -1,0 +1,125 @@
+"""Pydantic schemas for API responses.
+
+These models define the structured JSON contract returned by the API and give
+us automatic validation plus OpenAPI documentation at ``/docs``.
+"""
+
+from __future__ import annotations
+
+from typing import Literal
+
+from pydantic import BaseModel, Field
+
+
+class SkillReport(BaseModel):
+    """Breakdown of JD-required skills versus what the résumé contains."""
+
+    required: list[str] = Field(
+        default_factory=list,
+        description="Skills detected in the job description.",
+    )
+    matched: list[str] = Field(
+        default_factory=list,
+        description="Required skills that are present in the résumé.",
+    )
+    missing: list[str] = Field(
+        default_factory=list,
+        description="Required skills that are absent from the résumé.",
+    )
+
+
+class AnalyzeResponse(BaseModel):
+    """Full result of analysing a résumé against a job description."""
+
+    match_score: float = Field(
+        ...,
+        ge=0.0,
+        le=100.0,
+        description="Semantic similarity score between résumé and JD (0–100).",
+    )
+    skills: SkillReport = Field(..., description="Skill gap analysis.")
+    resume_char_count: int = Field(
+        ..., description="Number of characters extracted from the résumé PDF."
+    )
+    resume_text: str = Field(
+        default="",
+        description="Extracted résumé text (so the client can request AI "
+        "suggestions without re-uploading the file).",
+    )
+    filename: str | None = Field(
+        default=None, description="Original uploaded résumé filename."
+    )
+
+
+# --- AI suggestions (/suggest) ---
+
+
+class GapAdvice(BaseModel):
+    """Advice for addressing a single missing/weak skill."""
+
+    skill: str = ""
+    how_to_address: str = ""
+
+
+class Suggestions(BaseModel):
+    """AI-generated career guidance."""
+
+    fit_summary: str = ""
+    strengths: list[str] = Field(default_factory=list)
+    gap_advice: list[GapAdvice] = Field(default_factory=list)
+    resume_improvements: list[str] = Field(default_factory=list)
+    next_steps: list[str] = Field(default_factory=list)
+    model: str = Field(default="", description="LLM model that produced this.")
+
+
+class SuggestRequest(BaseModel):
+    """Input for the AI suggestions endpoint (JSON body)."""
+
+    resume_text: str = Field(..., description="Extracted résumé text.")
+    job_description: str = Field(..., description="Job description text.")
+    match_score: float = Field(0.0, ge=0.0, le=100.0)
+    matched_skills: list[str] = Field(default_factory=list)
+    missing_skills: list[str] = Field(default_factory=list)
+
+
+class SuggestResponse(BaseModel):
+    """Response wrapping the AI suggestions."""
+
+    suggestions: Suggestions
+
+
+# --- Chatbot (/chat) ---
+
+
+class ChatMessage(BaseModel):
+    """A single turn in the conversation."""
+
+    role: Literal["user", "assistant"]
+    content: str
+
+
+class ChatRequest(BaseModel):
+    """Input for the scoped chatbot (JSON body)."""
+
+    messages: list[ChatMessage] = Field(
+        ..., description="Conversation so far; the last item must be the user's "
+        "current question."
+    )
+    resume_text: str = Field("", description="Extracted résumé text (context).")
+    job_description: str = Field("", description="Job description text (context).")
+    match_score: float = Field(0.0, ge=0.0, le=100.0)
+    matched_skills: list[str] = Field(default_factory=list)
+    missing_skills: list[str] = Field(default_factory=list)
+
+
+class ChatResponse(BaseModel):
+    """The assistant's reply."""
+
+    reply: str
+    model: str = ""
+
+
+class ErrorResponse(BaseModel):
+    """Uniform error envelope."""
+
+    detail: str

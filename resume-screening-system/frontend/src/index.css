@@ -1,0 +1,158 @@
+/* ===========================================================================
+   Stratum Atelier — Editorial Depth in Motion
+   Design tokens, global reset, base typography, and the fixed page-glow canvas.
+   =========================================================================== */
+
+:root {
+  /* ---- Surfaces / canvas ---- */
+  --bg: #0b0d11;
+  --bg-elev: #0e1117;
+  --surface: #13161c;
+  --surface-2: #1a1e26;
+
+  /* ---- Accents ---- */
+  --accent: #7c6cf0;
+  --accent-strong: #6a5be0;
+  --accent-2: #22d3a8;
+  --accent-glow: rgba(124, 108, 240, 0.35);
+
+  /* ---- Text ---- */
+  --text: #eceef3;
+  --text-heading: #f6f7fb;
+  --muted: #8b92a3;
+
+  /* ---- Semantic ---- */
+  --matched: #34d399;
+  --missing: #f87171;
+  --moderate: #fbbf24;
+  --error: #f87171;
+
+  /* Solid rgba fallbacks (used before color-mix in pill styles) */
+  --matched-bg: rgba(52, 211, 153, 0.12);
+  --matched-border: rgba(52, 211, 153, 0.38);
+  --missing-bg: rgba(248, 113, 113, 0.12);
+  --missing-border: rgba(248, 113, 113, 0.38);
+  --moderate-bg: rgba(251, 191, 36, 0.12);
+  --moderate-border: rgba(251, 191, 36, 0.35);
+  --neutral-bg: rgba(255, 255, 255, 0.04);
+
+  /* ---- Lines ---- */
+  --hairline: rgba(255, 255, 255, 0.07);
+  --hairline-bright: rgba(255, 255, 255, 0.12);
+  --ring-track: #1e2430;
+
+  /* ---- Radii ---- */
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-pill: 999px;
+
+  /* ---- Shadows ---- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px -4px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.4),
+    0 22px 50px -12px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(124, 108, 240, 0.12);
+
+  /* ---- Type ---- */
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Geist Mono", "JetBrains Mono", Menlo,
+    Consolas, monospace;
+
+  font-family: var(--sans);
+  color: var(--text);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* @property enables the animated conic sweep on the score gauge. Browsers
+   without support simply render the final value instantly (graceful fallback). */
+@property --p {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* Fixed, non-scrolling page glow — sets the editorial mood without orbs. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      50% 40% at 88% -5%,
+      rgba(124, 108, 240, 0.12),
+      transparent 60%
+    ),
+    radial-gradient(
+      42% 38% at 4% 104%,
+      rgba(34, 211, 168, 0.07),
+      transparent 60%
+    );
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--text-heading);
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Editorial eyebrow — reused across section headings. */
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* Numeric readouts never jitter while animating. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Global motion safety net ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
