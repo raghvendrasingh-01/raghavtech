@@ -1,19 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { StarsCanvas } from "../components/canvas";
-
-/**
- * AI Resume Screening System — in-portfolio page.
- *
- * Lets the user upload a résumé PDF and paste a job description, then calls the
- * project's FastAPI backend (`POST /analyze`) to get a semantic match score and
- * a list of missing skills.
- *
- * The backend URL is configurable via the `VITE_RESUME_API_URL` env var and
- * defaults to the local dev server. Because this project is full-stack, the
- * page degrades gracefully (with a clear message) when the backend isn't
- * reachable.
- */
+import "./ResumeScreener.css";
 
 const API_BASE_URL: string = (
   (import.meta.env.VITE_RESUME_API_URL as string | undefined) ||
@@ -48,18 +36,6 @@ interface Suggestions {
   model?: string;
 }
 
-const scoreColor = (score: number): string => {
-  if (score >= 75) return "#22c55e";
-  if (score >= 50) return "#f59e0b";
-  return "#ef4444";
-};
-
-const scoreBand = (score: number): string => {
-  if (score >= 75) return "Strong match";
-  if (score >= 50) return "Moderate match";
-  return "Weak match";
-};
-
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
@@ -78,14 +54,508 @@ const CHAT_PROMPTS = [
   "How do I optimize for ATS?",
 ];
 
+// --- Sub-components for Scoped Resume Screener ---
+
+// 1. FileDropzone Component
+interface FileDropzoneProps {
+  file: File | null;
+  onFileSelected: (f: File | null) => void;
+  onError: (msg: string) => void;
+  error: string;
+  disabled: boolean;
+  labelledBy: string;
+}
+
+const FileDropzone = ({
+  file,
+  onFileSelected,
+  onError,
+  error,
+  disabled,
+  labelledBy,
+}: FileDropzoneProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const validateAndSelect = (candidate: File | undefined | null) => {
+    if (!candidate) return;
+    const isPdf =
+      candidate.type === "application/pdf" ||
+      candidate.name.toLowerCase().endsWith(".pdf");
+    if (!isPdf) {
+      onError("Please choose a PDF file.");
+      onFileSelected(null);
+      return;
+    }
+    onError("");
+    onFileSelected(candidate);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (disabled) return;
+    validateAndSelect(e.dataTransfer.files?.[0]);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    validateAndSelect(e.target.files?.[0]);
+
+  const openPicker = () => {
+    if (!disabled) inputRef.current?.click();
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openPicker();
+    }
+  };
+
+  return (
+    <div className="dropzone-wrap">
+      <div
+        className={
+          "dropzone" +
+          (isDragging ? " dropzone--active" : "") +
+          (disabled ? " dropzone--disabled" : "") +
+          (file ? " dropzone--has-file" : "")
+        }
+        role="button"
+        tabIndex={0}
+        aria-label={labelledBy ? undefined : "Upload résumé PDF"}
+        aria-labelledby={labelledBy}
+        onClick={openPicker}
+        onKeyDown={onKeyDown}
+        onDragOver={(e) => {
+          e.preventDefault();
+          if (!disabled) setIsDragging(true);
+        }}
+        onDragLeave={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node))
+            setIsDragging(false);
+        }}
+        onDrop={handleDrop}
+      >
+        <input
+          ref={inputRef}
+          type="file"
+          accept="application/pdf,.pdf"
+          className="dropzone__input"
+          onChange={handleChange}
+          disabled={disabled}
+          hidden
+        />
+        {file ? (
+          <div className="dropzone__file">
+            <span className="dropzone__file-chip" aria-hidden>
+              📄
+            </span>
+            <div>
+              <div className="dropzone__filename">{file.name}</div>
+              <div className="dropzone__hint">
+                {(file.size / 1024).toFixed(0)} KB · click to replace
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="dropzone__empty">
+            <span className="dropzone__icon" aria-hidden>
+              ⬆
+            </span>
+            <p className="dropzone__title">
+              Drag &amp; drop your résumé PDF here
+            </p>
+            <p className="dropzone__hint">or click to browse</p>
+          </div>
+        )}
+      </div>
+      {error && <p className="field-error">{error}</p>}
+    </div>
+  );
+};
+
+// 2. ScoreBar Component
+const REDUCED_MOTION =
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+interface ScoreBarProps {
+  score: number;
+}
+
+const ScoreBar = ({ score }: ScoreBarProps) => {
+  const clamped = Math.max(0, Math.min(100, Number(score) || 0));
+
+  const band =
+    clamped >= 75
+      ? "var(--matched)"
+      : clamped >= 50
+      ? "var(--moderate)"
+      : "var(--missing)";
+  const label =
+    clamped >= 75
+      ? "Strong match"
+      : clamped >= 50
+      ? "Moderate match"
+      : "Weak match";
+
+  const [pct, setPct] = useState(REDUCED_MOTION ? clamped : 0);
+  const [display, setDisplay] = useState(REDUCED_MOTION ? clamped : 0);
+  const [tilt, setTilt] = useState({ rx: 0, ry: 0, mx: 50, my: 50 });
+  const rectRef = useRef<DOMRect | null>(null);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setPct(clamped));
+    return () => cancelAnimationFrame(raf);
+  }, [clamped]);
+
+  useEffect(() => {
+    if (REDUCED_MOTION) {
+      const raf = requestAnimationFrame(() => setDisplay(clamped));
+      return () => cancelAnimationFrame(raf);
+    }
+    const duration = 1050;
+    let start: number | null = null;
+    let frame: number;
+    const step = (ts: number) => {
+      if (start === null) start = ts;
+      const t = Math.min(1, (ts - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setDisplay(clamped * eased);
+      if (t < 1) frame = requestAnimationFrame(step);
+      else setDisplay(clamped);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [clamped]);
+
+  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (REDUCED_MOTION) return;
+    const r = rectRef.current ?? e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    setTilt({
+      rx: -py * 6,
+      ry: px * 8,
+      mx: (px + 0.5) * 100,
+      my: (py + 0.5) * 100,
+    });
+  };
+  const handleEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    rectRef.current = e.currentTarget.getBoundingClientRect();
+  };
+  const handleLeave = () => setTilt({ rx: 0, ry: 0, mx: 50, my: 50 });
+
+  return (
+    <div className="score">
+      <span className="eyebrow score__eyebrow">Match score</span>
+
+      <div
+        className="tilt-stage"
+        role="progressbar"
+        aria-label="Match score"
+        aria-valuenow={Math.round(clamped)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuetext={`${clamped.toFixed(1)}% — ${label}`}
+      >
+        <div
+          className="tilt-card"
+          onMouseMove={handleMove}
+          onMouseEnter={handleEnter}
+          onMouseLeave={handleLeave}
+          style={{
+            transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
+            // @ts-expect-error Custom CSS variables are valid in React styles
+            "--mx": `${tilt.mx}%`,
+            "--my": `${tilt.my}%`,
+          }}
+        >
+          <div
+            className="gauge"
+            // @ts-expect-error Custom CSS variables are valid in React styles
+            style={{ "--p": pct, "--band": band }}
+            aria-hidden
+          >
+            <span className="gauge__sheen" />
+          </div>
+          <div className="gauge__center">
+            <span className="gauge__value tnum" style={{ color: band }}>
+              {display.toFixed(1)}
+              <span className="gauge__value-pct">%</span>
+            </span>
+            <span className="gauge__band" style={{ color: band }}>
+              {label}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 3. SkillList Component
+interface SkillListProps {
+  title: string;
+  skills: string[];
+  variant?: "matched" | "missing" | "neutral";
+  emptyText?: string;
+}
+
+const SkillList = ({
+  title,
+  skills = [],
+  variant = "neutral",
+  emptyText = "None",
+}: SkillListProps) => {
+  return (
+    <div className="skills">
+      <h3 className="skills__title">
+        {title} <span className="skills__count">{skills.length}</span>
+      </h3>
+      {skills.length === 0 ? (
+        <p className="skills__empty">{emptyText}</p>
+      ) : (
+        <ul className={`pill-list pill-list--${variant}`}>
+          {skills.map((skill, i) => (
+            <li
+              key={skill}
+              className="pill"
+              // @ts-expect-error Custom CSS variables are valid in React styles
+              style={{ "--i": i }}
+            >
+              {variant === "matched" && (
+                <span className="pill__mark" aria-hidden>
+                  ✓
+                </span>
+              )}
+              {variant === "missing" && (
+                <span className="pill__mark" aria-hidden>
+                  ✕
+                </span>
+              )}
+              {skill}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+// 4. AiSuggestions Component
+interface AiSuggestionsProps {
+  loading: boolean;
+  error: string;
+  suggestions: Suggestions | null;
+}
+
+const AiSuggestions = ({
+  loading,
+  error,
+  suggestions,
+}: AiSuggestionsProps) => {
+  return (
+    <section className="ai card">
+      <h2 className="ai__title">
+        <span aria-hidden>🤖</span> AI career guidance
+      </h2>
+
+      {loading && (
+        <div className="ai__loading">
+          <div className="spinner spinner--sm" aria-hidden />
+          <span>Generating personalized suggestions…</span>
+        </div>
+      )}
+
+      {!loading && error && <p className="alert alert--warn">{error}</p>}
+
+      {!loading && !error && suggestions && (
+        <div className="ai__body">
+          {suggestions.fit_summary && (
+            <p className="ai__summary">{suggestions.fit_summary}</p>
+          )}
+
+          {suggestions.strengths?.length > 0 && (
+            <div className="ai__group">
+              <h3 className="ai__heading">
+                <span className="ai__heading-emoji" aria-hidden>
+                  💪
+                </span>
+                Strengths
+              </h3>
+              <ul className="ai__list">
+                {suggestions.strengths.map((s, i) => (
+                  <li key={i}>{s}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {suggestions.gap_advice?.length > 0 && (
+            <div className="ai__group">
+              <h3 className="ai__heading">
+                <span className="ai__heading-emoji" aria-hidden>
+                  🎯
+                </span>
+                Closing the gaps
+              </h3>
+              <ul className="ai__list">
+                {suggestions.gap_advice.map((g, i) => (
+                  <li key={i}>
+                    {g.skill && <strong>{g.skill}: </strong>}
+                    {g.how_to_address}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {suggestions.resume_improvements?.length > 0 && (
+            <div className="ai__group">
+              <h3 className="ai__heading">
+                <span className="ai__heading-emoji" aria-hidden>
+                  📝
+                </span>
+                Résumé improvements
+              </h3>
+              <ul className="ai__list">
+                {suggestions.resume_improvements.map((s, i) => (
+                  <li key={i}>{s}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {suggestions.next_steps?.length > 0 && (
+            <div className="ai__group">
+              <h3 className="ai__heading">
+                <span className="ai__heading-emoji" aria-hidden>
+                  🚀
+                </span>
+                Next steps
+              </h3>
+              <ol className="ai__list ai__list--ordered">
+                {suggestions.next_steps.map((s, i) => (
+                  <li key={i}>{s}</li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {suggestions.model && (
+            <p className="ai__meta">
+              Generated by {suggestions.model} via OpenRouter
+            </p>
+          )}
+        </div>
+      )}
+    </section>
+  );
+};
+
+// 5. ChatBox Component
+interface ChatBoxProps {
+  messages: ChatMessage[];
+  onSend: (text: string) => void;
+  loading: boolean;
+  error: string;
+}
+
+const ChatBox = ({ messages, onSend, loading, error }: ChatBoxProps) => {
+  const [input, setInput] = useState("");
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages, loading]);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = input.trim();
+    if (!text || loading) return;
+    onSend(text);
+    setInput("");
+  };
+
+  return (
+    <section className="chat card">
+      <h2 className="chat__title">
+        <span aria-hidden>💬</span> Ask the AI assistant
+      </h2>
+      <p className="chat__hint">
+        Ask anything — and since it has your résumé, this job, and your score, it
+        can also give tailored interview, ATS, and career advice.
+      </p>
+
+      <div className="chat__log" role="log" aria-live="polite">
+        {messages.map((m, i) => (
+          <div
+            key={i}
+            className={`bubble bubble--${m.role === "user" ? "user" : "bot"}`}
+          >
+            {m.content}
+          </div>
+        ))}
+        {loading && (
+          <div className="bubble bubble--bot bubble--typing">
+            <span className="dot" />
+            <span className="dot" />
+            <span className="dot" />
+          </div>
+        )}
+        <div ref={endRef} />
+      </div>
+
+      {messages.length <= 1 && !loading && (
+        <div className="chat__suggestions">
+          {CHAT_PROMPTS.map((s) => (
+            <button
+              key={s}
+              type="button"
+              className="chip"
+              onClick={() => !loading && onSend(s)}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {error && <p className="alert alert--warn">{error}</p>}
+
+      <form className="chat__form" onSubmit={submit}>
+        <input
+          type="text"
+          className="chat__input"
+          placeholder="Type your question…"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          disabled={loading}
+          aria-label="Chat message"
+        />
+        <button
+          type="submit"
+          className="btn btn--primary chat__send"
+          disabled={loading || !input.trim()}
+        >
+          Send
+        </button>
+      </form>
+    </section>
+  );
+};
+
+// --- Main Integrated Component ---
+
 const ResumeScreener = () => {
   const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState("");
   const [jobDescription, setJobDescription] = useState<string>("");
   const [result, setResult] = useState<AnalyzeResponse | null>(null);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   // AI suggestions state (loaded after a successful analysis).
   const [suggestions, setSuggestions] = useState<Suggestions | null>(null);
@@ -94,37 +564,10 @@ const ResumeScreener = () => {
 
   // Chatbot state.
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [chatInput, setChatInput] = useState<string>("");
   const [chatLoading, setChatLoading] = useState<boolean>(false);
   const [chatError, setChatError] = useState<string>("");
-  const chatEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [chatMessages, chatLoading]);
 
   const canSubmit = !!file && jobDescription.trim().length > 0 && !loading;
-
-  const selectFile = (candidate: File | undefined | null) => {
-    if (!candidate) return;
-    const isPdf =
-      candidate.type === "application/pdf" ||
-      candidate.name.toLowerCase().endsWith(".pdf");
-    if (!isPdf) {
-      setError("Please choose a PDF file.");
-      setFile(null);
-      return;
-    }
-    setError("");
-    setFile(candidate);
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (loading) return;
-    selectFile(e.dataTransfer.files?.[0]);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -229,7 +672,7 @@ const ResumeScreener = () => {
     }
   };
 
-  const sendChat = async (text: string) => {
+  const handleSendChat = async (text: string) => {
     if (!result || chatLoading) return;
     const trimmed = text.trim();
     if (!trimmed) return;
@@ -238,7 +681,6 @@ const ResumeScreener = () => {
       { role: "user", content: trimmed },
     ];
     setChatMessages(history);
-    setChatInput("");
     setChatError("");
     setChatLoading(true);
     try {
@@ -280,445 +722,190 @@ const ResumeScreener = () => {
 
   const handleReset = () => {
     setFile(null);
+    setFileError("");
     setJobDescription("");
     setResult(null);
     setError("");
     setSuggestions(null);
     setSuggestError("");
     setChatMessages([]);
-    setChatInput("");
     setChatError("");
-  };
-
-  const renderPills = (skills: string[], variant: "matched" | "missing" | "neutral") => {
-    if (skills.length === 0) {
-      return (
-        <p className="text-gray-400 text-sm">
-          {variant === "missing" ? "Great — no missing skills! 🎉" : "None"}
-        </p>
-      );
-    }
-    const cls =
-      variant === "matched"
-        ? "bg-green-500/15 text-green-400"
-        : variant === "missing"
-        ? "bg-red-500/15 text-red-400"
-        : "bg-gray-500/20 text-gray-200";
-    return (
-      <ul className="flex flex-wrap gap-2">
-        {skills.map((skill) => (
-          <li key={skill} className={`rounded-full px-3 py-1 text-sm font-medium ${cls}`}>
-            {variant === "matched" && "✓ "}
-            {variant === "missing" && "✕ "}
-            {skill}
-          </li>
-        ))}
-      </ul>
-    );
   };
 
   return (
     <div className="relative min-h-screen w-full bg-black">
+      {/* Background 3D Stars Canvas */}
       <StarsCanvas />
-      <div className="relative z-10 min-h-screen px-6 py-16">
-        <div className="mx-auto w-full max-w-5xl">
-          {/* Header */}
-          <div className="mb-8 text-center">
-            <Link
-              to="/"
-              className="mb-6 inline-block text-sm text-purple-400 hover:text-purple-300"
-            >
-              ← Back to portfolio
-            </Link>
-            <h1 className="text-white text-4xl font-bold">
-              🎯 AI Resume Screening System
-            </h1>
-            <p className="mt-3 text-gray-300">
-              Upload a résumé and paste a job description to get a semantic match
-              score and a list of missing skills.
-            </p>
-          </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* ---- Input form ---- */}
-            <section className="bg-tertiary rounded-2xl p-6 shadow-xl">
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <span
-                  id="resume-label"
-                  className="text-white text-sm font-semibold"
-                >
+      {/* Main Glassmorphism Scope */}
+      <div className="resume-screener-scope relative z-10">
+        <div className="app">
+          {/* Header */}
+          <header className="app__header">
+            <div className="back-link-container">
+              <Link to="/" className="back-link">
+                ← Back to portfolio
+              </Link>
+            </div>
+            <span className="app__badge eyebrow">
+              <span className="app__badge-dot" aria-hidden />
+              Semantic résumé intelligence
+            </span>
+            <h1 className="app__title">
+              <span className="app__title-grad">Resume</span> Screening System
+            </h1>
+            <p className="app__subtitle">
+              Upload a résumé and paste a job description to get a semantic match
+              score, a skill-gap breakdown, and AI-powered career guidance.
+            </p>
+          </header>
+
+          {/* Core Layout */}
+          <main className="layout">
+            {/* Input Form Column */}
+            <section className="card form-card">
+              <form onSubmit={handleSubmit} className="form">
+                <span className="form__label" id="resume-label">
                   Résumé (PDF)
                 </span>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  aria-labelledby="resume-label"
-                  onClick={() => !loading && inputRef.current?.click()}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      if (!loading) inputRef.current?.click();
-                    }
-                  }}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    if (!loading) setIsDragging(true);
-                  }}
-                  onDragLeave={(e) => {
-                    if (!e.currentTarget.contains(e.relatedTarget as Node))
-                      setIsDragging(false);
-                  }}
-                  onDrop={handleDrop}
-                  className={`cursor-pointer rounded-xl border-2 border-dashed p-7 text-center transition-colors ${
-                    isDragging
-                      ? "border-purple-500 bg-purple-500/10"
-                      : file
-                      ? "border-green-500"
-                      : "border-gray-600 hover:border-purple-500"
-                  } ${loading ? "opacity-60" : ""}`}
-                >
-                  <input
-                    ref={inputRef}
-                    type="file"
-                    accept="application/pdf,.pdf"
-                    hidden
-                    disabled={loading}
-                    onChange={(e) => selectFile(e.target.files?.[0])}
-                  />
-                  {file ? (
-                    <div className="text-white">
-                      <span className="text-2xl">📄</span>
-                      <p className="mt-1 break-all font-semibold">{file.name}</p>
-                      <p className="text-xs text-gray-400">
-                        {(file.size / 1024).toFixed(0)} KB · click to replace
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="text-gray-300">
-                      <span className="text-2xl">⬆️</span>
-                      <p className="mt-1 font-semibold text-white">
-                        Drag &amp; drop your résumé PDF
-                      </p>
-                      <p className="text-xs text-gray-400">or click to browse</p>
-                    </div>
-                  )}
-                </div>
+                <FileDropzone
+                  file={file}
+                  onFileSelected={setFile}
+                  onError={setFileError}
+                  error={fileError}
+                  disabled={loading}
+                  labelledBy="resume-label"
+                />
 
-                <label
-                  htmlFor="jd"
-                  className="mt-1 text-white text-sm font-semibold"
-                >
+                <label className="form__label" htmlFor="jd">
                   Job description
                 </label>
                 <textarea
                   id="jd"
-                  rows={9}
+                  className="textarea"
+                  placeholder="Paste the job description here…"
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
+                  rows={10}
                   disabled={loading}
-                  placeholder="Paste the job description here…"
-                  className="bg-primary text-gray-200 w-full resize-y rounded-lg border border-gray-700 p-3 text-sm outline-none focus:border-purple-500"
                 />
 
-                <div className="flex gap-3">
+                <div className="form__actions">
                   <button
                     type="submit"
+                    className="btn btn--primary"
                     disabled={!canSubmit}
-                    className="flex-1 rounded-lg bg-purple-600 py-3 font-semibold text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {loading ? "Analyzing…" : "Analyze résumé"}
+                    {loading ? (
+                      <>
+                        <span className="btn__spinner" aria-hidden />
+                        Analyzing…
+                      </>
+                    ) : (
+                      "Analyze résumé"
+                    )}
                   </button>
                   <button
                     type="button"
+                    className="btn btn--ghost"
                     onClick={handleReset}
                     disabled={loading}
-                    className="rounded-lg border border-gray-600 px-5 py-3 font-semibold text-gray-300 transition-colors hover:text-white disabled:opacity-50"
                   >
                     Reset
                   </button>
                 </div>
 
-                {error && (
-                  <p className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-                    {error}
-                  </p>
-                )}
+                {error && <p className="alert alert--error">{error}</p>}
               </form>
             </section>
 
-            {/* ---- Results ---- */}
-            <section className="bg-tertiary flex min-h-[320px] rounded-2xl p-6 shadow-xl">
-              {loading ? (
-                <div className="m-auto text-center text-gray-300">
-                  <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-gray-600 border-t-purple-500" />
+            {/* Results Column */}
+            <section className="card card--results">
+              {loading && (
+                <div className="placeholder">
+                  <div className="spinner" aria-hidden />
                   <p>Analyzing your résumé…</p>
+                  <span className="placeholder__sub">
+                    Computing semantic similarity and skill coverage
+                  </span>
                 </div>
-              ) : !result ? (
-                <div className="m-auto text-center text-gray-400">
-                  <span className="text-4xl">📊</span>
-                  <p className="mt-3">Your results will appear here.</p>
+              )}
+
+              {!loading && !result && (
+                <div className="placeholder placeholder--muted">
+                  <span className="placeholder__icon" aria-hidden>
+                    ◎
+                  </span>
+                  <p>Your results will appear here</p>
+                  <span className="placeholder__sub">
+                    Add a résumé and a job description, then analyze
+                  </span>
                 </div>
-              ) : (
-                <div className="w-full">
-                  {/* Score */}
-                  <div className="mb-6">
-                    <div className="mb-2 flex items-baseline justify-between">
-                      <span className="text-white font-semibold">Match score</span>
-                      <span
-                        className="text-3xl font-bold"
-                        style={{ color: scoreColor(result.match_score) }}
-                      >
-                        {result.match_score.toFixed(1)}%
-                      </span>
-                    </div>
-                    <div
-                      role="progressbar"
-                      aria-label="Match score"
-                      aria-valuenow={Math.round(result.match_score)}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-valuetext={`${result.match_score.toFixed(1)}% — ${scoreBand(
-                        result.match_score
-                      )}`}
-                      className="bg-primary h-3.5 w-full overflow-hidden rounded-full border border-gray-700"
-                    >
-                      <div
-                        className="h-full rounded-full transition-all"
-                        style={{
-                          width: `${Math.max(0, Math.min(100, result.match_score))}%`,
-                          backgroundColor: scoreColor(result.match_score),
-                        }}
-                      />
-                    </div>
-                    <p
-                      className="mt-1.5 text-sm font-semibold"
-                      style={{ color: scoreColor(result.match_score) }}
-                    >
-                      {scoreBand(result.match_score)}
-                    </p>
+              )}
+
+              {!loading && result && (
+                <div className="results">
+                  {/* Conic Score Gauge */}
+                  <ScoreBar score={result.match_score} />
+
+                  {/* Skills lists */}
+                  <div className="results__skills">
+                    <SkillList
+                      title="Matched skills"
+                      skills={result.skills.matched}
+                      variant="matched"
+                      emptyText="No required skills were found in the résumé."
+                    />
+                    <SkillList
+                      title="Missing skills"
+                      skills={result.skills.missing}
+                      variant="missing"
+                      emptyText="Great — no missing skills! 🎉"
+                    />
+                    <SkillList
+                      title="All JD skills detected"
+                      skills={result.skills.required}
+                      variant="neutral"
+                      emptyText="No known skills detected in the job description."
+                    />
                   </div>
 
-                  {/* Skills */}
-                  <div className="space-y-5">
-                    <div>
-                      <h3 className="text-white mb-2 text-sm font-bold">
-                        Matched skills{" "}
-                        <span className="font-normal text-gray-400">
-                          ({result.skills.matched.length})
-                        </span>
-                      </h3>
-                      {renderPills(result.skills.matched, "matched")}
-                    </div>
-                    <div>
-                      <h3 className="text-white mb-2 text-sm font-bold">
-                        Missing skills{" "}
-                        <span className="font-normal text-gray-400">
-                          ({result.skills.missing.length})
-                        </span>
-                      </h3>
-                      {renderPills(result.skills.missing, "missing")}
-                    </div>
-                    <div>
-                      <h3 className="text-white mb-2 text-sm font-bold">
-                        All JD skills detected{" "}
-                        <span className="font-normal text-gray-400">
-                          ({result.skills.required.length})
-                        </span>
-                      </h3>
-                      {renderPills(result.skills.required, "neutral")}
-                    </div>
-                  </div>
-
-                  <p className="mt-5 border-t border-gray-700 pt-4 text-xs text-gray-400">
-                    Parsed <strong>{result.resume_char_count}</strong> characters
+                  <p className="results__meta">
+                    Parsed{" "}
+                    <strong className="tnum">
+                      {result.resume_char_count}
+                    </strong>{" "}
+                    characters
                     {result.filename ? ` from "${result.filename}"` : ""}.
                   </p>
                 </div>
               )}
             </section>
-          </div>
+          </main>
 
-          {/* ---- AI career guidance ---- */}
+          {/* AI Suggestions + Chatbot Row (renders after success) */}
           {result && (
-            <section className="bg-tertiary mt-6 rounded-2xl p-6 shadow-xl">
-              <h2 className="text-white mb-4 text-xl font-bold">
-                🤖 AI career guidance
-              </h2>
+            <div className="stack">
+              <AiSuggestions
+                loading={suggestLoading}
+                error={suggestError}
+                suggestions={suggestions}
+              />
 
-              {suggestLoading && (
-                <div className="flex items-center gap-3 text-gray-300">
-                  <div className="h-5 w-5 animate-spin rounded-full border-[3px] border-gray-600 border-t-purple-500" />
-                  <span>Generating personalized suggestions…</span>
-                </div>
-              )}
-
-              {!suggestLoading && suggestError && (
-                <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-400">
-                  {suggestError}
-                </p>
-              )}
-
-              {!suggestLoading && !suggestError && suggestions && (
-                <div className="space-y-5 text-sm text-gray-200">
-                  {suggestions.fit_summary && (
-                    <p className="rounded-lg border border-purple-500/30 bg-purple-500/10 p-4 leading-relaxed text-white">
-                      {suggestions.fit_summary}
-                    </p>
-                  )}
-
-                  {suggestions.strengths?.length > 0 && (
-                    <div>
-                      <h3 className="text-white mb-2 font-bold">💪 Strengths</h3>
-                      <ul className="list-disc space-y-1.5 pl-5">
-                        {suggestions.strengths.map((s, i) => (
-                          <li key={i}>{s}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {suggestions.gap_advice?.length > 0 && (
-                    <div>
-                      <h3 className="text-white mb-2 font-bold">
-                        🎯 Closing the gaps
-                      </h3>
-                      <ul className="list-disc space-y-1.5 pl-5">
-                        {suggestions.gap_advice.map((g, i) => (
-                          <li key={i}>
-                            {g.skill && (
-                              <strong className="text-white">{g.skill}: </strong>
-                            )}
-                            {g.how_to_address}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {suggestions.resume_improvements?.length > 0 && (
-                    <div>
-                      <h3 className="text-white mb-2 font-bold">
-                        📝 Résumé improvements
-                      </h3>
-                      <ul className="list-disc space-y-1.5 pl-5">
-                        {suggestions.resume_improvements.map((s, i) => (
-                          <li key={i}>{s}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {suggestions.next_steps?.length > 0 && (
-                    <div>
-                      <h3 className="text-white mb-2 font-bold">🚀 Next steps</h3>
-                      <ol className="list-decimal space-y-1.5 pl-5">
-                        {suggestions.next_steps.map((s, i) => (
-                          <li key={i}>{s}</li>
-                        ))}
-                      </ol>
-                    </div>
-                  )}
-
-                  {suggestions.model && (
-                    <p className="border-t border-gray-700 pt-3 text-xs text-gray-500">
-                      Generated by {suggestions.model} via OpenRouter
-                    </p>
-                  )}
-                </div>
-              )}
-            </section>
+              <ChatBox
+                messages={chatMessages}
+                onSend={handleSendChat}
+                loading={chatLoading}
+                error={chatError}
+              />
+            </div>
           )}
 
-          {/* ---- Chatbot ---- */}
-          {result && (
-            <section className="bg-tertiary mt-6 rounded-2xl p-6 shadow-xl">
-              <h2 className="text-white text-xl font-bold">
-                💬 Ask the AI assistant
-              </h2>
-              <p className="mb-4 mt-1 text-xs text-gray-400">
-                Ask anything — and since it has your résumé, this job, and your
-                score, it can also give tailored interview, ATS, and career advice.
-              </p>
-
-              <div
-                className="flex max-h-[360px] flex-col gap-2.5 overflow-y-auto pr-1"
-                role="log"
-                aria-live="polite"
-              >
-                {chatMessages.map((m, i) => (
-                  <div
-                    key={i}
-                    className={
-                      m.role === "user"
-                        ? "max-w-[85%] self-end whitespace-pre-wrap break-words rounded-2xl rounded-br-sm bg-purple-600 px-4 py-2.5 text-sm text-white"
-                        : "bg-primary max-w-[85%] self-start whitespace-pre-wrap break-words rounded-2xl rounded-bl-sm border border-gray-700 px-4 py-2.5 text-sm text-gray-200"
-                    }
-                  >
-                    {m.content}
-                  </div>
-                ))}
-                {chatLoading && (
-                  <div className="bg-primary self-start rounded-2xl rounded-bl-sm border border-gray-700 px-4 py-3 text-sm text-gray-400">
-                    <span className="inline-block animate-pulse">● ● ●</span>
-                  </div>
-                )}
-                <div ref={chatEndRef} />
-              </div>
-
-              {chatMessages.length <= 1 && !chatLoading && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {CHAT_PROMPTS.map((p) => (
-                    <button
-                      key={p}
-                      type="button"
-                      onClick={() => void sendChat(p)}
-                      className="rounded-full border border-gray-600 bg-gray-500/10 px-3 py-1.5 text-xs text-gray-300 transition-colors hover:border-purple-500 hover:text-white"
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {chatError && (
-                <p className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-400">
-                  {chatError}
-                </p>
-              )}
-
-              <form
-                className="mt-4 flex gap-3"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  void sendChat(chatInput);
-                }}
-              >
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  disabled={chatLoading}
-                  placeholder="Type your question…"
-                  aria-label="Chat message"
-                  className="bg-primary flex-1 rounded-lg border border-gray-700 px-3.5 py-2.5 text-sm text-gray-200 outline-none focus:border-purple-500"
-                />
-                <button
-                  type="submit"
-                  disabled={chatLoading || !chatInput.trim()}
-                  className="rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Send
-                </button>
-              </form>
-            </section>
-          )}
-
-          {/* Backend note */}
-          <p className="mt-8 text-center text-xs text-gray-500">
-            This is a full-stack project: the screening runs on a Python/FastAPI
-            backend with sentence-transformers. Source &amp; setup live in the{" "}
-            <code className="text-gray-400">resume-screening-system/</code> folder.
-          </p>
+          {/* Footer */}
+          <footer className="app__footer">
+            <span className="app__footer-line" aria-hidden />
+            Built with FastAPI · sentence-transformers · React + Vite
+          </footer>
         </div>
       </div>
     </div>
