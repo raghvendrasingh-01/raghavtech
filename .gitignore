@@ -7,3 +7,7 @@
 # see DEPLOYMENT.md "Repository hygiene" for the one-time cleanup commands).
 node_modules
 dist
+
+# Local IDE / Claude settings
+.claude/
+
