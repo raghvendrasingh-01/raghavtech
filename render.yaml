@@ -22,7 +22,7 @@ services:
     # restarts or 502s on the first analysis, upgrade to `standard` (2 GB).
     plan: free
 
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
 
     healthCheckPath: /health
