@@ -52,3 +52,11 @@ services:
 
       - key: OPENROUTER_MODEL
         value: openai/gpt-4o-mini
+
+      # Optimize PyTorch memory footprint on Render Free Tier (512MB RAM).
+      # Prevents PyTorch from spawning threads for each CPU core on the shared host,
+      # which consumes excessive memory and causes OOM crashes.
+      - key: OMP_NUM_THREADS
+        value: "1"
+      - key: MKL_NUM_THREADS
+        value: "1"
