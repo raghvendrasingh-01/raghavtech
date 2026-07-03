@@ -13,7 +13,8 @@ from __future__ import annotations
 import threading
 from functools import lru_cache
 
-from sentence_transformers import SentenceTransformer, util
+# sentence_transformers is imported lazily inside functions to speed up app boot
+# and prevent startup timeout crashes on resource-constrained platforms.
 
 from app.config import get_settings
 from app.exceptions import EmptyTextError
@@ -26,6 +27,7 @@ _model_lock = threading.Lock()
 @lru_cache(maxsize=1)
 def _load_model(model_name: str) -> SentenceTransformer:
     """Construct and cache the SentenceTransformer for ``model_name``."""
+    from sentence_transformers import SentenceTransformer
     return SentenceTransformer(model_name)
 
 
@@ -66,6 +68,7 @@ def compute_similarity(resume_text: str, jd_text: str) -> float:
         convert_to_tensor=True,
         normalize_embeddings=True,
     )
+    from sentence_transformers import util
     cosine = util.cos_sim(embeddings[0], embeddings[1]).item()
 
     # Clamp negatives to zero, then express as a 0–100 percentage.

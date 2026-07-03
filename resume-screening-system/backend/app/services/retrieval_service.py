@@ -11,8 +11,6 @@ from __future__ import annotations
 
 import re
 
-from sentence_transformers import util
-
 from app.services.nlp_service import get_model
 
 
@@ -61,6 +59,7 @@ def retrieve_context(
         A list of ``(source_label, chunk_text)`` tuples, highest-relevance first.
         Empty if there is nothing to search.
     """
+    from sentence_transformers import util
     chunks = _chunk(resume_text, "Résumé") + _chunk(jd_text, "Job description")
     if not chunks:
         return []
