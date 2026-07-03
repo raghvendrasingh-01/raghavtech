@@ -122,14 +122,21 @@ def _normalise(data: dict) -> dict:
     }
 
 
-async def _openrouter_chat(messages: list[dict], temperature: float = 0.4) -> str:
-    """Send a chat-completion request to OpenRouter and return the reply text.
+async def _openrouter_chat(
+    messages: list[dict],
+    temperature: float = 0.4,
+    model_override: str = "",
+) -> tuple[str, str]:
+    """Send a chat-completion request to OpenRouter and return (reply_text, model_used).
 
-    Shared by both the suggestions and chatbot features.
+    When ``model_override`` is non-empty it is used instead of the server
+    default from config, allowing the frontend to select the model.
+    If a 429 (Rate Limit) is encountered, it will automatically attempt
+    to failover to a few highly available free models.
 
     Raises:
         LLMError: If AI is not configured, the request fails/times out, or the
-            response is malformed.
+            response is malformed after all retries.
     """
     settings = get_settings()
     if not settings.ai_enabled:
@@ -138,42 +145,65 @@ async def _openrouter_chat(messages: list[dict], temperature: float = 0.4) -> st
             "backend environment."
         )
 
-    payload = {
-        "model": settings.OPENROUTER_MODEL,
-        "messages": messages,
-        "temperature": temperature,
-    }
+    chosen_model = model_override.strip() or settings.OPENROUTER_MODEL
+    
+    # Fallback cascade in case of 429s. We ensure the chosen model is tried first.
+    fallbacks = [
+        "google/gemma-4-26b-a4b-it:free",
+        "openrouter/free",
+    ]
+    models_to_try = [chosen_model] + [m for m in fallbacks if m != chosen_model]
+
+    url = f"{settings.OPENROUTER_BASE_URL.rstrip('/')}/chat/completions"
     headers = {
         "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
-        # Optional attribution headers recommended by OpenRouter.
         "X-Title": "AI Resume Screening System",
     }
 
-    url = f"{settings.OPENROUTER_BASE_URL.rstrip('/')}/chat/completions"
-    try:
-        async with httpx.AsyncClient(timeout=settings.LLM_TIMEOUT_SECONDS) as client:
-            response = await client.post(url, json=payload, headers=headers)
-    except httpx.TimeoutException as exc:
-        raise LLMError("The AI provider timed out. Please try again.") from exc
-    except httpx.HTTPError as exc:
-        logger.warning("OpenRouter request error: %s", exc)
-        raise LLMError("Could not reach the AI provider.") from exc
+    last_error_status = 500
+    
+    async with httpx.AsyncClient(timeout=settings.LLM_TIMEOUT_SECONDS) as client:
+        for attempt_model in models_to_try:
+            payload = {
+                "model": attempt_model,
+                "messages": messages,
+                "temperature": temperature,
+            }
+            try:
+                response = await client.post(url, json=payload, headers=headers)
+            except httpx.TimeoutException:
+                logger.warning("OpenRouter timeout for model %s", attempt_model)
+                continue
+            except httpx.HTTPError as exc:
+                logger.warning("OpenRouter request error for %s: %s", attempt_model, exc)
+                continue
 
-    if response.status_code != 200:
-        # Log full detail server-side; return a generic, safe message.
-        logger.warning(
-            "OpenRouter returned %s: %s", response.status_code, response.text[:500]
-        )
-        raise LLMError(
-            f"The AI provider returned an error (HTTP {response.status_code})."
-        )
+            if response.status_code in (402, 429):
+                logger.warning("OpenRouter %s error on %s (Rate Limited or Unpaid)", response.status_code, attempt_model)
+                last_error_status = response.status_code
+                continue
+                
+            if response.status_code != 200:
+                logger.warning(
+                    "OpenRouter returned %s on %s: %s", 
+                    response.status_code, attempt_model, response.text[:500]
+                )
+                last_error_status = response.status_code
+                continue
 
-    try:
-        body = response.json()
-        return body["choices"][0]["message"]["content"]
-    except (KeyError, IndexError, ValueError) as exc:
-        raise LLMError("The AI provider returned an unexpected response.") from exc
+            try:
+                body = response.json()
+                content = body["choices"][0]["message"]["content"]
+                return content, attempt_model
+            except (KeyError, IndexError, ValueError):
+                logger.warning("Unexpected response format from %s", attempt_model)
+                continue
+
+    # If we exhausted all fallbacks:
+    if last_error_status in (402, 429):
+        raise LLMError("The AI provider is currently overwhelmed or requires credits. Please wait a moment and try again.")
+    raise LLMError(f"The AI provider returned an error (HTTP {last_error_status}).")
 
 
 async def generate_suggestions(
@@ -182,6 +212,7 @@ async def generate_suggestions(
     match_score: float,
     matched_skills: list[str],
     missing_skills: list[str],
+    model_override: str = "",
 ) -> dict:
     """Call OpenRouter and return normalised AI suggestions.
 
@@ -190,6 +221,7 @@ async def generate_suggestions(
             response can't be parsed.
     """
     settings = get_settings()
+    chosen_model = model_override.strip() or settings.OPENROUTER_MODEL
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {
@@ -204,7 +236,9 @@ async def generate_suggestions(
             ),
         },
     ]
-    content = await _openrouter_chat(messages, temperature=0.4)
+    content, final_model = await _openrouter_chat(
+        messages, temperature=0.4, model_override=chosen_model
+    )
 
     try:
         parsed = _parse_json_object(content)
@@ -213,5 +247,5 @@ async def generate_suggestions(
         raise LLMError("The AI response could not be parsed.") from exc
 
     result = _normalise(parsed)
-    result["model"] = settings.OPENROUTER_MODEL
+    result["model"] = final_model
     return result

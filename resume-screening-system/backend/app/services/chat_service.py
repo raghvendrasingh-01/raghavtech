@@ -58,7 +58,8 @@ async def generate_chat_reply(
     matched_skills: list[str],
     missing_skills: list[str],
     snippets: list[tuple[str, str]],
-) -> str:
+    model_override: str = "",
+) -> tuple[str, str]:
     """Produce a scoped, grounded assistant reply.
 
     Args:
@@ -67,6 +68,7 @@ async def generate_chat_reply(
         match_score: The computed match score.
         matched_skills / missing_skills: Skill-gap context.
         snippets: Retrieved ``(source, text)`` excerpts for grounding.
+        model_override: OpenRouter model ID chosen by the user; empty = default.
 
     Returns:
         The assistant's reply text.
@@ -85,5 +87,7 @@ async def generate_chat_reply(
     ]
     full_messages = [{"role": "system", "content": system_prompt}, *trimmed]
 
-    reply = await _openrouter_chat(full_messages, temperature=0.3)
-    return reply.strip()
+    reply, final_model = await _openrouter_chat(
+        full_messages, temperature=0.3, model_override=model_override
+    )
+    return reply.strip(), final_model

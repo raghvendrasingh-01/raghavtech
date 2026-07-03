@@ -80,6 +80,11 @@ class SuggestRequest(BaseModel):
     match_score: float = Field(0.0, ge=0.0, le=100.0)
     matched_skills: list[str] = Field(default_factory=list)
     missing_skills: list[str] = Field(default_factory=list)
+    model: str = Field(
+        default="",
+        description="OpenRouter model ID chosen by the user. "
+        "Empty string means use the server default.",
+    )
 
 
 class SuggestResponse(BaseModel):
@@ -110,6 +115,11 @@ class ChatRequest(BaseModel):
     match_score: float = Field(0.0, ge=0.0, le=100.0)
     matched_skills: list[str] = Field(default_factory=list)
     missing_skills: list[str] = Field(default_factory=list)
+    model: str = Field(
+        default="",
+        description="OpenRouter model ID chosen by the user. "
+        "Empty string means use the server default.",
+    )
 
 
 class ChatResponse(BaseModel):
@@ -123,3 +133,21 @@ class ErrorResponse(BaseModel):
     """Uniform error envelope."""
 
     detail: str
+
+
+# --- Available models (/models) ---
+
+
+class ModelInfo(BaseModel):
+    """A single selectable AI model."""
+
+    id: str = Field(..., description="OpenRouter model ID.")
+    name: str = Field(..., description="Human-readable display name.")
+    provider: str = Field("", description="Provider (Google, Meta, …).")
+
+
+class ModelsResponse(BaseModel):
+    """List of available free-tier models."""
+
+    models: list[ModelInfo]
+    default: str = Field(..., description="The recommended default model ID.")

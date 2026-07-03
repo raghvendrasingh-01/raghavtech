@@ -26,6 +26,8 @@ from app.schemas import (
     AnalyzeResponse,
     ChatRequest,
     ChatResponse,
+    ModelInfo,
+    ModelsResponse,
     SkillReport,
     SuggestRequest,
     SuggestResponse,
@@ -169,6 +171,7 @@ async def suggest(body: SuggestRequest) -> SuggestResponse:
             match_score=body.match_score,
             matched_skills=body.matched_skills,
             missing_skills=body.missing_skills,
+            model_override=body.model,
         )
     except LLMError as exc:
         raise HTTPException(
@@ -214,16 +217,59 @@ async def chat(body: ChatRequest) -> ChatResponse:
 
     messages = [{"role": m.role, "content": m.content} for m in body.messages]
     try:
-        reply = await generate_chat_reply(
+        reply, final_model = await generate_chat_reply(
             messages=messages,
             match_score=body.match_score,
             matched_skills=body.matched_skills,
             missing_skills=body.missing_skills,
             snippets=snippets,
+            model_override=body.model,
         )
     except LLMError as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY, detail=str(exc)
         ) from exc
 
-    return ChatResponse(reply=reply, model=settings.OPENROUTER_MODEL)
+    return ChatResponse(reply=reply, model=final_model)
+
+
+# ---------------------------------------------------------------------------
+# Available free-tier models
+# ---------------------------------------------------------------------------
+
+# Curated list of OpenRouter models.
+# This list is intentionally static so the backend remains the single source
+# of truth and the frontend never hardcodes model IDs.
+_FREE_MODELS: list[dict] = [
+    # Premium models (requested by user)
+    {"id": "google/gemini-2.5-flash", "name": "Gemini 2.5 Flash", "provider": "Google"},
+    {"id": "deepseek/deepseek-r1", "name": "DeepSeek R1", "provider": "DeepSeek"},
+    {"id": "deepseek/deepseek-chat", "name": "DeepSeek V3", "provider": "DeepSeek"},
+    {"id": "openai/gpt-4o-mini", "name": "GPT-4o Mini", "provider": "OpenAI"},
+
+    # Free tier models
+    {"id": "openrouter/free", "name": "OpenRouter Auto (Best Free)", "provider": "OpenRouter"},
+    {"id": "meta-llama/llama-3.3-70b-instruct:free", "name": "Llama 3.3 70B Instruct", "provider": "Meta"},
+    {"id": "meta-llama/llama-3.2-3b-instruct:free", "name": "Llama 3.2 3B Instruct", "provider": "Meta"},
+    {"id": "qwen/qwen3-next-80b-a3b-instruct:free", "name": "Qwen 3 Next 80B", "provider": "Qwen"},
+    {"id": "qwen/qwen3-coder:free", "name": "Qwen 3 Coder", "provider": "Qwen"},
+    {"id": "google/gemma-4-31b-it:free", "name": "Gemma 4 31B", "provider": "Google"},
+    {"id": "google/gemma-4-26b-a4b-it:free", "name": "Gemma 4 26B (MoE)", "provider": "Google"},
+    {"id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "name": "Nemotron 3 Nano Omni", "provider": "NVIDIA"},
+    {"id": "nousresearch/hermes-3-llama-3.1-405b:free", "name": "Hermes 3 (Llama 3.1 405B)", "provider": "NousResearch"},
+]
+
+_DEFAULT_FREE_MODEL = "openai/gpt-4o-mini"
+
+
+@router.get(
+    "/models",
+    response_model=ModelsResponse,
+    summary="List available free-tier AI models",
+)
+def list_models() -> ModelsResponse:
+    """Return the curated list of free-tier models the frontend can offer."""
+    return ModelsResponse(
+        models=[ModelInfo(**m) for m in _FREE_MODELS],
+        default=_DEFAULT_FREE_MODEL,
+    )
