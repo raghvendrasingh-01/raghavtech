@@ -20,7 +20,7 @@ services:
     # sentence-transformers + PyTorch and loads an embedding model on the first
     # /analyze request, which can spike past 512 MB and OOM. If the service
     # restarts or 502s on the first analysis, upgrade to `standard` (2 GB).
-    plan: starter
+    plan: free
 
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
