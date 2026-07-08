@@ -66,7 +66,7 @@ export function TaskEditDialog({ task, open, onClose }: { task: Task; open: bool
       setLlmAnalysis(null);
       setIsAnalyzing(false);
     }
-  }, [open, task]);
+  }, [open, task.id]);
 
   const computedDeadline = React.useMemo(() => {
     if (deadlineMode === "date") {
