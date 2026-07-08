@@ -37,10 +37,10 @@ export function Field({
   className?: string;
 }) {
   return (
-    <label className={cn("block", className)}>
-      <span className="mb-1.5 block text-xs font-medium text-muted">{label}</span>
+    <div className={cn("block", className)}>
+      <div className="mb-1.5 block text-xs font-medium text-muted">{label}</div>
       {children}
-      {hint && <span className="mt-1 block text-[11px] text-subtle">{hint}</span>}
-    </label>
+      {hint && <div className="mt-1 block text-[11px] text-subtle">{hint}</div>}
+    </div>
   );
 }
