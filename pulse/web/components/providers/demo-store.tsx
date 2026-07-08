@@ -136,6 +136,7 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await fetch("/api/calendar");
       if (!res.ok) {
+        if (res.status === 401 || res.status === 403) return; // Silently ignore if not connected
         const errObj = await res.json().catch(() => null);
         throw new Error((errObj && errObj.error) ? errObj.error : "Network error");
       }
@@ -146,8 +147,7 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (e: any) {
       console.error("Failed to sync calendar:", e);
-      addActivity({ id: `act-cal-err-${Date.now()}`, kind: "missed", text: `Sync failed`, at: new Date().toISOString() });
-      alert(e.message);
+      addActivity({ id: `act-cal-err-${Date.now()}`, kind: "missed", text: `Calendar sync failed`, at: new Date().toISOString() });
     }
   }, [addActivity]);
 
@@ -155,6 +155,7 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await fetch("/api/tasks");
       if (!res.ok) {
+        if (res.status === 401 || res.status === 403) return; // Silently ignore if not connected
         const errObj = await res.json().catch(() => null);
         throw new Error((errObj && errObj.error) ? errObj.error : "Network error");
       }
@@ -180,7 +181,6 @@ export function DemoStoreProvider({ children }: { children: React.ReactNode }) {
     } catch (e: any) {
       console.error("Failed to sync Google Tasks:", e);
       addActivity({ id: `act-gtasks-err-${Date.now()}`, kind: "missed", text: `Tasks sync failed`, at: new Date().toISOString() });
-      alert(e.message);
     }
   }, [addActivity]);
 
