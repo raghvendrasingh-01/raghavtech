@@ -30,9 +30,9 @@ export function TaskEditDialog({ task, open, onClose }: { task: Task; open: bool
   // Remove trailing Z if present, ensure local time format YYYY-MM-DDTHH:mm
   const initialDeadline = task.deadline ? new Date(task.deadline).toISOString().slice(0, 16) : "";
   const [deadline, setDeadline] = React.useState(initialDeadline);
-  const [deadlineMode, setDeadlineMode] = React.useState<"date" | "period">("date");
-  const [periodValue, setPeriodValue] = React.useState(3);
-  const [periodUnit, setPeriodUnit] = React.useState<"days" | "weeks" | "months">("days");
+  const [deadlineMode, setDeadlineMode] = React.useState<"date" | "period">(task.deadlineMode || "date");
+  const [periodValue, setPeriodValue] = React.useState(task.periodValue || 3);
+  const [periodUnit, setPeriodUnit] = React.useState<"days" | "weeks" | "months">(task.periodUnit || "days");
   const [excluded, setExcluded] = React.useState<Set<string>>(new Set());
   const [editedSubtasks, setEditedSubtasks] = React.useState<Subtask[]>(task.subtasks);
 
@@ -53,9 +53,9 @@ export function TaskEditDialog({ task, open, onClose }: { task: Task; open: bool
       setDifficulty(task.difficulty);
       setEstimate(task.estimateMin);
       setDeadline(task.deadline ? new Date(task.deadline).toISOString().slice(0, 16) : "");
-      setDeadlineMode("date");
-      setPeriodValue(3);
-      setPeriodUnit("days");
+      setDeadlineMode(task.deadlineMode || "date");
+      setPeriodValue(task.periodValue || 3);
+      setPeriodUnit(task.periodUnit || "days");
       setExcluded(new Set());
       setEditedSubtasks(task.subtasks);
       setExistingAttachments(task.attachments || []);
@@ -211,6 +211,9 @@ export function TaskEditDialog({ task, open, onClose }: { task: Task; open: bool
       difficulty,
       estimateMin: estimate,
       deadline: computedDeadline,
+      deadlineMode,
+      periodValue: deadlineMode === "period" ? periodValue : undefined,
+      periodUnit: deadlineMode === "period" ? (periodUnit as any) : undefined,
       subtasks: [...editedSubtasks, ...newSubtasks],
       attachments: finalAttachments.length ? finalAttachments : undefined,
     });

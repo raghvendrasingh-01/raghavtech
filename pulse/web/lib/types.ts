@@ -36,6 +36,9 @@ export interface Task {
   estimateMin: number;
   /** ISO deadline. */
   deadline: string;
+  deadlineMode?: "date" | "period";
+  periodValue?: number;
+  periodUnit?: "days" | "weeks" | "months";
   status: TaskStatus;
   /** 0-1 fraction complete. */
   progress: number;
