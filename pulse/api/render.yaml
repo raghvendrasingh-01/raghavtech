@@ -20,4 +20,4 @@ services:
       - key: OPENAI_API_KEY
         sync: false
       - key: CORS_ORIGINS
-        value: "https://pulse.vercel.app,http://localhost:3000"
+        value: "https://raghavtech.me,https://www.raghavtech.me,https://pulse.vercel.app,http://localhost:3000"
