@@ -1,0 +1,101 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - link "Pulse" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]:
+            - img [ref=e10]
+            - generic [ref=e13]: Pulse
+        - navigation [ref=e14]:
+          - generic [ref=e15]:
+            - paragraph [ref=e16]: Workspace
+            - generic [ref=e17]:
+              - link "Dashboard" [ref=e18] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=e19]
+                - generic [ref=e24]: Dashboard
+              - link "Tasks" [ref=e25] [cursor=pointer]:
+                - /url: /tasks
+                - img [ref=e26]
+                - generic [ref=e29]: Tasks
+              - link "Calendar" [ref=e30] [cursor=pointer]:
+                - /url: /calendar
+                - img [ref=e31]
+                - generic [ref=e33]: Calendar
+          - generic [ref=e34]:
+            - paragraph [ref=e35]: Intelligence
+            - generic [ref=e36]:
+              - link "AI Planner" [ref=e37] [cursor=pointer]:
+                - /url: /planner
+                - img [ref=e38]
+                - generic [ref=e41]: AI Planner
+              - link "AI Chat" [ref=e42] [cursor=pointer]:
+                - /url: /chat
+                - img [ref=e44]
+                - generic [ref=e46]: AI Chat
+          - generic [ref=e47]:
+            - paragraph [ref=e48]: Growth
+            - generic [ref=e49]:
+              - link "Habits" [ref=e50] [cursor=pointer]:
+                - /url: /habits
+                - img [ref=e51]
+                - generic [ref=e53]: Habits
+              - link "Goals" [ref=e54] [cursor=pointer]:
+                - /url: /goals
+                - img [ref=e55]
+                - generic [ref=e59]: Goals
+              - link "Analytics" [ref=e60] [cursor=pointer]:
+                - /url: /analytics
+                - img [ref=e61]
+                - generic [ref=e63]: Analytics
+              - link "Settings" [ref=e64] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=e65]
+                - generic [ref=e68]: Settings
+        - generic [ref=e69]:
+          - paragraph [ref=e70]: Pulse Pro
+          - paragraph [ref=e71]: Unlimited AI planning, Google Calendar sync & burnout radar.
+          - button "Upgrade" [ref=e72]
+    - generic [ref=e74]:
+      - banner [ref=e75]:
+        - generic [ref=e76]:
+          - generic [ref=e77]:
+            - heading "AI Chat" [level=1] [ref=e78]
+            - generic [ref=e79]:
+              - img [ref=e80]
+              - text: GPT active
+          - generic [ref=e83]:
+            - img [ref=e84]
+            - textbox "Ask Pulse or search…" [ref=e87]
+            - generic [ref=e88]: ⌘K
+          - button "Notifications" [ref=e90]:
+            - img [ref=e91]
+            - generic [ref=e94]: "3"
+          - link "New task" [ref=e95] [cursor=pointer]:
+            - /url: /tasks?new=1
+            - button "New task" [ref=e96]:
+              - img [ref=e97]
+              - text: New task
+          - link "RS" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+      - main [ref=e99]:
+        - generic [ref=e100]:
+          - generic [ref=e102]:
+            - img [ref=e104]
+            - generic [ref=e110]:
+              - text: Morning! I've reviewed your day.
+              - strong [ref=e111]: Data Structures Assignment 3
+              - text: is your biggest risk — due tomorrow with ~4.8h of work left. Want me to build your day around it?
+          - generic [ref=e112]:
+            - generic [ref=e113]:
+              - button "Plan my entire week — 2 assignments, an interview, and an exam." [ref=e114]
+              - button "What should I work on right now?" [ref=e115]
+              - button "Am I going to miss any deadlines?" [ref=e116]
+              - button "Organize my day around my meetings." [ref=e117]
+            - generic [ref=e118]:
+              - textbox "Ask Pulse to plan, prioritize, or reschedule…" [ref=e119]
+              - button [disabled] [ref=e120]:
+                - img [ref=e121]
+            - paragraph [ref=e124]: Pulse plans from your real tasks & calendar. Enter to send · Shift+Enter for a new line.

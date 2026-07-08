@@ -1,0 +1,156 @@
+- generic [active] [ref=f4e1]:
+  - alert [ref=f4e2]
+  - generic [ref=f4e3]:
+    - complementary [ref=f4e4]:
+      - generic [ref=f4e5]:
+        - link "Pulse" [ref=f4e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f4e8]:
+            - img [ref=f4e10]
+            - generic [ref=f4e13]: Pulse
+        - navigation [ref=f4e14]:
+          - generic [ref=f4e15]:
+            - paragraph [ref=f4e16]: Workspace
+            - generic [ref=f4e17]:
+              - link "Dashboard" [ref=f4e18] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=f4e20]
+                - generic [ref=f4e25]: Dashboard
+              - link "Tasks" [ref=f4e26] [cursor=pointer]:
+                - /url: /tasks
+                - img [ref=f4e27]
+                - generic [ref=f4e30]: Tasks
+              - link "Calendar" [ref=f4e31] [cursor=pointer]:
+                - /url: /calendar
+                - img [ref=f4e32]
+                - generic [ref=f4e34]: Calendar
+          - generic [ref=f4e35]:
+            - paragraph [ref=f4e36]: Intelligence
+            - generic [ref=f4e37]:
+              - link "AI Planner" [ref=f4e38] [cursor=pointer]:
+                - /url: /planner
+                - img [ref=f4e39]
+                - generic [ref=f4e42]: AI Planner
+              - link "AI Chat" [ref=f4e43] [cursor=pointer]:
+                - /url: /chat
+                - img [ref=f4e44]
+                - generic [ref=f4e46]: AI Chat
+          - generic [ref=f4e47]:
+            - paragraph [ref=f4e48]: Growth
+            - generic [ref=f4e49]:
+              - link "Habits" [ref=f4e50] [cursor=pointer]:
+                - /url: /habits
+                - img [ref=f4e51]
+                - generic [ref=f4e53]: Habits
+              - link "Goals" [ref=f4e54] [cursor=pointer]:
+                - /url: /goals
+                - img [ref=f4e55]
+                - generic [ref=f4e59]: Goals
+              - link "Analytics" [ref=f4e60] [cursor=pointer]:
+                - /url: /analytics
+                - img [ref=f4e61]
+                - generic [ref=f4e63]: Analytics
+              - link "Settings" [ref=f4e64] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=f4e65]
+                - generic [ref=f4e68]: Settings
+        - generic [ref=f4e69]:
+          - paragraph [ref=f4e70]: Pulse Pro
+          - paragraph [ref=f4e71]: Unlimited AI planning, Google Calendar sync & burnout radar.
+          - button "Upgrade" [ref=f4e72]
+    - generic [ref=f4e74]:
+      - banner [ref=f4e75]:
+        - generic [ref=f4e76]:
+          - generic [ref=f4e77]:
+            - heading "Dashboard" [level=1] [ref=f4e78]
+            - generic [ref=f4e79]:
+              - img [ref=f4e80]
+              - text: AI active
+          - generic [ref=f4e83]:
+            - img [ref=f4e84]
+            - textbox "Ask Pulse or search…" [ref=f4e87]
+            - generic [ref=f4e88]: ⌘K
+          - button [ref=f4e89]:
+            - img [ref=f4e90]
+          - link "New task" [ref=f4e94] [cursor=pointer]:
+            - /url: /tasks?new=1
+            - button "New task" [ref=f4e95]:
+              - img [ref=f4e96]
+              - text: New task
+          - generic [ref=f4e97]: RS
+      - main [ref=f4e98]:
+        - generic [ref=f4e99]:
+          - generic [ref=f4e100]:
+            - heading "Good to see you, Raghvendra" [level=2] [ref=f4e101]
+            - paragraph [ref=f4e102]: 7 open tasks · your engine ranked them by priority & deadline risk.
+          - generic [ref=f4e103]:
+            - generic [ref=f4e105]:
+              - generic [ref=f4e106]:
+                - generic [ref=f4e107]:
+                  - generic [ref=f4e108]: critical
+                  - generic [ref=f4e109]: Data Structures Assignment 3
+                - paragraph [ref=f4e110]: Critical — driven mainly by tightness (needs more time than is left), with urgency (due in 5h) reinforcing it.
+                - generic [ref=f4e114]: due in 5h
+              - generic [ref=f4e115]:
+                - generic [ref=f4e116]: 71%
+                - generic [ref=f4e117]: miss risk
+            - generic [ref=f4e119]:
+              - generic [ref=f4e120]:
+                - generic [ref=f4e121]:
+                  - generic [ref=f4e122]: critical
+                  - generic [ref=f4e123]: Ship Pulse hackathon MVP
+                - paragraph [ref=f4e124]: Critical — driven mainly by urgency (due in 7h), with importance (project · hard) reinforcing it.
+                - generic [ref=f4e128]: due in 7h
+              - generic [ref=f4e129]:
+                - generic [ref=f4e130]: 45%
+                - generic [ref=f4e131]: miss risk
+            - generic [ref=f4e133]:
+              - generic [ref=f4e134]:
+                - generic [ref=f4e135]:
+                  - generic [ref=f4e136]: high
+                  - generic [ref=f4e137]: Pay credit card bill
+                - paragraph [ref=f4e138]: High priority — driven mainly by urgency (due in 4h), with importance (finance · easy) reinforcing it.
+                - generic [ref=f4e141]: due in 4h
+              - generic [ref=f4e142]:
+                - generic [ref=f4e143]: 2%
+                - generic [ref=f4e144]: miss risk
+            - generic [ref=f4e146]:
+              - generic [ref=f4e147]:
+                - generic [ref=f4e148]:
+                  - generic [ref=f4e149]: high
+                  - generic [ref=f4e150]: Send standup notes to team
+                - paragraph [ref=f4e151]: High priority — driven mainly by urgency (due in 3h), with importance (work · easy) reinforcing it.
+                - generic [ref=f4e154]: due in 3h
+              - generic [ref=f4e155]:
+                - generic [ref=f4e156]: 2%
+                - generic [ref=f4e157]: miss risk
+            - generic [ref=f4e159]:
+              - generic [ref=f4e160]:
+                - generic [ref=f4e161]:
+                  - generic [ref=f4e162]: medium
+                  - generic [ref=f4e163]: Google interview prep — Dynamic Programming
+                - paragraph [ref=f4e164]: Medium priority — driven mainly by importance (interview · hard), with effort left (3.5h remaining) reinforcing it.
+                - generic [ref=f4e168]: due in 3d
+              - generic [ref=f4e169]:
+                - generic [ref=f4e170]: 2%
+                - generic [ref=f4e171]: miss risk
+            - generic [ref=f4e173]:
+              - generic [ref=f4e174]:
+                - generic [ref=f4e175]:
+                  - generic [ref=f4e176]: low
+                  - generic [ref=f4e177]: Physics problem set 6
+                - paragraph [ref=f4e178]: Low priority — driven mainly by importance (study · medium), with effort left (3h remaining) reinforcing it.
+                - generic [ref=f4e181]: due in 4d
+              - generic [ref=f4e182]:
+                - generic [ref=f4e183]: 2%
+                - generic [ref=f4e184]: miss risk
+            - generic [ref=f4e186]:
+              - generic [ref=f4e187]:
+                - generic [ref=f4e188]:
+                  - generic [ref=f4e189]: low
+                  - generic [ref=f4e190]: Read DDIA — Chapter 4 (Encoding)
+                - paragraph [ref=f4e191]: Low priority — driven mainly by importance (personal · medium), with effort left (0.8h remaining) reinforcing it.
+                - generic [ref=f4e195]: due in 5d
+              - generic [ref=f4e196]:
+                - generic [ref=f4e197]: 2%
+                - generic [ref=f4e198]: miss risk

@@ -1,0 +1,191 @@
+- generic [active] [ref=f1e1]:
+  - alert [ref=f1e2]
+  - generic [ref=f1e3]:
+    - complementary [ref=f1e4]:
+      - generic [ref=f1e5]:
+        - link "Pulse" [ref=f1e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f1e8]:
+            - img [ref=f1e10]
+            - generic [ref=f1e13]: Pulse
+        - navigation [ref=f1e14]:
+          - generic [ref=f1e15]:
+            - paragraph [ref=f1e16]: Workspace
+            - generic [ref=f1e17]:
+              - link "Dashboard" [ref=f1e18] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=f1e19]
+                - generic [ref=f1e24]: Dashboard
+              - link "Tasks" [ref=f1e25] [cursor=pointer]:
+                - /url: /tasks
+                - img [ref=f1e26]
+                - generic [ref=f1e29]: Tasks
+              - link "Calendar" [ref=f1e30] [cursor=pointer]:
+                - /url: /calendar
+                - img [ref=f1e31]
+                - generic [ref=f1e33]: Calendar
+          - generic [ref=f1e34]:
+            - paragraph [ref=f1e35]: Intelligence
+            - generic [ref=f1e36]:
+              - link "AI Planner" [ref=f1e37] [cursor=pointer]:
+                - /url: /planner
+                - img [ref=f1e38]
+                - generic [ref=f1e41]: AI Planner
+              - link "AI Chat" [ref=f1e42] [cursor=pointer]:
+                - /url: /chat
+                - img [ref=f1e43]
+                - generic [ref=f1e45]: AI Chat
+          - generic [ref=f1e46]:
+            - paragraph [ref=f1e47]: Growth
+            - generic [ref=f1e48]:
+              - link "Habits" [ref=f1e49] [cursor=pointer]:
+                - /url: /habits
+                - img [ref=f1e50]
+                - generic [ref=f1e52]: Habits
+              - link "Goals" [ref=f1e53] [cursor=pointer]:
+                - /url: /goals
+                - img [ref=f1e54]
+                - generic [ref=f1e58]: Goals
+              - link "Analytics" [ref=f1e59] [cursor=pointer]:
+                - /url: /analytics
+                - img [ref=f1e60]
+                - generic [ref=f1e62]: Analytics
+              - link "Settings" [ref=f1e63] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=f1e65]
+                - generic [ref=f1e68]: Settings
+        - generic [ref=f1e69]:
+          - paragraph [ref=f1e70]: Pulse Pro
+          - paragraph [ref=f1e71]: Unlimited AI planning, Google Calendar sync & burnout radar.
+          - button "Upgrade" [ref=f1e72]
+    - generic [ref=f1e74]:
+      - banner [ref=f1e75]:
+        - generic [ref=f1e76]:
+          - generic [ref=f1e77]:
+            - heading "Settings" [level=1] [ref=f1e78]
+            - generic [ref=f1e79]:
+              - img [ref=f1e80]
+              - text: AI active
+          - generic [ref=f1e83]:
+            - img [ref=f1e84]
+            - textbox "Ask Pulse or search…" [ref=f1e87]
+            - generic [ref=f1e88]: ⌘K
+          - button [ref=f1e89]:
+            - img [ref=f1e90]
+          - link "New task" [ref=f1e94] [cursor=pointer]:
+            - /url: /tasks?new=1
+            - button "New task" [ref=f1e95]:
+              - img [ref=f1e96]
+              - text: New task
+          - generic [ref=f1e97]: RS
+      - main [ref=f1e98]:
+        - generic [ref=f1e99]:
+          - generic [ref=f1e100]:
+            - heading "Settings" [level=2] [ref=f1e101]
+            - paragraph [ref=f1e102]: Tune how Pulse plans and nudges you.
+          - generic [ref=f1e103]:
+            - generic [ref=f1e104]:
+              - img [ref=f1e105]
+              - heading "Profile" [level=3] [ref=f1e108]
+            - generic [ref=f1e110]:
+              - generic [ref=f1e111]: RS
+              - generic [ref=f1e112]:
+                - paragraph [ref=f1e113]: Raghvendra Singh
+                - paragraph [ref=f1e114]: raghvendra@pulse.app
+              - button "Edit" [ref=f1e115]
+          - generic [ref=f1e116]:
+            - generic [ref=f1e117]:
+              - img [ref=f1e118]
+              - heading "Integrations" [level=3] [ref=f1e121]
+            - generic [ref=f1e122]:
+              - generic [ref=f1e123]:
+                - generic [ref=f1e124]:
+                  - paragraph [ref=f1e125]: Google Calendar
+                  - paragraph [ref=f1e126]: Sync meetings, classes and events.
+                - button "Connect" [ref=f1e127]
+              - generic [ref=f1e128]:
+                - generic [ref=f1e129]:
+                  - paragraph [ref=f1e130]: Push notifications
+                  - paragraph [ref=f1e131]: Get Pulse nudges on your devices (Firebase Cloud Messaging).
+                - button "Enable" [ref=f1e132]
+          - generic [ref=f1e133]:
+            - generic [ref=f1e134]:
+              - img [ref=f1e135]
+              - heading "Working hours" [level=3] [ref=f1e138]
+            - generic [ref=f1e139]:
+              - generic [ref=f1e140]:
+                - generic [ref=f1e141]:
+                  - generic [ref=f1e142]: Day starts
+                  - combobox "Day starts" [ref=f1e143]:
+                    - option "5:00"
+                    - option "6:00"
+                    - option "7:00"
+                    - option "8:00" [selected]
+                    - option "9:00"
+                    - option "10:00"
+                    - option "11:00"
+                    - option "12:00"
+                    - option "13:00"
+                    - option "14:00"
+                    - option "15:00"
+                    - option "16:00"
+                - generic [ref=f1e144]:
+                  - generic [ref=f1e145]: Day ends
+                  - combobox "Day ends" [ref=f1e146]:
+                    - option "17:00"
+                    - option "18:00"
+                    - option "19:00"
+                    - option "20:00"
+                    - option "21:00"
+                    - option "22:00" [selected]
+                    - option "23:00"
+                    - option "24:00"
+              - paragraph [ref=f1e147]: Pulse only schedules focus blocks inside these hours.
+          - generic [ref=f1e148]:
+            - generic [ref=f1e149]:
+              - img [ref=f1e150]
+              - heading "Notifications" [level=3] [ref=f1e153]
+            - generic [ref=f1e154]:
+              - generic [ref=f1e155]:
+                - generic [ref=f1e156]:
+                  - paragraph [ref=f1e157]: Smart reminders
+                  - paragraph [ref=f1e158]: Context-aware nudges, not just “due tomorrow”.
+                - switch [checked] [ref=f1e159]
+              - generic [ref=f1e161]:
+                - generic [ref=f1e162]:
+                  - paragraph [ref=f1e163]: Daily briefing
+                  - paragraph [ref=f1e164]: A morning summary of your day.
+                - switch [checked] [ref=f1e165]
+              - generic [ref=f1e167]:
+                - generic [ref=f1e168]:
+                  - paragraph [ref=f1e169]: Weekly review
+                  - paragraph [ref=f1e170]: Sunday recap + next week's plan.
+                - switch [checked] [ref=f1e171]
+              - generic [ref=f1e173]:
+                - generic [ref=f1e174]:
+                  - paragraph [ref=f1e175]: Deadline risk alerts
+                  - paragraph [ref=f1e176]: Warn me when a deadline hits high risk.
+                - switch [checked] [ref=f1e177]
+          - generic [ref=f1e179]:
+            - generic [ref=f1e180]:
+              - img [ref=f1e181]
+              - heading "AI planning" [level=3] [ref=f1e193]
+            - generic [ref=f1e194]:
+              - generic [ref=f1e195]:
+                - generic [ref=f1e196]:
+                  - img [ref=f1e197]
+                  - text: Planning style
+                - combobox "Planning style" [ref=f1e199]:
+                  - option "Relaxed — more buffers & breaks"
+                  - option "Balanced — the default" [selected]
+                  - option "Aggressive — pack the day, hit deadlines"
+              - generic [ref=f1e200]:
+                - generic [ref=f1e201]:
+                  - paragraph [ref=f1e202]: Energy-aware scheduling
+                  - paragraph [ref=f1e203]: Put hard tasks in your peak-focus windows.
+                - switch [checked] [ref=f1e204]
+              - generic [ref=f1e206]:
+                - generic [ref=f1e207]:
+                  - paragraph [ref=f1e208]: Auto-reschedule
+                  - paragraph [ref=f1e209]: Let Pulse move slipped tasks automatically.
+                - switch [checked] [ref=f1e210]

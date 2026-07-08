@@ -200,6 +200,14 @@ const testimonials: TTestimonial[] = [
 
 const projects: TProject[] = [
   {
+    name: "Pulse — AI Chief of Staff",
+    description:
+      "An AI productivity companion (Next.js + FastAPI + Supabase) that proactively plans your day, prioritizes tasks with written explanations, and predicts missed deadlines with a live risk score. Includes an AI planner/chat powered by GPT (OpenRouter), a smart scheduler, habit tracking, goal roadmaps, and analytics — in a premium glassmorphic dark UI.",
+    tags: [],
+    image: "https://images.unsplash.com/photo-1506784365847-bbad939e9335?w=500&q=80",
+    sourceCodeLink: "/pulse",
+  },
+  {
     name: "Tax Calculator",
     description:
       "Web-based platform that allows users to calculate income tax, compare tax slabs, and estimate deductions, providing a convenient and efficient solution for tax planning needs.",

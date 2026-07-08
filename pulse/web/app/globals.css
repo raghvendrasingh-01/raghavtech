@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+/*
+  Pulse design system — premium dark theme.
+  Tailwind v4 is CSS-first: tokens declared in @theme become utilities
+  (e.g. `--color-brand` -> `bg-brand`, `text-brand`, `border-brand`).
+*/
+
+@theme {
+  /* ---- Surfaces / structure ---- */
+  --color-bg: oklch(0.16 0.015 275);         /* near-black with a violet undertone */
+  --color-bg-elevated: oklch(0.19 0.018 275);
+  --color-surface: oklch(0.21 0.02 275);      /* card base */
+  --color-surface-2: oklch(0.25 0.022 275);   /* raised card / hover */
+  --color-border: oklch(0.32 0.02 275 / 0.6);
+  --color-border-strong: oklch(0.4 0.025 275 / 0.75);
+
+  /* ---- Text ---- */
+  --color-fg: oklch(0.97 0.005 275);
+  --color-muted: oklch(0.72 0.015 275);
+  --color-subtle: oklch(0.55 0.02 275);
+
+  /* ---- Brand gradient stops ---- */
+  --color-brand: oklch(0.66 0.2 285);         /* violet */
+  --color-brand-2: oklch(0.72 0.16 240);      /* indigo/blue */
+  --color-brand-3: oklch(0.78 0.14 200);      /* cyan */
+  --color-brand-soft: oklch(0.66 0.2 285 / 0.14);
+
+  /* ---- Priority / semantic ---- */
+  --color-critical: oklch(0.66 0.21 18);      /* rose-red */
+  --color-high: oklch(0.76 0.16 65);          /* amber */
+  --color-medium: oklch(0.72 0.15 240);       /* blue */
+  --color-low: oklch(0.75 0.14 165);          /* emerald */
+  --color-success: oklch(0.78 0.16 155);
+  --color-warning: oklch(0.8 0.16 85);
+  --color-danger: oklch(0.66 0.21 18);
+
+  /* ---- Radius scale ---- */
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+
+  /* ---- Fonts (wired in layout.tsx) ---- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), var(--font-inter), sans-serif;
+  --font-mono: var(--font-mono-code), ui-monospace, monospace;
+
+  /* ---- Motion ---- */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    /* Ambient aurora glows behind the whole app */
+    background-image:
+      radial-gradient(60rem 60rem at 12% -10%, oklch(0.66 0.2 285 / 0.14), transparent 60%),
+      radial-gradient(50rem 50rem at 100% 0%, oklch(0.72 0.16 240 / 0.12), transparent 55%),
+      radial-gradient(45rem 45rem at 50% 120%, oklch(0.78 0.14 200 / 0.08), transparent 60%);
+    background-attachment: fixed;
+  }
+  ::selection {
+    background: var(--color-brand-soft);
+    color: var(--color-fg);
+  }
+  select option {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+  }
+  /* Slim, on-theme scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+  *::-webkit-scrollbar { width: 8px; height: 8px; }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: 9999px;
+  }
+}
+
+@layer utilities {
+  /* Glassmorphism card surface */
+  .glass {
+    background: linear-gradient(
+      180deg,
+      oklch(1 0 0 / 0.05),
+      oklch(1 0 0 / 0.02)
+    );
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--color-border);
+  }
+  .glass-strong {
+    background: linear-gradient(
+      180deg,
+      oklch(1 0 0 / 0.08),
+      oklch(1 0 0 / 0.03)
+    );
+    backdrop-filter: blur(22px) saturate(160%);
+    border: 1px solid var(--color-border-strong);
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    background: linear-gradient(
+      100deg,
+      var(--color-brand),
+      var(--color-brand-2) 45%,
+      var(--color-brand-3)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Brand glow shadow */
+  .glow-brand {
+    box-shadow:
+      0 0 0 1px var(--color-border),
+      0 8px 40px -12px oklch(0.66 0.2 285 / 0.5);
+  }
+
+  /* Fine gradient hairline used on premium cards */
+  .card-sheen {
+    position: relative;
+  }
+  .card-sheen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      130deg,
+      oklch(1 0 0 / 0.14),
+      transparent 30%,
+      transparent 70%,
+      oklch(1 0 0 / 0.06)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 75%);
+  }
+
+  .animate-float { animation: float 6s var(--ease-spring) infinite; }
+  .animate-shimmer {
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+  }
+  .animate-pulse-glow { animation: pulseGlow 2.4s ease-in-out infinite; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}

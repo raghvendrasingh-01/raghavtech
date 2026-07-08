@@ -1,0 +1,110 @@
+- generic [active] [ref=f3e1]:
+  - alert [ref=f3e2]
+  - generic [ref=f3e3]:
+    - complementary [ref=f3e4]:
+      - generic [ref=f3e5]:
+        - link "Pulse" [ref=f3e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f3e8]:
+            - img [ref=f3e10]
+            - generic [ref=f3e13]: Pulse
+        - navigation [ref=f3e14]:
+          - generic [ref=f3e15]:
+            - paragraph [ref=f3e16]: Workspace
+            - generic [ref=f3e17]:
+              - link "Dashboard" [ref=f3e18] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=f3e19]
+                - generic [ref=f3e24]: Dashboard
+              - link "Tasks" [ref=f3e25] [cursor=pointer]:
+                - /url: /tasks
+                - img [ref=f3e26]
+                - generic [ref=f3e29]: Tasks
+              - link "Calendar" [ref=f3e30] [cursor=pointer]:
+                - /url: /calendar
+                - img [ref=f3e31]
+                - generic [ref=f3e33]: Calendar
+          - generic [ref=f3e34]:
+            - paragraph [ref=f3e35]: Intelligence
+            - generic [ref=f3e36]:
+              - link "AI Planner" [ref=f3e37] [cursor=pointer]:
+                - /url: /planner
+                - img [ref=f3e38]
+                - generic [ref=f3e41]: AI Planner
+              - link "AI Chat" [ref=f3e42] [cursor=pointer]:
+                - /url: /chat
+                - img [ref=f3e44]
+                - generic [ref=f3e46]: AI Chat
+          - generic [ref=f3e47]:
+            - paragraph [ref=f3e48]: Growth
+            - generic [ref=f3e49]:
+              - link "Habits" [ref=f3e50] [cursor=pointer]:
+                - /url: /habits
+                - img [ref=f3e51]
+                - generic [ref=f3e53]: Habits
+              - link "Goals" [ref=f3e54] [cursor=pointer]:
+                - /url: /goals
+                - img [ref=f3e55]
+                - generic [ref=f3e59]: Goals
+              - link "Analytics" [ref=f3e60] [cursor=pointer]:
+                - /url: /analytics
+                - img [ref=f3e61]
+                - generic [ref=f3e63]: Analytics
+              - link "Settings" [ref=f3e64] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=f3e65]
+                - generic [ref=f3e68]: Settings
+        - generic [ref=f3e69]:
+          - paragraph [ref=f3e70]: Pulse Pro
+          - paragraph [ref=f3e71]: Unlimited AI planning, Google Calendar sync & burnout radar.
+          - button "Upgrade" [ref=f3e72]
+    - generic [ref=f3e74]:
+      - banner [ref=f3e75]:
+        - generic [ref=f3e76]:
+          - generic [ref=f3e77]:
+            - heading "AI Chat" [level=1] [ref=f3e78]
+            - generic [ref=f3e79]:
+              - img [ref=f3e80]
+              - text: AI active
+          - generic [ref=f3e83]:
+            - img [ref=f3e84]
+            - textbox "Ask Pulse or search…" [ref=f3e87]
+            - generic [ref=f3e88]: ⌘K
+          - button [ref=f3e89]:
+            - img [ref=f3e90]
+          - link "New task" [ref=f3e94] [cursor=pointer]:
+            - /url: /tasks?new=1
+            - button "New task" [ref=f3e95]:
+              - img [ref=f3e96]
+              - text: New task
+          - generic [ref=f3e97]: RS
+      - main [ref=f3e98]:
+        - generic [ref=f3e99]:
+          - generic [ref=f3e100]:
+            - generic [ref=f3e101]:
+              - img [ref=f3e103]
+              - generic [ref=f3e109]:
+                - text: Morning! I've reviewed your day.
+                - strong [ref=f3e110]: Data Structures Assignment 3
+                - text: is your biggest risk — due tomorrow with ~4.8h of work left. Want me to build your day around it?
+            - generic [ref=f3e124]:
+              - generic [ref=f3e125]: RS
+              - paragraph [ref=f3e127]: Plan my entire week — 2 assignments, an interview, and an exam.
+            - generic [ref=f3e128]:
+              - img [ref=f3e130]
+              - generic [ref=f3e136]:
+                - text: "Here's a plan for your week, weighted by priority and deadline risk:"
+                - strong [ref=f3e137]: Today
+                - text: — 8:00 AM Data Structures Assignment 3 · 2:30 PM Google interview prep — Dynamic Programming · 7:15 PM Physics problem set 6
+                - strong [ref=f3e138]: Monday
+                - text: — 8:00 AM Physics problem set 6 · 8:15 AM Read DDIA — Chapter 4 (Encoding) ⚠️ 3 items won't fit this week (Ship Pulse hackathon MVP, Pay credit card bill). Consider trimming scope. I front-loaded the highest-risk work and spread the rest so nothing piles up. Say the word and I'll drop it on your calendar.
+          - generic [ref=f3e111]:
+            - generic [ref=f3e112]:
+              - button "Regenerate" [ref=f3e139]
+              - button "Show risks" [ref=f3e140]
+              - button "Add a task" [ref=f3e141]
+            - generic [ref=f3e117]:
+              - textbox "Ask Pulse to plan, prioritize, or reschedule…" [ref=f3e118]
+              - button [disabled] [ref=f3e119]:
+                - img [ref=f3e120]
+            - paragraph [ref=f3e123]: Pulse plans from your real tasks & calendar. Enter to send · Shift+Enter for a new line.

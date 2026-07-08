@@ -1,0 +1,168 @@
+- generic [active] [ref=f4e1]:
+  - alert [ref=f4e2]
+  - generic [ref=f4e3]:
+    - complementary [ref=f4e4]:
+      - generic [ref=f4e5]:
+        - link "Pulse" [ref=f4e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f4e8]:
+            - img [ref=f4e10]
+            - generic [ref=f4e13]: Pulse
+        - navigation [ref=f4e14]:
+          - generic [ref=f4e15]:
+            - paragraph [ref=f4e16]: Workspace
+            - generic [ref=f4e17]:
+              - link "Dashboard" [ref=f4e18] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=f4e19]
+                - generic [ref=f4e24]: Dashboard
+              - link "Tasks" [ref=f4e25] [cursor=pointer]:
+                - /url: /tasks
+                - img [ref=f4e26]
+                - generic [ref=f4e29]: Tasks
+              - link "Calendar" [ref=f4e30] [cursor=pointer]:
+                - /url: /calendar
+                - img [ref=f4e31]
+                - generic [ref=f4e33]: Calendar
+          - generic [ref=f4e34]:
+            - paragraph [ref=f4e35]: Intelligence
+            - generic [ref=f4e36]:
+              - link "AI Planner" [ref=f4e37] [cursor=pointer]:
+                - /url: /planner
+                - img [ref=f4e38]
+                - generic [ref=f4e41]: AI Planner
+              - link "AI Chat" [ref=f4e42] [cursor=pointer]:
+                - /url: /chat
+                - img [ref=f4e43]
+                - generic [ref=f4e45]: AI Chat
+          - generic [ref=f4e46]:
+            - paragraph [ref=f4e47]: Growth
+            - generic [ref=f4e48]:
+              - link "Habits" [ref=f4e49] [cursor=pointer]:
+                - /url: /habits
+                - img [ref=f4e50]
+                - generic [ref=f4e52]: Habits
+              - link "Goals" [ref=f4e53] [cursor=pointer]:
+                - /url: /goals
+                - img [ref=f4e54]
+                - generic [ref=f4e58]: Goals
+              - link "Analytics" [ref=f4e59] [cursor=pointer]:
+                - /url: /analytics
+                - img [ref=f4e61]
+                - generic [ref=f4e63]: Analytics
+              - link "Settings" [ref=f4e64] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=f4e65]
+                - generic [ref=f4e68]: Settings
+        - generic [ref=f4e69]:
+          - paragraph [ref=f4e70]: Pulse Pro
+          - paragraph [ref=f4e71]: Unlimited AI planning, Google Calendar sync & burnout radar.
+          - button "Upgrade" [ref=f4e72]
+    - generic [ref=f4e74]:
+      - banner [ref=f4e75]:
+        - generic [ref=f4e76]:
+          - generic [ref=f4e77]:
+            - heading "Analytics" [level=1] [ref=f4e78]
+            - generic [ref=f4e79]:
+              - img [ref=f4e80]
+              - text: AI active
+          - generic [ref=f4e83]:
+            - img [ref=f4e84]
+            - textbox "Ask Pulse or search…" [ref=f4e87]
+            - generic [ref=f4e88]: ⌘K
+          - button [ref=f4e89]:
+            - img [ref=f4e90]
+          - link "New task" [ref=f4e94] [cursor=pointer]:
+            - /url: /tasks?new=1
+            - button "New task" [ref=f4e95]:
+              - img [ref=f4e96]
+              - text: New task
+          - generic [ref=f4e97]: RS
+      - main [ref=f4e98]:
+        - generic [ref=f4e99]:
+          - generic [ref=f4e100]:
+            - heading "Analytics" [level=2] [ref=f4e101]
+            - paragraph [ref=f4e102]: How you actually spend your time — and how to get better.
+          - generic [ref=f4e103]:
+            - generic [ref=f4e104]:
+              - img [ref=f4e106]
+              - generic [ref=f4e109]:
+                - generic [ref=f4e110]: "101"
+                - generic [ref=f4e111]: Tasks completed
+            - generic [ref=f4e112]:
+              - img [ref=f4e114]
+              - generic [ref=f4e118]:
+                - generic [ref=f4e119]: 0%
+                - generic [ref=f4e120]: Success rate
+            - generic [ref=f4e121]:
+              - img [ref=f4e123]
+              - generic [ref=f4e126]:
+                - generic [ref=f4e127]: 3.1h
+                - generic [ref=f4e128]: Avg focus / day
+            - generic [ref=f4e129]:
+              - img [ref=f4e131]
+              - generic [ref=f4e138]:
+                - generic [ref=f4e139]: "1"
+                - generic [ref=f4e140]: Missed deadlines
+          - generic [ref=f4e141]:
+            - generic [ref=f4e142]:
+              - paragraph [ref=f4e143]: Productivity trend · 21 days
+              - application [ref=f4e147]:
+                - generic [ref=f4e156]:
+                  - generic [ref=f4e157]:
+                    - generic [ref=f4e159]: 06-15
+                    - generic [ref=f4e161]: 06-19
+                    - generic [ref=f4e163]: 06-23
+                    - generic [ref=f4e165]: 06-27
+                    - generic [ref=f4e167]: 07-01
+                    - generic [ref=f4e169]: 07-05
+                  - generic [ref=f4e170]:
+                    - generic [ref=f4e172]: "30"
+                    - generic [ref=f4e174]: "50"
+                    - generic [ref=f4e176]: "70"
+                    - generic [ref=f4e178]: "90"
+                    - generic [ref=f4e180]: "100"
+            - generic [ref=f4e181]:
+              - paragraph [ref=f4e182]: Work by category
+              - application [ref=f4e186]
+              - generic [ref=f4e187]:
+                - generic [ref=f4e188]: Study
+                - generic [ref=f4e190]: Interview
+                - generic [ref=f4e192]: Finance
+                - generic [ref=f4e194]: Project
+                - generic [ref=f4e196]: Work
+                - generic [ref=f4e198]: Personal
+          - generic [ref=f4e200]:
+            - generic [ref=f4e201]:
+              - paragraph [ref=f4e202]: Focus hours · last 14 days
+              - application [ref=f4e206]:
+                - generic [ref=f4e207]:
+                  - generic [ref=f4e208]:
+                    - generic [ref=f4e210]: 06-22
+                    - generic [ref=f4e212]: 06-24
+                    - generic [ref=f4e214]: 06-26
+                    - generic [ref=f4e216]: 06-28
+                    - generic [ref=f4e218]: 06-30
+                    - generic [ref=f4e220]: 07-02
+                    - generic [ref=f4e222]: 07-04
+                  - generic [ref=f4e223]:
+                    - generic [ref=f4e225]: "0"
+                    - generic [ref=f4e227]: "0.95"
+                    - generic [ref=f4e229]: "1.9"
+                    - generic [ref=f4e231]: "2.85"
+                    - generic [ref=f4e233]: "3.8"
+            - generic [ref=f4e234]:
+              - generic [ref=f4e235]:
+                - img [ref=f4e236]
+                - text: AI recommendations
+              - generic [ref=f4e239]:
+                - generic [ref=f4e240]:
+                  - img [ref=f4e241]
+                  - paragraph [ref=f4e244]: Your score is up +7 this week. Mornings are your most productive block — protect 9–11 AM.
+                - generic [ref=f4e245]:
+                  - img [ref=f4e246]
+                  - paragraph [ref=f4e249]: You average 3.1h of focus a day. Adding one more 90-min deep block would lift your weekly output ~15%.
+                - generic [ref=f4e250]:
+                  - img [ref=f4e251]
+                  - paragraph [ref=f4e258]: 1 missed recently — enable earlier risk alerts so Pulse warns you 2 days out.
+  - generic [ref=f4e259]: "0"

@@ -1,0 +1,425 @@
+- generic [active] [ref=f4e1]:
+  - alert [ref=f4e2]
+  - generic [ref=f4e3]:
+    - complementary [ref=f4e4]:
+      - generic [ref=f4e5]:
+        - link "Pulse" [ref=f4e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f4e8]:
+            - img [ref=f4e10]
+            - generic [ref=f4e13]: Pulse
+        - navigation [ref=f4e14]:
+          - generic [ref=f4e15]:
+            - paragraph [ref=f4e16]: Workspace
+            - generic [ref=f4e17]:
+              - link "Dashboard" [ref=f4e18] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=f4e20]
+                - generic [ref=f4e25]: Dashboard
+              - link "Tasks" [ref=f4e26] [cursor=pointer]:
+                - /url: /tasks
+                - img [ref=f4e27]
+                - generic [ref=f4e30]: Tasks
+              - link "Calendar" [ref=f4e31] [cursor=pointer]:
+                - /url: /calendar
+                - img [ref=f4e32]
+                - generic [ref=f4e34]: Calendar
+          - generic [ref=f4e35]:
+            - paragraph [ref=f4e36]: Intelligence
+            - generic [ref=f4e37]:
+              - link "AI Planner" [ref=f4e38] [cursor=pointer]:
+                - /url: /planner
+                - img [ref=f4e39]
+                - generic [ref=f4e42]: AI Planner
+              - link "AI Chat" [ref=f4e43] [cursor=pointer]:
+                - /url: /chat
+                - img [ref=f4e44]
+                - generic [ref=f4e46]: AI Chat
+          - generic [ref=f4e47]:
+            - paragraph [ref=f4e48]: Growth
+            - generic [ref=f4e49]:
+              - link "Habits" [ref=f4e50] [cursor=pointer]:
+                - /url: /habits
+                - img [ref=f4e51]
+                - generic [ref=f4e53]: Habits
+              - link "Goals" [ref=f4e54] [cursor=pointer]:
+                - /url: /goals
+                - img [ref=f4e55]
+                - generic [ref=f4e59]: Goals
+              - link "Analytics" [ref=f4e60] [cursor=pointer]:
+                - /url: /analytics
+                - img [ref=f4e61]
+                - generic [ref=f4e63]: Analytics
+              - link "Settings" [ref=f4e64] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=f4e65]
+                - generic [ref=f4e68]: Settings
+        - generic [ref=f4e69]:
+          - paragraph [ref=f4e70]: Pulse Pro
+          - paragraph [ref=f4e71]: Unlimited AI planning, Google Calendar sync & burnout radar.
+          - button "Upgrade" [ref=f4e72]
+    - generic [ref=f4e74]:
+      - banner [ref=f4e75]:
+        - generic [ref=f4e76]:
+          - generic [ref=f4e77]:
+            - heading "Dashboard" [level=1] [ref=f4e78]
+            - generic [ref=f4e79]:
+              - img [ref=f4e80]
+              - text: AI active
+          - generic [ref=f4e83]:
+            - img [ref=f4e84]
+            - textbox "Ask Pulse or search…" [ref=f4e87]
+            - generic [ref=f4e88]: ⌘K
+          - button "Notifications" [ref=f4e90]:
+            - img [ref=f4e91]
+            - generic [ref=f4e94]: "3"
+          - link "New task" [ref=f4e95] [cursor=pointer]:
+            - /url: /tasks?new=1
+            - button "New task" [ref=f4e96]:
+              - img [ref=f4e97]
+              - text: New task
+          - link "RS" [ref=f4e98] [cursor=pointer]:
+            - /url: /settings
+      - main [ref=f4e99]:
+        - generic [ref=f4e100]:
+          - generic [ref=f4e101]:
+            - generic [ref=f4e102]:
+              - heading "Good morning, Raghvendra" [level=2] [ref=f4e103]
+              - paragraph [ref=f4e104]:
+                - generic [ref=f4e105]:
+                  - text: You have 4 events and 7 open tasks today.
+                  - strong [ref=f4e106]: Data Structures Assignment 3
+                  - text: is your biggest risk at 74% — I'd start there.
+            - generic [ref=f4e107]:
+              - generic [ref=f4e108]:
+                - img [ref=f4e110]
+                - generic [ref=f4e113]:
+                  - generic [ref=f4e114]: "7"
+                  - generic [ref=f4e115]: Open tasks
+              - generic [ref=f4e116]:
+                - img [ref=f4e118]
+                - generic [ref=f4e120]:
+                  - generic [ref=f4e121]: "1"
+                  - generic [ref=f4e122]: At risk
+              - generic [ref=f4e123]:
+                - img [ref=f4e125]
+                - generic [ref=f4e128]:
+                  - generic [ref=f4e129]: 6.3h
+                  - generic [ref=f4e130]: Focus planned
+              - generic [ref=f4e131]:
+                - img [ref=f4e133]
+                - generic [ref=f4e135]:
+                  - generic [ref=f4e136]: "4"
+                  - generic [ref=f4e137]: Events today
+          - generic [ref=f4e138]:
+            - generic [ref=f4e139]:
+              - generic [ref=f4e140]:
+                - generic [ref=f4e141]:
+                  - img [ref=f4e142]
+                  - generic [ref=f4e144]: Deadline Radar
+                - generic [ref=f4e145]:
+                  - generic [ref=f4e146]:
+                    - img [ref=f4e147]
+                    - generic [ref=f4e151]:
+                      - generic [ref=f4e152]: 74%
+                      - generic [ref=f4e153]: miss risk
+                  - generic [ref=f4e154]:
+                    - heading "Data Structures Assignment 3" [level=3] [ref=f4e155]
+                    - paragraph [ref=f4e156]: due in 5h · 6.4h left of work
+                    - paragraph [ref=f4e157]: Cutting it close. ~6.4h of work vs. ~3.8h free — one distraction and it slips.
+                    - paragraph [ref=f4e158]: Block a focus session in your next free slot today. I can schedule it for you.
+                    - generic [ref=f4e159]:
+                      - button "Rescue my day" [ref=f4e160]:
+                        - generic [ref=f4e161]:
+                          - img [ref=f4e162]
+                          - text: Rescue my day
+                      - link "Break it down" [ref=f4e165] [cursor=pointer]:
+                        - /url: /tasks?focus=t1
+                        - button "Break it down" [ref=f4e166]:
+                          - img [ref=f4e167]
+                          - text: Break it down
+                      - link "Plan around it" [ref=f4e173] [cursor=pointer]:
+                        - /url: /planner
+                        - button "Plan around it" [ref=f4e174]:
+                          - text: Plan around it
+                          - img [ref=f4e175]
+              - generic [ref=f4e177]:
+                - generic [ref=f4e178]:
+                  - img [ref=f4e179]
+                  - heading "Today's schedule" [level=3] [ref=f4e183]
+                  - generic [ref=f4e184]:
+                    - button "Regenerate" [ref=f4e185]:
+                      - img [ref=f4e186]
+                      - text: Regenerate
+                    - link "View all" [ref=f4e191] [cursor=pointer]:
+                      - /url: /planner
+                - generic [ref=f4e193]:
+                  - generic [ref=f4e194]:
+                    - generic [ref=f4e195]: 10:00 AM–12:00 PM
+                    - img [ref=f4e197]
+                    - generic [ref=f4e201]: Algorithms lecture
+                    - generic [ref=f4e202]: Now
+                  - generic [ref=f4e204]:
+                    - generic [ref=f4e205]: 12:00 PM–1:30 PM
+                    - img [ref=f4e207]
+                    - generic [ref=f4e209]: Data Structures Assignment 3
+                    - generic [ref=f4e210]: Rescue
+                  - generic [ref=f4e211]:
+                    - generic [ref=f4e212]: 1:30 PM–2:00 PM
+                    - img [ref=f4e214]
+                    - generic [ref=f4e216]: Data Structures Assignment 3
+                    - generic [ref=f4e217]: Rescue
+                  - generic [ref=f4e218]:
+                    - generic [ref=f4e219]: 2:00 PM–2:30 PM
+                    - img [ref=f4e221]
+                    - generic [ref=f4e225]: 1:1 with mentor
+                  - generic [ref=f4e226]:
+                    - generic [ref=f4e227]: 2:30 PM–2:45 PM
+                    - img [ref=f4e229]
+                    - generic [ref=f4e231]: Break
+                  - generic [ref=f4e232]:
+                    - generic [ref=f4e233]: 2:45 PM–4:15 PM
+                    - img [ref=f4e235]
+                    - generic [ref=f4e237]: Data Structures Assignment 3
+                    - generic [ref=f4e238]: Rescue
+                  - generic [ref=f4e239]:
+                    - generic [ref=f4e240]: 6:00 PM–7:00 PM
+                    - img [ref=f4e242]
+                    - generic [ref=f4e246]: Gym
+                  - generic [ref=f4e247]:
+                    - generic [ref=f4e248]: 7:00 PM–8:30 PM
+                    - img [ref=f4e250]
+                    - generic [ref=f4e253]: Google interview prep — Dynamic Programming
+                  - generic [ref=f4e254]:
+                    - generic [ref=f4e255]: 8:30 PM–8:45 PM
+                    - img [ref=f4e257]
+                    - generic [ref=f4e259]: Break
+                  - generic [ref=f4e260]:
+                    - generic [ref=f4e261]: 8:45 PM–10:00 PM
+                    - img [ref=f4e263]
+                    - generic [ref=f4e266]: Google interview prep — Dynamic Programming
+              - generic [ref=f4e267]:
+                - generic [ref=f4e268]:
+                  - img [ref=f4e269]
+                  - heading "Urgent tasks" [level=3] [ref=f4e271]
+                  - link "View all" [ref=f4e273] [cursor=pointer]:
+                    - /url: /tasks
+                - generic [ref=f4e275]:
+                  - generic [ref=f4e276]:
+                    - button "Complete task" [ref=f4e277]:
+                      - img [ref=f4e278]
+                    - img [ref=f4e281]
+                    - generic [ref=f4e284]:
+                      - generic [ref=f4e286]: Data Structures Assignment 3
+                      - generic [ref=f4e287]:
+                        - generic [ref=f4e288]: critical
+                        - generic [ref=f4e289]: due in 5h
+                    - generic [ref=f4e293]: 20%
+                  - generic [ref=f4e294]:
+                    - button "Complete task" [ref=f4e295]:
+                      - img [ref=f4e296]
+                    - img [ref=f4e299]
+                    - generic [ref=f4e301]:
+                      - generic [ref=f4e303]: Ship Pulse hackathon MVP
+                      - generic [ref=f4e304]:
+                        - generic [ref=f4e305]: critical
+                        - generic [ref=f4e306]: due in 7h
+                    - generic [ref=f4e310]: 40%
+                  - generic [ref=f4e311]:
+                    - button "Complete task" [ref=f4e312]:
+                      - img [ref=f4e313]
+                    - img [ref=f4e316]
+                    - generic [ref=f4e319]:
+                      - generic [ref=f4e321]: Pay credit card bill
+                      - generic [ref=f4e322]:
+                        - generic [ref=f4e323]: high
+                        - generic [ref=f4e324]: due in 4h
+                    - generic [ref=f4e327]: 0%
+                  - generic [ref=f4e328]:
+                    - button "Complete task" [ref=f4e329]:
+                      - img [ref=f4e330]
+                    - img [ref=f4e333]
+                    - generic [ref=f4e336]:
+                      - generic [ref=f4e338]: Send standup notes to team
+                      - generic [ref=f4e339]:
+                        - generic [ref=f4e340]: high
+                        - generic [ref=f4e341]: due in 3h
+                    - generic [ref=f4e344]: 0%
+                  - generic [ref=f4e345]:
+                    - button "Complete task" [ref=f4e346]:
+                      - img [ref=f4e347]
+                    - img [ref=f4e350]
+                    - generic [ref=f4e355]:
+                      - generic [ref=f4e357]: Google interview prep — Dynamic Programming
+                      - generic [ref=f4e358]:
+                        - generic [ref=f4e359]: medium
+                        - generic [ref=f4e360]: due in 3d
+                    - generic [ref=f4e364]: 30%
+              - generic [ref=f4e365]:
+                - generic [ref=f4e366]:
+                  - img [ref=f4e367]
+                  - heading "Recent activity" [level=3] [ref=f4e369]
+                - list [ref=f4e371]:
+                  - listitem [ref=f4e372]:
+                    - img [ref=f4e374]
+                    - generic [ref=f4e377]:
+                      - paragraph [ref=f4e378]: Completed “AVL insert + rotations”
+                      - paragraph [ref=f4e379]: 3h ago
+                  - listitem [ref=f4e380]:
+                    - img [ref=f4e382]
+                    - generic [ref=f4e384]:
+                      - paragraph [ref=f4e385]: 🔥 12-day Coding streak
+                      - paragraph [ref=f4e386]: 3h ago
+                  - listitem [ref=f4e387]:
+                    - img [ref=f4e389]
+                    - generic [ref=f4e393]:
+                      - paragraph [ref=f4e394]: Pulse moved DP prep to tonight to protect your deadline
+                      - paragraph [ref=f4e395]: 13h ago
+                  - listitem [ref=f4e396]:
+                    - img [ref=f4e398]
+                    - generic [ref=f4e399]:
+                      - paragraph [ref=f4e400]: Added “Physics problem set 6”
+                      - paragraph [ref=f4e401]: 1d ago
+                  - listitem [ref=f4e402]:
+                    - img [ref=f4e404]
+                    - generic [ref=f4e407]:
+                      - paragraph [ref=f4e408]: Completed “Resume review”
+                      - paragraph [ref=f4e409]: 19h ago
+                  - listitem [ref=f4e410]:
+                    - img [ref=f4e412]
+                    - generic [ref=f4e419]:
+                      - paragraph [ref=f4e420]: Missed “Water the plants” 🪴
+                      - paragraph [ref=f4e421]: 2d ago
+            - generic [ref=f4e422]:
+              - generic [ref=f4e423]:
+                - generic [ref=f4e424]:
+                  - img [ref=f4e425]
+                  - heading "Productivity score" [level=3] [ref=f4e428]
+                  - link "View all" [ref=f4e430] [cursor=pointer]:
+                    - /url: /analytics
+                - generic [ref=f4e433]:
+                  - generic [ref=f4e434]:
+                    - generic [ref=f4e435]: "80"
+                    - generic [ref=f4e436]:
+                      - img [ref=f4e437]
+                      - text: "+7"
+                  - generic [ref=f4e440]: Excellent · vs last week
+              - generic [ref=f4e443]:
+                - generic [ref=f4e444]:
+                  - img [ref=f4e445]
+                  - heading "AI suggestions" [level=3] [ref=f4e448]
+                - generic [ref=f4e450]:
+                  - generic [ref=f4e452]:
+                    - img [ref=f4e454]
+                    - generic [ref=f4e456]:
+                      - paragraph [ref=f4e457]: Data Structures Assignment 3 is at 74% miss risk
+                      - paragraph [ref=f4e458]: Cutting it close. ~6.4h of work vs. ~3.8h free — one distraction and it slips. Block a focus session in your next free slot today. I can schedule it for you.
+                      - button "Rescue this deadline" [ref=f4e459]:
+                        - text: Rescue this deadline
+                        - img [ref=f4e460]
+                  - generic [ref=f4e463]:
+                    - img [ref=f4e465]
+                    - generic [ref=f4e467]:
+                      - paragraph [ref=f4e468]: Your day is overloaded
+                      - paragraph [ref=f4e469]: Heads up — 15.6h of committed work today (3.8h in meetings). That's above a sustainable load. Protect one block and consider pushing a low-priority item.
+                      - button "Rebalance my day" [ref=f4e470]:
+                        - text: Rebalance my day
+                        - img [ref=f4e471]
+                  - generic [ref=f4e474]:
+                    - img [ref=f4e476]
+                    - generic [ref=f4e482]:
+                      - paragraph [ref=f4e483]: Your peak focus window is 9–11 AM
+                      - paragraph [ref=f4e484]: Based on when you complete the most work, I've reserved deep-work blocks in the morning for your hardest tasks.
+                      - button "Use this window" [ref=f4e485]:
+                        - text: Use this window
+                        - img [ref=f4e486]
+                  - generic [ref=f4e489]:
+                    - img [ref=f4e491]
+                    - generic [ref=f4e493]:
+                      - paragraph [ref=f4e494]: Do "Data Structures Assignment 3" first today
+                      - paragraph [ref=f4e495]: Critical — driven mainly by tightness (needs more time than is left), with urgency (due in 5h) reinforcing it.
+                      - button "Start now" [ref=f4e496]:
+                        - text: Start now
+                        - img [ref=f4e497]
+              - generic [ref=f4e499]:
+                - generic [ref=f4e500]:
+                  - img [ref=f4e501]
+                  - heading "Upcoming deadlines" [level=3] [ref=f4e505]
+                  - link "View all" [ref=f4e507] [cursor=pointer]:
+                    - /url: /tasks
+                - generic [ref=f4e509]:
+                  - generic [ref=f4e510]:
+                    - img [ref=f4e512]
+                    - generic [ref=f4e515]:
+                      - paragraph [ref=f4e516]: Send standup notes to team
+                      - paragraph [ref=f4e517]: Sun, Jul 5 · 2:16 PM
+                    - generic [ref=f4e518]: in 3h
+                  - generic [ref=f4e519]:
+                    - img [ref=f4e521]
+                    - generic [ref=f4e524]:
+                      - paragraph [ref=f4e525]: Pay credit card bill
+                      - paragraph [ref=f4e526]: Sun, Jul 5 · 3:16 PM
+                    - generic [ref=f4e527]: in 4h
+                  - generic [ref=f4e528]:
+                    - img [ref=f4e530]
+                    - generic [ref=f4e533]:
+                      - paragraph [ref=f4e534]: Data Structures Assignment 3
+                      - paragraph [ref=f4e535]: Sun, Jul 5 · 4:16 PM
+                    - generic [ref=f4e536]: in 5h
+                  - generic [ref=f4e537]:
+                    - img [ref=f4e539]
+                    - generic [ref=f4e541]:
+                      - paragraph [ref=f4e542]: Ship Pulse hackathon MVP
+                      - paragraph [ref=f4e543]: Sun, Jul 5 · 6:16 PM
+                    - generic [ref=f4e544]: in 7h
+                  - generic [ref=f4e545]:
+                    - img [ref=f4e547]
+                    - generic [ref=f4e552]:
+                      - paragraph [ref=f4e553]: Google interview prep — Dynamic Programming
+                      - paragraph [ref=f4e554]: Wed, Jul 8 · 6:00 PM
+                    - generic [ref=f4e555]: in 3d
+              - generic [ref=f4e556]:
+                - generic [ref=f4e557]:
+                  - img [ref=f4e558]
+                  - heading "Calendar" [level=3] [ref=f4e560]
+                  - link "View all" [ref=f4e562] [cursor=pointer]:
+                    - /url: /calendar
+                - generic [ref=f4e563]:
+                  - generic [ref=f4e564]:
+                    - generic [ref=f4e565]:
+                      - generic [ref=f4e566]: M
+                      - generic [ref=f4e567]: "29"
+                    - generic [ref=f4e568]:
+                      - generic [ref=f4e569]: T
+                      - generic [ref=f4e570]: "30"
+                    - generic [ref=f4e571]:
+                      - generic [ref=f4e572]: W
+                      - generic [ref=f4e573]: "1"
+                    - generic [ref=f4e574]:
+                      - generic [ref=f4e575]: T
+                      - generic [ref=f4e576]: "2"
+                    - generic [ref=f4e577]:
+                      - generic [ref=f4e578]: F
+                      - generic [ref=f4e579]: "3"
+                    - generic [ref=f4e580]:
+                      - generic [ref=f4e581]: S
+                      - generic [ref=f4e582]: "4"
+                    - generic [ref=f4e583]:
+                      - generic [ref=f4e584]: S
+                      - generic [ref=f4e585]: "5"
+                  - generic [ref=f4e589]:
+                    - link "Algorithms lecture Sun · 10:00 AM" [ref=f4e590] [cursor=pointer]:
+                      - /url: /calendar
+                      - generic [ref=f4e592]:
+                        - paragraph [ref=f4e593]: Algorithms lecture
+                        - paragraph [ref=f4e594]: Sun · 10:00 AM
+                    - link "1:1 with mentor Sun · 2:00 PM" [ref=f4e595] [cursor=pointer]:
+                      - /url: /calendar
+                      - generic [ref=f4e597]:
+                        - paragraph [ref=f4e598]: 1:1 with mentor
+                        - paragraph [ref=f4e599]: Sun · 2:00 PM
+                    - link "Gym Sun · 6:00 PM" [ref=f4e600] [cursor=pointer]:
+                      - /url: /calendar
+                      - generic [ref=f4e602]:
+                        - paragraph [ref=f4e603]: Gym
+                        - paragraph [ref=f4e604]: Sun · 6:00 PM

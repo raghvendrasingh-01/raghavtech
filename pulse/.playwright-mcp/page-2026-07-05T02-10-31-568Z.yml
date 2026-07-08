@@ -1,0 +1,194 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - link "Pulse" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]:
+            - img [ref=e10]
+            - generic [ref=e13]: Pulse
+        - navigation [ref=e14]:
+          - generic [ref=e15]:
+            - paragraph [ref=e16]: Workspace
+            - generic [ref=e17]:
+              - link "Dashboard" [ref=e18] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=e19]
+                - generic [ref=e24]: Dashboard
+              - link "Tasks" [ref=e25] [cursor=pointer]:
+                - /url: /tasks
+                - img [ref=e26]
+                - generic [ref=e29]: Tasks
+              - link "Calendar" [ref=e30] [cursor=pointer]:
+                - /url: /calendar
+                - img [ref=e32]
+                - generic [ref=e34]: Calendar
+          - generic [ref=e35]:
+            - paragraph [ref=e36]: Intelligence
+            - generic [ref=e37]:
+              - link "AI Planner" [ref=e38] [cursor=pointer]:
+                - /url: /planner
+                - img [ref=e39]
+                - generic [ref=e42]: AI Planner
+              - link "AI Chat" [ref=e43] [cursor=pointer]:
+                - /url: /chat
+                - img [ref=e44]
+                - generic [ref=e46]: AI Chat
+          - generic [ref=e47]:
+            - paragraph [ref=e48]: Growth
+            - generic [ref=e49]:
+              - link "Habits" [ref=e50] [cursor=pointer]:
+                - /url: /habits
+                - img [ref=e51]
+                - generic [ref=e53]: Habits
+              - link "Goals" [ref=e54] [cursor=pointer]:
+                - /url: /goals
+                - img [ref=e55]
+                - generic [ref=e59]: Goals
+              - link "Analytics" [ref=e60] [cursor=pointer]:
+                - /url: /analytics
+                - img [ref=e61]
+                - generic [ref=e63]: Analytics
+              - link "Settings" [ref=e64] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=e65]
+                - generic [ref=e68]: Settings
+        - generic [ref=e69]:
+          - paragraph [ref=e70]: Pulse Pro
+          - paragraph [ref=e71]: Unlimited AI planning, Google Calendar sync & burnout radar.
+          - button "Upgrade" [ref=e72]
+    - generic [ref=e74]:
+      - banner [ref=e75]:
+        - generic [ref=e76]:
+          - generic [ref=e77]:
+            - heading "Calendar" [level=1] [ref=e78]
+            - generic [ref=e79]:
+              - img [ref=e80]
+              - text: AI active
+          - generic [ref=e83]:
+            - img [ref=e84]
+            - textbox "Ask Pulse or search…" [ref=e87]
+            - generic [ref=e88]: ⌘K
+          - button [ref=e89]:
+            - img [ref=e90]
+          - link "New task" [ref=e94] [cursor=pointer]:
+            - /url: /tasks?new=1
+            - button "New task" [ref=e95]:
+              - img [ref=e96]
+              - text: New task
+          - generic [ref=e97]: RS
+      - main [ref=e98]:
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e101]:
+              - heading "Calendar" [level=2] [ref=e102]
+              - paragraph [ref=e103]: Your meetings, plus the focus blocks Pulse scheduled for you.
+            - generic [ref=e105]:
+              - button [ref=e106]:
+                - img [ref=e107]
+              - generic [ref=e109]: Jul 5 – Jul 11
+              - button [ref=e110]:
+                - img [ref=e111]
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e116]:
+                - generic [ref=e117]: Sun
+                - generic [ref=e118]: "5"
+              - generic [ref=e119]:
+                - generic [ref=e120]: Mon
+                - generic [ref=e121]: "6"
+              - generic [ref=e122]:
+                - generic [ref=e123]: Tue
+                - generic [ref=e124]: "7"
+              - generic [ref=e125]:
+                - generic [ref=e126]: Wed
+                - generic [ref=e127]: "8"
+              - generic [ref=e128]:
+                - generic [ref=e129]: Thu
+                - generic [ref=e130]: "9"
+              - generic [ref=e131]:
+                - generic [ref=e132]: Fri
+                - generic [ref=e133]: "10"
+              - generic [ref=e134]:
+                - generic [ref=e135]: Sat
+                - generic [ref=e136]: "11"
+            - generic [ref=e138]:
+              - generic [ref=e139]:
+                - generic [ref=e140]: 7a
+                - generic [ref=e141]: 8a
+                - generic [ref=e142]: 9a
+                - generic [ref=e143]: 10a
+                - generic [ref=e144]: 11a
+                - generic [ref=e145]: 12p
+                - generic [ref=e146]: 1p
+                - generic [ref=e147]: 2p
+                - generic [ref=e148]: 3p
+                - generic [ref=e149]: 4p
+                - generic [ref=e150]: 5p
+                - generic [ref=e151]: 6p
+                - generic [ref=e152]: 7p
+                - generic [ref=e153]: 8p
+                - generic [ref=e154]: 9p
+                - generic [ref=e155]: 10p
+              - generic [ref=e156]:
+                - generic [ref=e173]:
+                  - generic [ref=e174]: Data Structures Assignment 3
+                  - generic [ref=e175]: 7:40 AM
+                - generic [ref=e177]: Daily standup
+                - generic [ref=e178]:
+                  - generic [ref=e179]: Data Structures Assignment 3
+                  - generic [ref=e180]: 9:15 AM
+                - generic [ref=e181]:
+                  - generic [ref=e182]: Algorithms lecture
+                  - generic [ref=e183]: 10:00 AM
+                - generic [ref=e185]: Break
+                - generic [ref=e187]: Data Structures Assignment 3
+                - generic [ref=e188]:
+                  - generic [ref=e189]: Ship Pulse hackathon MVP
+                  - generic [ref=e190]: 12:40 PM
+                - generic [ref=e192]: 1:1 with mentor
+                - generic [ref=e194]: Break
+                - generic [ref=e195]:
+                  - generic [ref=e196]: Google interview prep — Dynamic Programming
+                  - generic [ref=e197]: 2:45 PM
+                - generic [ref=e198]:
+                  - generic [ref=e199]: Google interview prep — Dynamic Programming
+                  - generic [ref=e200]: 4:15 PM
+                - generic [ref=e202]: Google interview prep — Dynamic Programming
+                - generic [ref=e203]:
+                  - generic [ref=e204]: Gym
+                  - generic [ref=e205]: 6:00 PM
+                - generic [ref=e207]: Break
+                - generic [ref=e209]: Google interview prep — Dynamic Programming
+                - generic [ref=e210]:
+                  - generic [ref=e211]: Physics problem set 6
+                  - generic [ref=e212]: 7:30 PM
+                - generic [ref=e214]: Break
+                - generic [ref=e215]:
+                  - generic [ref=e216]: Physics problem set 6
+                  - generic [ref=e217]: 9:15 PM
+                - generic [ref=e219]: Read DDIA — Chapter 4 (Encoding)
+                - generic [ref=e222]: ⚑ Data Struc
+                - generic [ref=e225]: ⚑ Pay credit
+                - generic [ref=e228]: ⚑ Ship Pulse
+                - generic [ref=e231]: ⚑ Send stand
+              - generic [ref=e232]:
+                - generic [ref=e250]: Read DDIA — Chapter 4 (Encoding)
+                - generic [ref=e251]:
+                  - generic [ref=e252]: Client demo
+                  - generic [ref=e253]: 11:00 AM
+                - generic [ref=e254]:
+                  - generic [ref=e255]: DBMS lab
+                  - generic [ref=e256]: 2:00 PM
+              - generic [ref=e275]: Hackathon check-in
+              - generic [ref=e295]: ⚑ Google int
+              - generic [ref=e315]: ⚑ Physics pr
+              - generic [ref=e335]: ⚑ Read DDIA
+          - generic [ref=e353]:
+            - generic [ref=e354]: Meeting / event
+            - generic [ref=e356]: Focus block (AI)
+            - generic [ref=e358]: Deadline / rescue
+            - generic [ref=e360]:
+              - img [ref=e361]
+              - text: Focus blocks are auto-scheduled

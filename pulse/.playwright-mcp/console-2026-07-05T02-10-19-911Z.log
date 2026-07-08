@@ -1,0 +1,10 @@
+[  925335ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/settings?_rsc=vgVrlNteE-o2NTaI:0
+[  925336ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/analytics?_rsc=vgVrlNteE-o2NTaI:0
+[  925336ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/goals?_rsc=vgVrlNteE-o2NTaI:0
+[  925336ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/habits?_rsc=vgVrlNteE-o2NTaI:0
+[  925337ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/chat?_rsc=vgVrlNteE-o2NTaI:0
+[  925338ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/planner?_rsc=vgVrlNteE-o2NTaI:0
+[  925338ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/calendar?_rsc=vgVrlNteE-o2NTaI:0
+[  925338ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/tasks?_rsc=vgVrlNteE-o2NTaI:0
+[  925338ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/dashboard?_rsc=vgVrlNteE-o2NTaI:0
+[  925338ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/?_rsc=vgVrlNteE-o2NTaI:0

@@ -1,0 +1,153 @@
+- generic [active] [ref=f6e1]:
+  - alert [ref=f6e2]
+  - generic [ref=f6e3]:
+    - complementary [ref=f6e4]:
+      - generic [ref=f6e5]:
+        - link "Pulse" [ref=f6e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f6e8]:
+            - img [ref=f6e10]
+            - generic [ref=f6e13]: Pulse
+        - navigation [ref=f6e14]:
+          - generic [ref=f6e15]:
+            - paragraph [ref=f6e16]: Workspace
+            - generic [ref=f6e17]:
+              - link "Dashboard" [ref=f6e18] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=f6e19]
+                - generic [ref=f6e24]: Dashboard
+              - link "Tasks" [ref=f6e25] [cursor=pointer]:
+                - /url: /tasks
+                - img [ref=f6e26]
+                - generic [ref=f6e29]: Tasks
+              - link "Calendar" [ref=f6e30] [cursor=pointer]:
+                - /url: /calendar
+                - img [ref=f6e31]
+                - generic [ref=f6e33]: Calendar
+          - generic [ref=f6e34]:
+            - paragraph [ref=f6e35]: Intelligence
+            - generic [ref=f6e36]:
+              - link "AI Planner" [ref=f6e37] [cursor=pointer]:
+                - /url: /planner
+                - img [ref=f6e38]
+                - generic [ref=f6e41]: AI Planner
+              - link "AI Chat" [ref=f6e42] [cursor=pointer]:
+                - /url: /chat
+                - img [ref=f6e43]
+                - generic [ref=f6e45]: AI Chat
+          - generic [ref=f6e46]:
+            - paragraph [ref=f6e47]: Growth
+            - generic [ref=f6e48]:
+              - link "Habits" [ref=f6e49] [cursor=pointer]:
+                - /url: /habits
+                - img [ref=f6e50]
+                - generic [ref=f6e52]: Habits
+              - link "Goals" [ref=f6e53] [cursor=pointer]:
+                - /url: /goals
+                - img [ref=f6e55]
+                - generic [ref=f6e59]: Goals
+              - link "Analytics" [ref=f6e60] [cursor=pointer]:
+                - /url: /analytics
+                - img [ref=f6e61]
+                - generic [ref=f6e63]: Analytics
+              - link "Settings" [ref=f6e64] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=f6e65]
+                - generic [ref=f6e68]: Settings
+        - generic [ref=f6e69]:
+          - paragraph [ref=f6e70]: Pulse Pro
+          - paragraph [ref=f6e71]: Unlimited AI planning, Google Calendar sync & burnout radar.
+          - button "Upgrade" [ref=f6e72]
+    - generic [ref=f6e74]:
+      - banner [ref=f6e75]:
+        - generic [ref=f6e76]:
+          - generic [ref=f6e77]:
+            - heading "Goals" [level=1] [ref=f6e78]
+            - generic [ref=f6e79]:
+              - img [ref=f6e80]
+              - text: AI active
+          - generic [ref=f6e83]:
+            - img [ref=f6e84]
+            - textbox "Ask Pulse or search…" [ref=f6e87]
+            - generic [ref=f6e88]: ⌘K
+          - button [ref=f6e89]:
+            - img [ref=f6e90]
+          - link "New task" [ref=f6e94] [cursor=pointer]:
+            - /url: /tasks?new=1
+            - button "New task" [ref=f6e95]:
+              - img [ref=f6e96]
+              - text: New task
+          - generic [ref=f6e97]: RS
+      - main [ref=f6e98]:
+        - generic [ref=f6e99]:
+          - generic [ref=f6e100]:
+            - heading "Goals" [level=2] [ref=f6e101]
+            - paragraph [ref=f6e102]: Tell Pulse a goal — it builds the roadmap and the daily plan.
+          - generic [ref=f6e103]:
+            - generic [ref=f6e104]:
+              - img [ref=f6e105]
+              - text: AI Goal Planner
+            - generic [ref=f6e108]:
+              - textbox "e.g. Crack a Google internship, get fit, launch my app…" [ref=f6e109]
+              - button "Generate plan" [disabled]:
+                - img
+                - text: Generate plan
+          - generic [ref=f6e110]:
+            - generic [ref=f6e111]:
+              - generic [ref=f6e112]:
+                - generic [ref=f6e113]:
+                  - img [ref=f6e114]
+                  - generic [ref=f6e118]:
+                    - generic [ref=f6e119]: 42%
+                    - generic [ref=f6e120]: done
+                - generic [ref=f6e121]:
+                  - generic [ref=f6e122]:
+                    - img [ref=f6e124]
+                    - heading "Crack a Google internship" [level=3] [ref=f6e129]
+                  - paragraph [ref=f6e130]: Target Fri, Sep 18 · 2/5 milestones
+              - generic [ref=f6e131]:
+                - button "Finish DSA patterns (Grind 75) 3w" [ref=f6e132]:
+                  - img [ref=f6e134]
+                  - generic [ref=f6e136]: Finish DSA patterns (Grind 75)
+                  - generic [ref=f6e137]: 3w
+                - button "System design fundamentals 3w" [ref=f6e138]:
+                  - img [ref=f6e140]
+                  - generic [ref=f6e142]: System design fundamentals
+                  - generic [ref=f6e143]: 3w
+                - button "2 portfolio projects shipped 4w" [ref=f6e144]:
+                  - img [ref=f6e146]
+                  - generic [ref=f6e148]: 2 portfolio projects shipped
+                  - generic [ref=f6e149]: 4w
+                - button "Resume reviewed + polished 1w" [ref=f6e150]:
+                  - img [ref=f6e152]
+                  - generic [ref=f6e154]: Resume reviewed + polished
+                  - generic [ref=f6e155]: 1w
+                - button "10 mock interviews 4w" [ref=f6e156]:
+                  - img [ref=f6e158]
+                  - generic [ref=f6e160]: 10 mock interviews
+                  - generic [ref=f6e161]: 4w
+            - generic [ref=f6e162]:
+              - generic [ref=f6e163]:
+                - generic [ref=f6e164]:
+                  - img [ref=f6e165]
+                  - generic [ref=f6e169]:
+                    - generic [ref=f6e170]: 25%
+                    - generic [ref=f6e171]: done
+                - generic [ref=f6e172]:
+                  - generic [ref=f6e173]:
+                    - img [ref=f6e175]
+                    - heading "Grow Pulse to 100 users" [level=3] [ref=f6e177]
+                  - paragraph [ref=f6e178]: Target Fri, Aug 14 · 1/3 milestones
+              - generic [ref=f6e179]:
+                - button "MVP shipped 1w" [ref=f6e180]:
+                  - img [ref=f6e182]
+                  - generic [ref=f6e184]: MVP shipped
+                  - generic [ref=f6e185]: 1w
+                - button "Landing + waitlist live 1w" [ref=f6e186]:
+                  - img [ref=f6e188]
+                  - generic [ref=f6e190]: Landing + waitlist live
+                  - generic [ref=f6e191]: 1w
+                - button "Product Hunt launch 2w" [ref=f6e192]:
+                  - img [ref=f6e194]
+                  - generic [ref=f6e196]: Product Hunt launch
+                  - generic [ref=f6e197]: 2w

@@ -1,0 +1,123 @@
+- generic [ref=f1e1]:
+  - alert [ref=f1e2]
+  - generic [ref=f1e3]:
+    - complementary [ref=f1e4]:
+      - generic [ref=f1e5]:
+        - link "Pulse" [ref=f1e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f1e8]:
+            - img [ref=f1e10]
+            - generic [ref=f1e13]: Pulse
+        - navigation [ref=f1e14]:
+          - generic [ref=f1e15]:
+            - paragraph [ref=f1e16]: Workspace
+            - generic [ref=f1e17]:
+              - link "Dashboard" [ref=f1e18] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=f1e19]
+                - generic [ref=f1e24]: Dashboard
+              - link "Tasks" [ref=f1e25] [cursor=pointer]:
+                - /url: /tasks
+                - img [ref=f1e26]
+                - generic [ref=f1e29]: Tasks
+              - link "Calendar" [ref=f1e30] [cursor=pointer]:
+                - /url: /calendar
+                - img [ref=f1e31]
+                - generic [ref=f1e33]: Calendar
+          - generic [ref=f1e34]:
+            - paragraph [ref=f1e35]: Intelligence
+            - generic [ref=f1e36]:
+              - link "AI Planner" [ref=f1e37] [cursor=pointer]:
+                - /url: /planner
+                - img [ref=f1e38]
+                - generic [ref=f1e41]: AI Planner
+              - link "AI Chat" [ref=f1e42] [cursor=pointer]:
+                - /url: /chat
+                - img [ref=f1e44]
+                - generic [ref=f1e46]: AI Chat
+          - generic [ref=f1e47]:
+            - paragraph [ref=f1e48]: Growth
+            - generic [ref=f1e49]:
+              - link "Habits" [ref=f1e50] [cursor=pointer]:
+                - /url: /habits
+                - img [ref=f1e51]
+                - generic [ref=f1e53]: Habits
+              - link "Goals" [ref=f1e54] [cursor=pointer]:
+                - /url: /goals
+                - img [ref=f1e55]
+                - generic [ref=f1e59]: Goals
+              - link "Analytics" [ref=f1e60] [cursor=pointer]:
+                - /url: /analytics
+                - img [ref=f1e61]
+                - generic [ref=f1e63]: Analytics
+              - link "Settings" [ref=f1e64] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=f1e65]
+                - generic [ref=f1e68]: Settings
+        - generic [ref=f1e69]:
+          - paragraph [ref=f1e70]: Pulse Pro
+          - paragraph [ref=f1e71]: Unlimited AI planning, Google Calendar sync & burnout radar.
+          - button "Upgrade" [ref=f1e72]
+    - generic [ref=f1e74]:
+      - banner [ref=f1e75]:
+        - generic [ref=f1e76]:
+          - generic [ref=f1e77]:
+            - heading "AI Chat" [level=1] [ref=f1e78]
+            - generic [ref=f1e79]:
+              - img [ref=f1e80]
+              - text: AI active
+          - generic [ref=f1e83]:
+            - img [ref=f1e84]
+            - textbox "Ask Pulse or search…" [ref=f1e87]
+            - generic [ref=f1e88]: ⌘K
+          - button [ref=f1e89]:
+            - img [ref=f1e90]
+          - link "New task" [ref=f1e94] [cursor=pointer]:
+            - /url: /tasks?new=1
+            - button "New task" [ref=f1e95]:
+              - img [ref=f1e96]
+              - text: New task
+          - generic [ref=f1e97]: RS
+      - main [ref=f1e98]:
+        - generic [ref=f1e99]:
+          - generic [ref=f1e100]:
+            - generic [ref=f1e101]:
+              - img [ref=f1e103]
+              - generic [ref=f1e109]:
+                - text: Morning! I've reviewed your day.
+                - strong [ref=f1e110]: Data Structures Assignment 3
+                - text: is your biggest risk — due tomorrow with ~4.8h of work left. Want me to build your day around it?
+            - generic [ref=f1e124]:
+              - generic [ref=f1e125]: RS
+              - paragraph [ref=f1e127]: hey
+            - generic [ref=f1e128]:
+              - img [ref=f1e130]
+              - generic [ref=f1e134]:
+                - generic [ref=f1e135]: "Here's your day, built around your meetings and weighted by priority:"
+                - generic [ref=f1e136]: 9:00 AM–9:15 AM 📅 Daily standup 10:00 AM–12:00 PM 📅 Algorithms lecture 2:00 PM–2:30 PM 📅 1:1 with mentor 6:00 PM–7:00 PM 📅 Gym 8:41 PM–10:00 PM 🚨 Data Structures Assignment 3
+                - generic [ref=f1e138]:
+                  - text: Start with
+                  - strong [ref=f1e139]: Data Structures Assignment 3
+                  - text: — 5h to its deadline. ⚠️ I couldn't fit 7 items today (Data Structures Assignment 3, Ship Pulse hackathon MVP). They're tight — consider trimming scope or clearing an evening slot.
+            - generic [ref=f1e143]:
+              - generic [ref=f1e144]: RS
+              - paragraph [ref=f1e146]: j
+            - generic [ref=f1e147]:
+              - img [ref=f1e149]
+              - generic [ref=f1e153]:
+                - generic [ref=f1e154]: "Here's your day, built around your meetings and weighted by priority:"
+                - generic [ref=f1e155]: 9:00 AM–9:15 AM 📅 Daily standup 10:00 AM–12:00 PM 📅 Algorithms lecture 2:00 PM–2:30 PM 📅 1:1 with mentor 6:00 PM–7:00 PM 📅 Gym 8:41 PM–10:00 PM 🚨 Data Structures Assignment 3
+                - generic [ref=f1e157]:
+                  - text: Start with
+                  - strong [ref=f1e158]: Data Structures Assignment 3
+                  - text: — 5h to its deadline. ⚠️ I couldn't fit 7 items today (Data Structures Assignment 3, Ship Pulse hackathon MVP). They're tight — consider trimming scope or clearing an evening slot.
+          - generic [ref=f1e111]:
+            - generic [ref=f1e112]:
+              - button "Regenerate" [ref=f1e140]
+              - button "What's most urgent?" [ref=f1e141]
+              - button "Reschedule around a new meeting" [ref=f1e142]
+            - generic [ref=f1e117]:
+              - textbox "Ask Pulse to plan, prioritize, or reschedule…" [active] [ref=f1e118]
+              - button [disabled] [ref=f1e119]:
+                - img [ref=f1e120]
+            - paragraph [ref=f1e123]: Pulse plans from your real tasks & calendar. Enter to send · Shift+Enter for a new line.

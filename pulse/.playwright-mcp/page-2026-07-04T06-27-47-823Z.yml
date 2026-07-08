@@ -1,0 +1,121 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e3]:
+    - generic [ref=e5]:
+      - banner [ref=e6]:
+        - generic [ref=e7]:
+          - generic [ref=e8]:
+            - heading "Dashboard" [level=1] [ref=e9]
+            - generic [ref=e10]:
+              - img [ref=e11]
+              - text: AI active
+          - generic [ref=e14]:
+            - img [ref=e15]
+            - textbox "Ask Pulse or search…" [ref=e18]
+            - generic [ref=e19]: ⌘K
+          - button [ref=e20]:
+            - img [ref=e21]
+          - link "New task" [ref=e25] [cursor=pointer]:
+            - /url: /tasks?new=1
+            - button "New task" [ref=e26]:
+              - img [ref=e27]
+              - text: New task
+          - generic [ref=e28]: RS
+      - main [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - heading "Good to see you, Raghvendra" [level=2] [ref=e32]
+            - paragraph [ref=e33]: 7 open tasks · your engine ranked them by priority & deadline risk.
+          - generic [ref=e34]:
+            - generic [ref=e36]:
+              - generic [ref=e37]:
+                - generic [ref=e38]:
+                  - generic [ref=e39]: high
+                  - generic [ref=e40]: Data Structures Assignment 3
+                - paragraph [ref=e41]: High priority — driven mainly by importance (study · hard), with urgency (due in 1d) reinforcing it.
+                - generic [ref=e45]: due in 1d
+              - generic [ref=e46]:
+                - generic [ref=e47]: 2%
+                - generic [ref=e48]: miss risk
+            - generic [ref=e50]:
+              - generic [ref=e51]:
+                - generic [ref=e52]:
+                  - generic [ref=e53]: high
+                  - generic [ref=e54]: Pay credit card bill
+                - paragraph [ref=e55]: High priority — driven mainly by urgency (due in 8h), with importance (finance · easy) reinforcing it.
+                - generic [ref=e58]: due in 8h
+              - generic [ref=e59]:
+                - generic [ref=e60]: 2%
+                - generic [ref=e61]: miss risk
+            - generic [ref=e63]:
+              - generic [ref=e64]:
+                - generic [ref=e65]:
+                  - generic [ref=e66]: high
+                  - generic [ref=e67]: Send standup notes to team
+                - paragraph [ref=e68]: High priority — driven mainly by urgency (due in 5h), with importance (work · easy) reinforcing it.
+                - generic [ref=e71]: due in 5h
+              - generic [ref=e72]:
+                - generic [ref=e73]: 2%
+                - generic [ref=e74]: miss risk
+            - generic [ref=e76]:
+              - generic [ref=e77]:
+                - generic [ref=e78]:
+                  - generic [ref=e79]: medium
+                  - generic [ref=e80]: Ship Pulse hackathon MVP
+                - paragraph [ref=e81]: Medium priority — driven mainly by importance (project · hard), with effort left (4.8h remaining) reinforcing it.
+                - generic [ref=e85]: due in 2d
+              - generic [ref=e86]:
+                - generic [ref=e87]: 2%
+                - generic [ref=e88]: miss risk
+            - generic [ref=e90]:
+              - generic [ref=e91]:
+                - generic [ref=e92]:
+                  - generic [ref=e93]: medium
+                  - generic [ref=e94]: Google interview prep — Dynamic Programming
+                - paragraph [ref=e95]: Medium priority — driven mainly by importance (interview · hard), with effort left (3.5h remaining) reinforcing it.
+                - generic [ref=e99]: due in 3d
+              - generic [ref=e100]:
+                - generic [ref=e101]: 2%
+                - generic [ref=e102]: miss risk
+            - generic [ref=e104]:
+              - generic [ref=e105]:
+                - generic [ref=e106]:
+                  - generic [ref=e107]: low
+                  - generic [ref=e108]: Physics problem set 6
+                - paragraph [ref=e109]: Low priority — driven mainly by importance (study · medium), with effort left (3h remaining) reinforcing it.
+                - generic [ref=e112]: due in 4d
+              - generic [ref=e113]:
+                - generic [ref=e114]: 2%
+                - generic [ref=e115]: miss risk
+            - generic [ref=e117]:
+              - generic [ref=e118]:
+                - generic [ref=e119]:
+                  - generic [ref=e120]: low
+                  - generic [ref=e121]: Read DDIA — Chapter 4 (Encoding)
+                - paragraph [ref=e122]: Low priority — driven mainly by importance (personal · medium), with effort left (0.8h remaining) reinforcing it.
+                - generic [ref=e126]: due in 5d
+              - generic [ref=e127]:
+                - generic [ref=e128]: 2%
+                - generic [ref=e129]: miss risk
+    - navigation [ref=e130]:
+      - generic [ref=e131]:
+        - link "Home" [ref=e132] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e133]
+          - text: Home
+        - link "Tasks" [ref=e138] [cursor=pointer]:
+          - /url: /tasks
+          - img [ref=e139]
+          - text: Tasks
+        - link "Planner" [ref=e142] [cursor=pointer]:
+          - /url: /planner
+          - img [ref=e143]
+          - text: Planner
+        - link "Habits" [ref=e146] [cursor=pointer]:
+          - /url: /habits
+          - img [ref=e147]
+          - text: Habits
+        - link "Stats" [ref=e149] [cursor=pointer]:
+          - /url: /analytics
+          - img [ref=e150]
+          - text: Stats

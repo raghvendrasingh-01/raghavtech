@@ -1,0 +1,36 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - generic [ref=f3e6]:
+      - link "Pulse" [ref=f3e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f3e8]:
+          - img [ref=f3e10]
+          - generic [ref=f3e13]: Pulse
+      - generic [ref=f3e14]:
+        - heading "Your day, planned before you wake up." [level=1] [ref=f3e15]
+        - paragraph [ref=f3e16]: Pulse prioritizes your work, predicts missed deadlines, and rebuilds your schedule the moment things change.
+        - generic [ref=f3e17]:
+          - img [ref=f3e18]
+          - text: Your tasks and calendar stay private to you.
+      - paragraph [ref=f3e21]: © 2026 Pulse. Built for the last-minute life.
+    - generic [ref=f3e23]:
+      - heading "Welcome back" [level=2] [ref=f3e24]
+      - paragraph [ref=f3e25]: Sign in to your Chief of Staff.
+      - generic [ref=f3e26]:
+        - button "Continue with Google" [ref=f3e27]:
+          - img [ref=f3e28]
+          - text: Continue with Google
+        - button "Continue with GitHub" [ref=f3e33]:
+          - img [ref=f3e34]
+          - text: Continue with GitHub
+      - generic [ref=f3e36]: or
+      - generic [ref=f3e39]:
+        - textbox "you@email.com" [ref=f3e40]
+        - button "Continue with email" [ref=f3e41]:
+          - text: Continue with email
+          - img [ref=f3e42]
+      - paragraph [ref=f3e44]: Demo mode — any input opens the app. Add a Clerk key to enable real auth.
+      - paragraph [ref=f3e45]:
+        - text: New here?
+        - button "Create an account" [ref=f3e46]
+  - alert [ref=f3e47]

@@ -1,0 +1,302 @@
+- generic [ref=f5e2]:
+  - banner [ref=f5e3]:
+    - navigation [ref=f5e4]:
+      - link "Pulse" [ref=f5e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f5e6]:
+          - img [ref=f5e8]
+          - generic [ref=f5e11]: Pulse
+      - generic [ref=f5e12]:
+        - link "Features" [ref=f5e13] [cursor=pointer]:
+          - /url: "#features"
+        - link "How it works" [ref=f5e14] [cursor=pointer]:
+          - /url: "#how"
+        - link "FAQ" [ref=f5e15] [cursor=pointer]:
+          - /url: "#faq"
+      - generic [ref=f5e16]:
+        - link "Sign in" [ref=f5e17] [cursor=pointer]:
+          - /url: /dashboard
+          - button "Sign in" [ref=f5e18]
+        - link "Open Pulse" [ref=f5e19] [cursor=pointer]:
+          - /url: /dashboard
+          - button "Open Pulse" [ref=f5e20]
+  - main [ref=f5e21]:
+    - generic [ref=f5e22]:
+      - generic [ref=f5e23]:
+        - generic [ref=f5e24]:
+          - img [ref=f5e25]
+          - text: Notion AI + Motion + Calendar, in one Chief of Staff
+        - heading "Never miss a deadline again." [level=1] [ref=f5e28]
+        - paragraph [ref=f5e29]: Pulse is the AI that actively runs your day — planning your schedule, prioritizing what matters, and predicting a missed deadline before it happens. Not another to-do list.
+        - generic [ref=f5e30]:
+          - link "Start planning free" [ref=f5e31] [cursor=pointer]:
+            - /url: /dashboard
+            - button "Start planning free" [ref=f5e32]:
+              - text: Start planning free
+              - img [ref=f5e33]
+          - button "Watch 90s demo" [ref=f5e35]:
+            - img [ref=f5e36]
+            - text: Watch 90s demo
+        - paragraph [ref=f5e38]: Free forever for students · No credit card · Set up in 60 seconds
+      - generic [ref=f5e39]:
+        - generic [ref=f5e41]:
+          - generic [ref=f5e42]:
+            - generic [ref=f5e43]:
+              - generic [ref=f5e44]:
+                - paragraph [ref=f5e45]: Today · AI-generated plan
+                - paragraph [ref=f5e46]: Built around 3 meetings & 2 deadlines
+              - generic [ref=f5e47]:
+                - img [ref=f5e48]
+                - text: Optimized
+            - generic [ref=f5e50]:
+              - generic [ref=f5e51]:
+                - generic [ref=f5e52]: 9:00
+                - generic [ref=f5e54]: Team standup
+                - generic [ref=f5e55]: Meeting
+              - generic [ref=f5e56]:
+                - generic [ref=f5e57]: 9:30
+                - generic [ref=f5e59]: Deep work — DS Assignment 3
+                - generic [ref=f5e60]: 🚨 Rescue
+              - generic [ref=f5e61]:
+                - generic [ref=f5e62]: 11:00
+                - generic [ref=f5e64]: Algorithms lecture
+                - generic [ref=f5e65]: Class
+              - generic [ref=f5e66]:
+                - generic [ref=f5e67]: 13:30
+                - generic [ref=f5e69]: Interview prep — DP
+                - generic [ref=f5e70]: Focus
+              - generic [ref=f5e71]:
+                - generic [ref=f5e72]: 15:15
+                - generic [ref=f5e74]: Break
+                - generic [ref=f5e75]: ☕
+          - generic [ref=f5e76]:
+            - generic [ref=f5e77]:
+              - generic [ref=f5e78]:
+                - img [ref=f5e79]
+                - text: Deadline Radar
+              - generic [ref=f5e81]:
+                - img [ref=f5e82]
+                - generic [ref=f5e86]:
+                  - generic [ref=f5e87]: 77%
+                  - generic [ref=f5e88]: miss risk
+              - paragraph [ref=f5e89]: DS Assignment 3 — start now or it slips.
+            - generic [ref=f5e90]:
+              - img [ref=f5e91]
+              - paragraph [ref=f5e95]: Pulse moved DP prep to tonight to protect your deadline.
+        - generic [ref=f5e96]:
+          - paragraph [ref=f5e97]: Productivity
+          - paragraph [ref=f5e98]: 87 ↑12
+        - generic [ref=f5e99]:
+          - paragraph [ref=f5e100]: 🔥 Coding streak
+          - paragraph [ref=f5e101]: 12 days
+    - generic [ref=f5e104]:
+      - generic [ref=f5e105]:
+        - generic [ref=f5e106]: 94%
+        - generic [ref=f5e107]: of deadlines met after 2 weeks
+      - generic [ref=f5e108]:
+        - generic [ref=f5e109]: 5.2h
+        - generic [ref=f5e110]: focus time reclaimed weekly
+      - generic [ref=f5e111]:
+        - generic [ref=f5e112]: 60s
+        - generic [ref=f5e113]: to a full weekly plan
+      - generic [ref=f5e114]:
+        - generic [ref=f5e115]: "0"
+        - generic [ref=f5e116]: reminders you have to think about
+    - generic [ref=f5e118]:
+      - generic [ref=f5e120]:
+        - paragraph [ref=f5e121]: Not another to-do list
+        - heading "An AI that acts, not just reminds" [level=2] [ref=f5e122]
+        - paragraph [ref=f5e123]: Passive reminders get ignored. Pulse reads your calendar, does the math, and intervenes before a deadline turns into a crisis.
+      - generic [ref=f5e124]:
+        - generic [ref=f5e127]:
+          - generic [ref=f5e128]:
+            - generic [ref=f5e129]:
+              - img [ref=f5e130]
+              - text: Deadline Prediction
+            - heading "Risk scored before you fall behind" [level=3] [ref=f5e132]
+            - paragraph [ref=f5e133]: Pulse compares work remaining against the free time actually left on your calendar and gives every deadline a live miss-risk score — with a plan to fix it.
+            - generic [ref=f5e134]: 92% risk · 6h of work, 2h free before tomorrow. “Start immediately — I’ll clear your evening.”
+          - generic [ref=f5e135]:
+            - img [ref=f5e136]
+            - generic [ref=f5e140]:
+              - generic [ref=f5e141]: 92%
+              - generic [ref=f5e142]: miss risk
+        - generic [ref=f5e144]:
+          - img [ref=f5e146]
+          - heading "Smart Scheduler" [level=3] [ref=f5e150]
+          - paragraph [ref=f5e151]: Auto-builds your day around meetings and free slots, with focus blocks and breaks. Regenerate anytime.
+        - generic [ref=f5e153]:
+          - img [ref=f5e155]
+          - heading "AI Planner Chat" [level=3] [ref=f5e157]
+          - paragraph [ref=f5e158]: “Plan my week — 2 assignments, an interview, and an exam.” Get a full daily plan in seconds.
+        - generic [ref=f5e160]:
+          - img [ref=f5e162]
+          - heading "Accountability Coach" [level=3] [ref=f5e174]
+          - paragraph [ref=f5e175]: Checks in, reschedules what slipped, breaks big tasks down, and keeps you moving — kindly but relentlessly.
+        - generic [ref=f5e177]:
+          - img [ref=f5e179]
+          - heading "Goal Planner" [level=3] [ref=f5e183]
+          - paragraph [ref=f5e184]: “Crack a Google internship” becomes a milestone roadmap with a daily plan you actually follow.
+        - generic [ref=f5e186]:
+          - img [ref=f5e188]
+          - heading "Habits & Streaks" [level=3] [ref=f5e190]
+          - paragraph [ref=f5e191]: Track coding, reading, workouts and more. Streaks and weekly graphs keep momentum visible.
+        - generic [ref=f5e193]:
+          - img [ref=f5e195]
+          - heading "Productivity Analytics" [level=3] [ref=f5e197]
+          - paragraph [ref=f5e198]: Focus hours, success rate, missed deadlines and AI recommendations to get better each week.
+        - generic [ref=f5e200]:
+          - img [ref=f5e202]
+          - heading "Smart Reminders" [level=3] [ref=f5e205]
+          - paragraph [ref=f5e206]: "Not “due tomorrow.” Instead: “2h on YouTube today — start in 30 min or you’ll miss it.”"
+        - generic [ref=f5e208]:
+          - img [ref=f5e210]
+          - heading "Voice Capture" [level=3] [ref=f5e213]
+          - paragraph [ref=f5e214]: “Remind me to finish my assignment tomorrow evening.” Pulse turns it into a scheduled task.
+    - generic [ref=f5e216]:
+      - generic [ref=f5e218]:
+        - paragraph [ref=f5e219]: How it works
+        - heading "From chaos to a plan in 60 seconds" [level=2] [ref=f5e220]
+      - generic [ref=f5e221]:
+        - generic [ref=f5e223]:
+          - img [ref=f5e225]
+          - generic [ref=f5e231]: "01"
+          - heading "Connect & brain-dump" [level=3] [ref=f5e232]
+          - paragraph [ref=f5e233]: Add your tasks and connect Google Calendar. Or just talk — “I have an exam Friday and a hackathon this weekend.”
+        - generic [ref=f5e235]:
+          - img [ref=f5e237]
+          - generic [ref=f5e240]: "02"
+          - heading "Pulse plans everything" [level=3] [ref=f5e241]
+          - paragraph [ref=f5e242]: It prioritizes with reasons, scores deadline risk, and drops focus blocks into the real gaps in your day.
+        - generic [ref=f5e244]:
+          - img [ref=f5e246]
+          - generic [ref=f5e249]: "03"
+          - heading "It keeps you on track" [level=3] [ref=f5e250]
+          - paragraph [ref=f5e251]: As the day shifts, Pulse reschedules, nudges, and protects your deadlines — so nothing slips.
+    - generic [ref=f5e253]:
+      - generic [ref=f5e255]:
+        - paragraph [ref=f5e256]: Loved by busy people
+        - heading "People stop dropping the ball" [level=2] [ref=f5e257]
+      - generic [ref=f5e258]:
+        - figure "AK Aisha K. PhD student, Cambridge" [ref=f5e260]:
+          - generic [ref=f5e261]:
+            - img [ref=f5e262]
+            - img [ref=f5e264]
+            - img [ref=f5e266]
+            - img [ref=f5e268]
+            - img [ref=f5e270]
+          - blockquote [ref=f5e272]: “I stopped pulling all-nighters. Pulse flagged my thesis chapter as 88% at-risk four days early and rebuilt my week around it.”
+          - generic [ref=f5e273]:
+            - generic [ref=f5e274]: AK
+            - generic [ref=f5e275]:
+              - generic [ref=f5e276]: Aisha K.
+              - generic [ref=f5e277]: PhD student, Cambridge
+        - figure "MB Marco B. Founder, seed-stage startup" [ref=f5e279]:
+          - generic [ref=f5e280]:
+            - img [ref=f5e281]
+            - img [ref=f5e283]
+            - img [ref=f5e285]
+            - img [ref=f5e287]
+            - img [ref=f5e289]
+          - blockquote [ref=f5e291]: “It feels like having a chief of staff. I dump everything in the chat and it hands me back a plan I actually follow.”
+          - generic [ref=f5e292]:
+            - generic [ref=f5e293]: MB
+            - generic [ref=f5e294]:
+              - generic [ref=f5e295]: Marco B.
+              - generic [ref=f5e296]: Founder, seed-stage startup
+        - figure "PS Priya S. Freelance designer" [ref=f5e298]:
+          - generic [ref=f5e299]:
+            - img [ref=f5e300]
+            - img [ref=f5e302]
+            - img [ref=f5e304]
+            - img [ref=f5e306]
+            - img [ref=f5e308]
+          - blockquote [ref=f5e310]: “The deadline radar is genuinely scary-good. It caught two client deliverables I'd underestimated by hours.”
+          - generic [ref=f5e311]:
+            - generic [ref=f5e312]: PS
+            - generic [ref=f5e313]:
+              - generic [ref=f5e314]: Priya S.
+              - generic [ref=f5e315]: Freelance designer
+    - generic [ref=f5e317]:
+      - generic [ref=f5e319]:
+        - paragraph [ref=f5e320]: FAQ
+        - heading "Questions, answered" [level=2] [ref=f5e321]
+      - generic [ref=f5e322]:
+        - generic [ref=f5e324]:
+          - button "How is this different from a to-do list or reminders app?" [ref=f5e325]:
+            - generic [ref=f5e326]: How is this different from a to-do list or reminders app?
+            - img [ref=f5e327]
+          - paragraph [ref=f5e331]: "To-do lists are passive — they wait for you. Pulse is active: it plans your day around your calendar, scores each deadline's miss-risk, reschedules when things slip, and nudges you before it's too late. It does the thinking, not just the storing."
+        - button "How does the deadline prediction actually work?" [ref=f5e334]:
+          - generic [ref=f5e335]: How does the deadline prediction actually work?
+          - img [ref=f5e336]
+        - button "Do I need to connect my calendar?" [ref=f5e339]:
+          - generic [ref=f5e340]: Do I need to connect my calendar?
+          - img [ref=f5e341]
+        - button "Is my data private?" [ref=f5e344]:
+          - generic [ref=f5e345]: Is my data private?
+          - img [ref=f5e346]
+        - button "Is it really free for students?" [ref=f5e349]:
+          - generic [ref=f5e350]: Is it really free for students?
+          - img [ref=f5e351]
+    - generic [ref=f5e354]:
+      - heading "Stop reacting to deadlines. Start beating them." [level=2] [ref=f5e355]
+      - paragraph [ref=f5e356]: Give Pulse your week. Get back a plan, a clear head, and deadlines that no longer sneak up on you.
+      - generic [ref=f5e357]:
+        - link "Open Pulse free" [ref=f5e358] [cursor=pointer]:
+          - /url: /dashboard
+          - button "Open Pulse free" [ref=f5e359]:
+            - text: Open Pulse free
+            - img [ref=f5e360]
+        - generic [ref=f5e362]: No card · Free for students
+  - contentinfo [ref=f5e363]:
+    - generic [ref=f5e364]:
+      - generic [ref=f5e365]:
+        - generic [ref=f5e366]:
+          - img [ref=f5e368]
+          - generic [ref=f5e371]: Pulse
+        - paragraph [ref=f5e372]: Your AI Chief of Staff. Plans your day, protects your deadlines, and keeps you moving.
+        - paragraph [ref=f5e373]: © 2026 Pulse. Built for the last-minute life.
+      - generic [ref=f5e374]:
+        - generic [ref=f5e375]:
+          - paragraph [ref=f5e376]: Product
+          - list [ref=f5e377]:
+            - listitem [ref=f5e378]:
+              - link "Features" [ref=f5e379] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=f5e380]:
+              - link "AI Planner" [ref=f5e381] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=f5e382]:
+              - link "Deadline Radar" [ref=f5e383] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=f5e384]:
+              - link "Pricing" [ref=f5e385] [cursor=pointer]:
+                - /url: /dashboard
+        - generic [ref=f5e386]:
+          - paragraph [ref=f5e387]: Company
+          - list [ref=f5e388]:
+            - listitem [ref=f5e389]:
+              - link "About" [ref=f5e390] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=f5e391]:
+              - link "Blog" [ref=f5e392] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=f5e393]:
+              - link "Careers" [ref=f5e394] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=f5e395]:
+              - link "Contact" [ref=f5e396] [cursor=pointer]:
+                - /url: /dashboard
+        - generic [ref=f5e397]:
+          - paragraph [ref=f5e398]: Legal
+          - list [ref=f5e399]:
+            - listitem [ref=f5e400]:
+              - link "Privacy" [ref=f5e401] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=f5e402]:
+              - link "Terms" [ref=f5e403] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=f5e404]:
+              - link "Security" [ref=f5e405] [cursor=pointer]:
+                - /url: /dashboard
