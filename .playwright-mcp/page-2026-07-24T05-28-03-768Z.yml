@@ -1,0 +1,106 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]: Semantic résumé intelligence
+    - heading "Resume Screening System" [level=1] [ref=e7]
+    - paragraph [ref=e8]: Upload a résumé and paste a job description to get a semantic match score, a skill-gap breakdown, and AI-powered career guidance.
+  - main [ref=e9]:
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - generic [ref=e13]: "1"
+        - text: Résumé (PDF or DOCX)
+      - button "Résumé (PDF or DOCX)" [ref=e15] [cursor=pointer]:
+        - generic [ref=e16]:
+          - generic [ref=e17]: ⬆
+          - paragraph [ref=e18]: Drag & drop your résumé here
+          - paragraph [ref=e19]: PDF or DOCX · click to browse
+      - generic [ref=e20]:
+        - generic [ref=e21]: "2"
+        - text: Job description
+      - textbox "Job description" [ref=e22]:
+        - /placeholder: Paste the job description here…
+      - generic [ref=e23]:
+        - generic [ref=e24]: "3"
+        - text: AI model
+      - generic [ref=e37]:
+        - 'button "AI model: GPT-4o Mini by OpenAI. Change model." [expanded] [ref=e38] [cursor=pointer]':
+          - generic [ref=e39]:
+            - generic [ref=e40]: GPT-4o Mini
+            - generic [ref=e41]:
+              - text: OpenAI
+              - generic [ref=e42]: Premium
+        - listbox "AI models" [active] [ref=e45]:
+          - option "Gemini 2.5 Flash Google Premium" [ref=e46] [cursor=pointer]:
+            - generic [ref=e47]:
+              - generic [ref=e48]: Gemini 2.5 Flash
+              - generic [ref=e49]: Google
+            - generic [ref=e50]: Premium
+          - option "DeepSeek R1 DeepSeek Premium" [ref=e51] [cursor=pointer]:
+            - generic [ref=e52]:
+              - generic [ref=e53]: DeepSeek R1
+              - generic [ref=e54]: DeepSeek
+            - generic [ref=e55]: Premium
+          - option "DeepSeek V3 DeepSeek Premium" [ref=e56] [cursor=pointer]:
+            - generic [ref=e57]:
+              - generic [ref=e58]: DeepSeek V3
+              - generic [ref=e59]: DeepSeek
+            - generic [ref=e60]: Premium
+          - option "GPT-4o Mini OpenAI Premium" [selected] [ref=e61] [cursor=pointer]:
+            - generic [ref=e62]:
+              - generic [ref=e63]: GPT-4o Mini
+              - generic [ref=e64]: OpenAI
+            - generic [ref=e65]: Premium
+          - option "OpenRouter Auto (Best Free) OpenRouter Free" [ref=e68] [cursor=pointer]:
+            - generic [ref=e69]:
+              - generic [ref=e70]: OpenRouter Auto (Best Free)
+              - generic [ref=e71]: OpenRouter
+            - generic [ref=e72]: Free
+          - option "Llama 3.3 70B Instruct Meta Free" [ref=e73] [cursor=pointer]:
+            - generic [ref=e74]:
+              - generic [ref=e75]: Llama 3.3 70B Instruct
+              - generic [ref=e76]: Meta
+            - generic [ref=e77]: Free
+          - option "Llama 3.2 3B Instruct Meta Free" [ref=e78] [cursor=pointer]:
+            - generic [ref=e79]:
+              - generic [ref=e80]: Llama 3.2 3B Instruct
+              - generic [ref=e81]: Meta
+            - generic [ref=e82]: Free
+          - option "Qwen 3 Next 80B Qwen Free" [ref=e83] [cursor=pointer]:
+            - generic [ref=e84]:
+              - generic [ref=e85]: Qwen 3 Next 80B
+              - generic [ref=e86]: Qwen
+            - generic [ref=e87]: Free
+          - option "Qwen 3 Coder Qwen Free" [ref=e88] [cursor=pointer]:
+            - generic [ref=e89]:
+              - generic [ref=e90]: Qwen 3 Coder
+              - generic [ref=e91]: Qwen
+            - generic [ref=e92]: Free
+          - option "Gemma 4 31B Google Free" [ref=e93] [cursor=pointer]:
+            - generic [ref=e94]:
+              - generic [ref=e95]: Gemma 4 31B
+              - generic [ref=e96]: Google
+            - generic [ref=e97]: Free
+          - option "Gemma 4 26B (MoE) Google Free" [ref=e98] [cursor=pointer]:
+            - generic [ref=e99]:
+              - generic [ref=e100]: Gemma 4 26B (MoE)
+              - generic [ref=e101]: Google
+            - generic [ref=e102]: Free
+          - option "Nemotron 3 Nano Omni NVIDIA Free" [ref=e103] [cursor=pointer]:
+            - generic [ref=e104]:
+              - generic [ref=e105]: Nemotron 3 Nano Omni
+              - generic [ref=e106]: NVIDIA
+            - generic [ref=e107]: Free
+          - option "Hermes 3 (Llama 3.1 405B) NousResearch Free" [ref=e108] [cursor=pointer]:
+            - generic [ref=e109]:
+              - generic [ref=e110]: Hermes 3 (Llama 3.1 405B)
+              - generic [ref=e111]: NousResearch
+            - generic [ref=e112]: Free
+      - generic [ref=e26]:
+        - button "Analyze résumé" [disabled] [ref=e27]:
+          - generic [ref=e28]: "4"
+          - text: Analyze résumé
+        - button "Reset" [ref=e29] [cursor=pointer]
+    - generic [ref=e31]:
+      - generic [ref=e32]: ◎
+      - paragraph [ref=e33]: Your results will appear here
+      - generic [ref=e34]: Add a résumé and a job description, then analyze
+  - contentinfo [ref=e35]: Built with FastAPI · sentence-transformers · React + Vite

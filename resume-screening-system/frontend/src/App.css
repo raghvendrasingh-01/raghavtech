@@ -696,6 +696,125 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Score breakdown (component bars)
+   --------------------------------------------------------------------------- */
+.breakdown {
+  border-top: 1px solid var(--hairline);
+  padding-top: 18px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.breakdown__title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0;
+}
+.breakdown__row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.breakdown__row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13px;
+  color: var(--text);
+}
+.breakdown__value {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--text-heading);
+}
+.breakdown__track {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--ring-track);
+  overflow: hidden;
+}
+.breakdown__fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.breakdown__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 4px;
+}
+.breakdown__subhead {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* ---- Quick wins (highest-impact missing skills) ---- */
+.quick-wins {
+  border-top: 1px solid var(--hairline);
+  padding-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.quick-wins__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0;
+}
+.quick-wins__hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+.quick-wins__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.quick-wins__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-heading);
+  background: var(--moderate-bg);
+  border: 1px solid var(--moderate-border);
+  border-radius: var(--radius-pill);
+}
+.quick-wins__rank {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--moderate);
+}
+
+/* ---- Export report button ---- */
+.results__actions {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--hairline);
+  padding-top: 16px;
+}
+
+/* ---------------------------------------------------------------------------
    AI suggestions
    --------------------------------------------------------------------------- */
 .ai {
@@ -989,6 +1108,441 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Workflow step badges — make Upload → JD → Model → Analyze legible at a glance
+   --------------------------------------------------------------------------- */
+.form__label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.form__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(124, 108, 240, 0.14);
+  border: 1px solid rgba(124, 108, 240, 0.32);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.btn__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+/* The Analyze button is the primary CTA — give it extra presence. */
+.btn--cta {
+  padding-block: 15px;
+  font-size: 15.5px;
+}
+
+/* ---------------------------------------------------------------------------
+   Model selector (ported from the portfolio client)
+   --------------------------------------------------------------------------- */
+.model-selector {
+  position: relative;
+  width: 100%;
+}
+.model-selector__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--bg-elev);
+  border: 1px solid var(--hairline-bright);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  text-align: left;
+}
+.model-selector__trigger:hover:not(:disabled) {
+  border-color: rgba(124, 108, 240, 0.5);
+}
+.model-selector__trigger:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.model-selector__trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.model-selector__trigger-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+.model-selector__name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-heading);
+}
+.model-selector__provider {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.model-selector__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: rgba(34, 211, 168, 0.14);
+  color: var(--accent-2);
+  border: 1px solid rgba(34, 211, 168, 0.3);
+}
+.model-selector__tag--premium {
+  background: rgba(124, 108, 240, 0.14);
+  color: var(--accent);
+  border: 1px solid rgba(124, 108, 240, 0.3);
+}
+.model-selector__chevron {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+.model-selector--open .model-selector__chevron {
+  transform: rotate(180deg);
+}
+.model-selector__dropdown {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 0;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--hairline-bright);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(124, 108, 240, 0.08);
+  padding: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+  animation: dropdown-in 0.18s ease both;
+}
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.model-selector__dropdown:focus-visible {
+  outline: none;
+}
+.model-selector__dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+.model-selector__dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+}
+.model-selector__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  text-align: left;
+  gap: 8px;
+}
+.model-selector__option--active,
+.model-selector__option:hover {
+  background: rgba(124, 108, 240, 0.1);
+  color: var(--text-heading);
+}
+.model-selector__option--selected {
+  background: rgba(124, 108, 240, 0.14);
+  color: var(--text-heading);
+}
+.model-selector__option-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.model-selector__option-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.model-selector__option-provider {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.model-selector__badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: rgba(34, 211, 168, 0.14);
+  color: var(--accent-2);
+  border: 1px solid rgba(34, 211, 168, 0.3);
+}
+.model-selector__badge--premium {
+  background: rgba(124, 108, 240, 0.14);
+  color: var(--accent);
+  border: 1px solid rgba(124, 108, 240, 0.3);
+}
+.model-selector__check {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+}
+.form__model-placeholder {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px dashed var(--hairline-bright);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------------------
+   Model fallback notice — informational, NOT an error
+   --------------------------------------------------------------------------- */
+.model-fallback-notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  padding: 11px 15px;
+  border-radius: var(--radius-sm);
+  background: var(--moderate-bg);
+  border: 1px solid var(--moderate-border);
+  color: var(--moderate);
+  font-size: 13px;
+  animation: fade-up 0.3s ease both;
+}
+
+/* ---------------------------------------------------------------------------
+   Staged loading — truthful pipeline labels, no fabricated percentages
+   --------------------------------------------------------------------------- */
+.placeholder--loading {
+  gap: 20px;
+}
+.analyze-stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  width: 100%;
+  max-width: 280px;
+}
+.analyze-stages__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+  transition: color 0.3s, opacity 0.3s;
+}
+.analyze-stages__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--ring-track);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.analyze-stages__item--pending {
+  color: var(--muted);
+  opacity: 0.55;
+}
+.analyze-stages__item--current {
+  color: var(--text-heading);
+  font-weight: 600;
+}
+.analyze-stages__item--current .analyze-stages__dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+  animation: stage-pulse 1.2s ease-in-out infinite;
+}
+.analyze-stages__item--done {
+  color: var(--matched);
+}
+.analyze-stages__item--done .analyze-stages__dot {
+  background: var(--matched);
+}
+@keyframes stage-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(124, 108, 240, 0.12);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Dropzone: file chip status + remove affordance
+   --------------------------------------------------------------------------- */
+.dropzone__file {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+.dropzone__file-meta {
+  min-width: 0;
+  flex: 1;
+}
+.dropzone__filename {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dropzone__status {
+  color: var(--matched);
+  font-weight: 700;
+  margin-right: 4px;
+}
+.dropzone__remove {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--hairline-bright);
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.dropzone__remove:hover:not(:disabled) {
+  color: var(--missing);
+  border-color: var(--missing-border);
+  background: var(--missing-bg);
+}
+.dropzone__remove:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* ---------------------------------------------------------------------------
+   Chat input becomes an auto-sizing textarea (Enter to send, Shift+Enter NL)
+   --------------------------------------------------------------------------- */
+.chat__form {
+  align-items: flex-end;
+}
+textarea.chat__input {
+  resize: none;
+  min-height: 46px;
+  max-height: 140px;
+  line-height: 1.5;
+  padding-top: 13px;
+  padding-bottom: 13px;
+  font-family: inherit;
+}
+
+/* ---------------------------------------------------------------------------
+   Selective, tasteful depth — hover elevation + cursor glow on key surfaces.
+   Uses the same --mx/--my custom props the gauge tilt already relies on.
+   --------------------------------------------------------------------------- */
+.card {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .card--results:hover,
+  .form-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+  /* Cursor-follow glow layer for the results card. */
+  .card--results::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(124, 108, 240, 0.08),
+      transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .card--results:hover::after {
+    opacity: 1;
+  }
+  /* Upload zone lifts subtly on hover to invite interaction. */
+  .dropzone:hover:not(.dropzone--disabled) {
+    transform: translateY(-2px);
+  }
+}
+.dropzone {
+  transition: border-color 0.18s, background 0.18s, transform 0.25s,
+    box-shadow 0.25s;
+}
+/* Stronger depth cue while a file is dragged over the zone. */
+.dropzone--active {
+  transform: translateY(-2px) scale(1.005);
+  box-shadow: 0 14px 40px -14px var(--accent-glow),
+    0 0 0 1px rgba(124, 108, 240, 0.25);
+}
+
+/* ---------------------------------------------------------------------------
    Reduced motion — flatten the 3D tilt and gauge motion to final states
    --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
@@ -1003,6 +1557,19 @@
   }
   .gauge {
     transition: none;
+  }
+  .card,
+  .card--results:hover,
+  .form-card:hover,
+  .dropzone:hover,
+  .dropzone--active {
+    transform: none !important;
+  }
+  .card--results::after {
+    display: none;
+  }
+  .analyze-stages__item--current .analyze-stages__dot {
+    animation: none;
   }
 }
 

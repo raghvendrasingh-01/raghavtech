@@ -206,6 +206,58 @@ async def _openrouter_chat(
     raise LLMError(f"The AI provider returned an error (HTTP {last_error_status}).")
 
 
+async def extract_skills_llm(text: str) -> set[str]:
+    """Use an LLM to extract technical skills from ``text``.
+
+    Best-effort extraction used to augment the regex-based skill bank. Only runs
+    when AI is configured; gracefully returns an empty set on any failure.
+
+    Args:
+        text: The résumé or JD text to analyse.
+
+    Returns:
+        A set of skill names extracted by the model (lowercased, stripped).
+    """
+    settings = get_settings()
+    if not settings.ai_enabled:
+        return set()
+
+    # Truncate to keep the request fast and cheap.
+    truncated = text[: settings.LLM_MAX_INPUT_CHARS]
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are a technical recruiter extracting skills from a document. "
+                "Return ONLY a JSON array of technical skill names (programming "
+                "languages, frameworks, libraries, databases, cloud platforms, "
+                "tools). Be specific. Do not include soft skills or job titles."
+            ),
+        },
+        {
+            "role": "user",
+            "content": f"Extract all technical skills from this text:\n\n{truncated}",
+        },
+    ]
+
+    try:
+        content, _ = await _openrouter_chat(messages, temperature=0.2)
+        # Parse as a JSON array.
+        parsed = json.loads(content.strip())
+        if not isinstance(parsed, list):
+            # Try extracting an array from inside a code fence or object.
+            if isinstance(parsed, dict) and "skills" in parsed:
+                parsed = parsed["skills"]
+            else:
+                return set()
+        return {str(s).strip().lower() for s in parsed if str(s).strip()}
+    except Exception as exc:
+        # Best-effort: any failure (timeout, parse error, rate limit) just
+        # returns empty rather than breaking the analysis.
+        logger.debug("LLM skill extraction failed: %s", exc)
+        return set()
+
+
 async def generate_suggestions(
     resume_text: str,
     jd_text: str,

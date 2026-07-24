@@ -1,0 +1,24 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]: Semantic résumé intelligence
+    - heading "Resume Screening System" [level=1] [ref=e7]
+    - paragraph [ref=e8]: Upload a résumé and paste a job description to get a semantic match score, a skill-gap breakdown, and AI-powered career guidance.
+  - main [ref=e9]:
+    - generic [ref=e11]:
+      - generic [ref=e12]: Résumé (PDF or DOCX)
+      - button "Résumé (PDF or DOCX)" [ref=e14] [cursor=pointer]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: ⬆
+          - paragraph [ref=e17]: Drag & drop your résumé here
+          - paragraph [ref=e18]: PDF or DOCX · click to browse
+      - generic [ref=e19]: Job description
+      - textbox "Job description" [ref=e20]:
+        - /placeholder: Paste the job description here…
+      - generic [ref=e21]:
+        - button "Analyze résumé" [disabled] [ref=e22]
+        - button "Reset" [ref=e23] [cursor=pointer]
+    - generic [ref=e25]:
+      - generic [ref=e26]: ◎
+      - paragraph [ref=e27]: Your results will appear here
+      - generic [ref=e28]: Add a résumé and a job description, then analyze
+  - contentinfo [ref=e29]: Built with FastAPI · sentence-transformers · React + Vite

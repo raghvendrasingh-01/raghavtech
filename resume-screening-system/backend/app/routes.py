@@ -1,44 +1,49 @@
 """API routes for résumé analysis.
 
-Exposes the core ``POST /analyze`` endpoint which accepts a résumé PDF upload
-plus a job-description string, then orchestrates the service layer:
+Exposes the core ``POST /analyze`` endpoint which accepts a résumé PDF or DOCX
+upload plus a job-description string, then orchestrates the service layer:
 
-    PDF bytes ──> pdf_service ──> résumé text
-                                      │
-    job description ──────────────────┤
-                                      ▼
-                 nlp_service (match score) + skill_service (gap analysis)
-                                      ▼
-                              AnalyzeResponse JSON
+    PDF/DOCX bytes ──> document_service ──> résumé text
+                                                 │
+    job description ─────────────────────────────┤
+                                                 ▼
+                 nlp_service (match + breakdown) + skill_service (gap analysis)
+                                                 ▼
+                                       AnalyzeResponse JSON
 
-The NLP/PDF work is CPU-bound and blocking, so it is dispatched to a worker
+The NLP/PDF/DOCX work is CPU-bound and blocking, so it is dispatched to a worker
 thread via ``run_in_threadpool`` to avoid stalling the async event loop.
+
+Note: this module intentionally does NOT use ``from __future__ import annotations``.
+slowapi's ``@limiter.limit`` wraps the endpoint, and stringized annotations get
+resolved against the wrong module globals, which makes FastAPI misread the return
+type. Keeping concrete annotations avoids that.
 """
 
-from __future__ import annotations
-
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile, status
 from fastapi.concurrency import run_in_threadpool
 
 from app.config import get_settings
 from app.exceptions import EmptyTextError, LLMError, PDFExtractionError
+from app.rate_limit import limiter
 from app.schemas import (
     AnalyzeResponse,
     ChatRequest,
     ChatResponse,
     ModelInfo,
     ModelsResponse,
+    ScoreBreakdown,
     SkillReport,
     SuggestRequest,
     SuggestResponse,
     Suggestions,
 )
 from app.services.chat_service import generate_chat_reply
-from app.services.llm_service import generate_suggestions
-from app.services.nlp_service import compute_similarity
-from app.services.pdf_service import extract_text_from_pdf_bytes
+from app.services.document_service import extract_text_from_upload
+from app.services.llm_service import extract_skills_llm, generate_suggestions
+from app.services.nlp_service import compute_score_breakdown, compute_similarity
 from app.services.retrieval_service import retrieve_context
-from app.services.skill_service import analyze_skills
+from app.services.skill_service import analyze_skills, extract_known_skills
 
 router = APIRouter(tags=["analysis"])
 settings = get_settings()
@@ -76,15 +81,17 @@ async def _read_upload_capped(upload: UploadFile, max_bytes: int) -> bytes:
     response_model=AnalyzeResponse,
     summary="Analyse a résumé against a job description",
 )
+@limiter.limit(settings.RATE_LIMIT_ANALYZE)
 async def analyze(
-    resume: UploadFile = File(..., description="Résumé file (PDF)."),
+    request: Request,
+    resume: UploadFile = File(..., description="Résumé file (PDF or DOCX)."),
     job_description: str = Form(..., description="Job description text."),
 ) -> AnalyzeResponse:
     """Score a résumé against a JD and report missing skills.
 
     Raises:
-        HTTPException: 400 for invalid input (non-PDF, empty JD, empty file),
-            413 if the upload exceeds the size limit.
+        HTTPException: 400 for invalid input (unsupported format, empty JD, empty
+            file), 413 if the upload exceeds the size limit, 429 if rate limited.
     """
     try:
         # --- Validate the job description ---
@@ -98,28 +105,30 @@ async def analyze(
         jd = jd[: settings.MAX_TEXT_CHARS]
 
         # --- Validate the upload content type (best-effort; we also sniff bytes) ---
-        if resume.content_type not in (
+        if resume.content_type and resume.content_type not in (
             "application/pdf",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "application/octet-stream",
-            None,
         ):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Expected a PDF upload, got '{resume.content_type}'.",
+                detail=f"Expected a PDF or DOCX upload, got '{resume.content_type}'.",
             )
 
         # --- Read bytes with an enforced, streamed size cap ---
         data = await _read_upload_capped(resume, settings.MAX_UPLOAD_BYTES)
 
-        # --- Extract text from the PDF (blocking → threadpool) ---
+        # --- Extract text from the résumé (blocking → threadpool) ---
         try:
-            resume_text = await run_in_threadpool(extract_text_from_pdf_bytes, data)
+            resume_text = await run_in_threadpool(
+                extract_text_from_upload, data, resume.filename
+            )
         except PDFExtractionError as exc:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)
             ) from exc
 
-        # --- Score + skill gap analysis (blocking → threadpool) ---
+        # --- Score (blocking → threadpool) ---
         try:
             score = await run_in_threadpool(compute_similarity, resume_text, jd)
         except EmptyTextError as exc:
@@ -127,7 +136,31 @@ async def analyze(
                 status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)
             ) from exc
 
+        # --- Skill gap analysis (blocking → threadpool) ---
         skills = await run_in_threadpool(analyze_skills, resume_text, jd)
+
+        # --- Optional LLM skill extraction (best-effort; union with regex) ---
+        if settings.ai_enabled and settings.LLM_SKILL_EXTRACTION:
+            try:
+                llm_resume_aug = await extract_skills_llm(resume_text)
+                llm_jd_aug = await extract_skills_llm(jd)
+                if llm_resume_aug or llm_jd_aug:
+                    resume_skills = extract_known_skills(resume_text)
+                    jd_skills = extract_known_skills(jd)
+                    resume_all = resume_skills | {s.title() for s in llm_resume_aug}
+                    jd_all = jd_skills | {s.title() for s in llm_jd_aug}
+                    matched_aug = jd_all & resume_all
+                    missing_aug = jd_all - resume_all
+                    skills["required"] = sorted(jd_all)
+                    skills["matched"] = sorted(matched_aug)
+                    skills["missing"] = sorted(missing_aug)
+            except Exception:
+                pass  # fall back to regex-only skills already in `skills`
+
+        # --- Score breakdown (blocking → threadpool) ---
+        breakdown = await run_in_threadpool(
+            compute_score_breakdown, resume_text, jd, skills
+        )
 
         return AnalyzeResponse(
             match_score=score,
@@ -135,9 +168,9 @@ async def analyze(
             resume_char_count=len(resume_text),
             resume_text=resume_text,
             filename=resume.filename,
+            score_breakdown=ScoreBreakdown(**breakdown),
         )
     finally:
-        # Always release the upload's underlying spooled temp file.
         await resume.close()
 
 
@@ -146,7 +179,8 @@ async def analyze(
     response_model=SuggestResponse,
     summary="AI-powered suggestions to improve résumé fit",
 )
-async def suggest(body: SuggestRequest) -> SuggestResponse:
+@limiter.limit(settings.RATE_LIMIT_SUGGEST)
+async def suggest(request: Request, body: SuggestRequest) -> SuggestResponse:
     """Return LLM-generated guidance for the analysed résumé/JD.
 
     Best-effort and decoupled from ``/analyze`` so the score can render
@@ -186,7 +220,8 @@ async def suggest(body: SuggestRequest) -> SuggestResponse:
     response_model=ChatResponse,
     summary="Scoped, retrieval-grounded chatbot",
 )
-async def chat(body: ChatRequest) -> ChatResponse:
+@limiter.limit(settings.RATE_LIMIT_CHAT)
+async def chat(request: Request, body: ChatRequest) -> ChatResponse:
     """Answer a project-scoped question grounded in the résumé and JD.
 
     Retrieves the most relevant résumé/JD excerpts for the question and lets a
@@ -242,21 +277,52 @@ async def chat(body: ChatRequest) -> ChatResponse:
 # of truth and the frontend never hardcodes model IDs.
 _FREE_MODELS: list[dict] = [
     # Premium models (requested by user)
-    {"id": "google/gemini-2.5-flash", "name": "Gemini 2.5 Flash", "provider": "Google"},
+    {
+        "id": "google/gemini-2.5-flash",
+        "name": "Gemini 2.5 Flash",
+        "provider": "Google",
+    },
     {"id": "deepseek/deepseek-r1", "name": "DeepSeek R1", "provider": "DeepSeek"},
     {"id": "deepseek/deepseek-chat", "name": "DeepSeek V3", "provider": "DeepSeek"},
     {"id": "openai/gpt-4o-mini", "name": "GPT-4o Mini", "provider": "OpenAI"},
-
     # Free tier models
-    {"id": "openrouter/free", "name": "OpenRouter Auto (Best Free)", "provider": "OpenRouter"},
-    {"id": "meta-llama/llama-3.3-70b-instruct:free", "name": "Llama 3.3 70B Instruct", "provider": "Meta"},
-    {"id": "meta-llama/llama-3.2-3b-instruct:free", "name": "Llama 3.2 3B Instruct", "provider": "Meta"},
-    {"id": "qwen/qwen3-next-80b-a3b-instruct:free", "name": "Qwen 3 Next 80B", "provider": "Qwen"},
+    {
+        "id": "openrouter/free",
+        "name": "OpenRouter Auto (Best Free)",
+        "provider": "OpenRouter",
+    },
+    {
+        "id": "meta-llama/llama-3.3-70b-instruct:free",
+        "name": "Llama 3.3 70B Instruct",
+        "provider": "Meta",
+    },
+    {
+        "id": "meta-llama/llama-3.2-3b-instruct:free",
+        "name": "Llama 3.2 3B Instruct",
+        "provider": "Meta",
+    },
+    {
+        "id": "qwen/qwen3-next-80b-a3b-instruct:free",
+        "name": "Qwen 3 Next 80B",
+        "provider": "Qwen",
+    },
     {"id": "qwen/qwen3-coder:free", "name": "Qwen 3 Coder", "provider": "Qwen"},
     {"id": "google/gemma-4-31b-it:free", "name": "Gemma 4 31B", "provider": "Google"},
-    {"id": "google/gemma-4-26b-a4b-it:free", "name": "Gemma 4 26B (MoE)", "provider": "Google"},
-    {"id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "name": "Nemotron 3 Nano Omni", "provider": "NVIDIA"},
-    {"id": "nousresearch/hermes-3-llama-3.1-405b:free", "name": "Hermes 3 (Llama 3.1 405B)", "provider": "NousResearch"},
+    {
+        "id": "google/gemma-4-26b-a4b-it:free",
+        "name": "Gemma 4 26B (MoE)",
+        "provider": "Google",
+    },
+    {
+        "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "name": "Nemotron 3 Nano Omni",
+        "provider": "NVIDIA",
+    },
+    {
+        "id": "nousresearch/hermes-3-llama-3.1-405b:free",
+        "name": "Hermes 3 (Llama 3.1 405B)",
+        "provider": "NousResearch",
+    },
 ]
 
 _DEFAULT_FREE_MODEL = "openai/gpt-4o-mini"

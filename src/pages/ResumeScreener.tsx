@@ -8,10 +8,35 @@ const API_BASE_URL: string = (
   "http://127.0.0.1:8000"
 ).replace(/\/$/, "");
 
+// Client-side upload guardrails (mirrors the backend's accepted formats/limit).
+const MAX_UPLOAD_MB = 5;
+const MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024;
+const FILE_ACCEPT_ATTR =
+  "application/pdf,.pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx";
+
+interface RankedSkill {
+  skill: string;
+  jd_frequency: number;
+}
+
 interface SkillReport {
   required: string[];
   matched: string[];
   missing: string[];
+  // Additive fields from the backend; older responses may omit them.
+  missing_ranked?: RankedSkill[];
+  quick_wins?: string[];
+}
+
+interface SectionScore {
+  section: string;
+  score: number;
+}
+
+interface ScoreBreakdown {
+  semantic_similarity: number;
+  skills_coverage: number;
+  sections: SectionScore[];
 }
 
 interface AnalyzeResponse {
@@ -20,6 +45,8 @@ interface AnalyzeResponse {
   resume_char_count: number;
   resume_text?: string;
   filename: string | null;
+  // Additive field; older responses may omit it.
+  score_breakdown?: ScoreBreakdown | null;
 }
 
 interface GapAdvice {
@@ -56,11 +83,78 @@ const CHAT_GREETING: ChatMessage = {
     "results on hand, so I can give tailored advice when you need it.",
 };
 
-const CHAT_PROMPTS = [
+const DEFAULT_CHAT_PROMPTS = [
   "How can I improve my résumé for this role?",
   "What interview questions should I prepare for?",
   "How do I optimize for ATS?",
 ];
+
+/**
+ * Contextual chat starter prompts derived from the analysis (score band + top
+ * missing skill). Falls back to the generic set before analysis.
+ */
+const buildChatPrompts = (analysis: AnalyzeResponse | null): string[] => {
+  if (!analysis) return DEFAULT_CHAT_PROMPTS;
+  const chips: string[] = [];
+  const score = Number(analysis.match_score) || 0;
+  const quickWins = analysis.skills?.quick_wins ?? [];
+  const missing = analysis.skills?.missing ?? [];
+
+  const topSkill = quickWins[0] ?? missing[0];
+  if (topSkill) chips.push(`How do I gain and show ${topSkill} experience?`);
+  if (score < 50) chips.push("Why is my match score low, and how do I raise it?");
+  else if (score < 75) chips.push("What would push this résumé to a strong match?");
+  else chips.push("My score is strong — how do I stand out further?");
+  if (missing.length > 0)
+    chips.push("How should I rewrite my résumé to cover the missing skills?");
+  else chips.push("What interview questions should I prepare for?");
+  chips.push("How do I optimize this résumé for ATS?");
+
+  return [...new Set(chips)].slice(0, 3);
+};
+
+/**
+ * Build a self-contained JSON report and trigger a client-side download.
+ * No network involvement — everything is already in the browser.
+ */
+const downloadReport = (
+  result: AnalyzeResponse,
+  jobDescription: string,
+  suggestions: Suggestions | null
+): void => {
+  const skills = result?.skills ?? ({} as SkillReport);
+  const report = {
+    generated_at: new Date().toISOString(),
+    filename: result?.filename ?? null,
+    match_score: result?.match_score ?? null,
+    score_breakdown: result?.score_breakdown ?? null,
+    skills: {
+      required: skills.required ?? [],
+      matched: skills.matched ?? [],
+      missing: skills.missing ?? [],
+      missing_ranked: skills.missing_ranked ?? [],
+      quick_wins: skills.quick_wins ?? [],
+    },
+    suggestions: suggestions ?? null,
+    job_description: jobDescription ?? "",
+  };
+  const blob = new Blob([JSON.stringify(report, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const stamp = new Date().toISOString().slice(0, 10);
+  const base = (result?.filename || "resume")
+    .replace(/\.[^.]+$/, "")
+    .replace(/[^\w-]+/g, "_");
+
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `resume-report-${base}-${stamp}.json`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+};
 
 // --- Sub-components for Scoped Resume Screener ---
 
@@ -205,11 +299,20 @@ const FileDropzone = ({
 
   const validateAndSelect = (candidate: File | undefined | null) => {
     if (!candidate) return;
+    const name = candidate.name.toLowerCase();
     const isPdf =
-      candidate.type === "application/pdf" ||
-      candidate.name.toLowerCase().endsWith(".pdf");
-    if (!isPdf) {
-      onError("Please choose a PDF file.");
+      candidate.type === "application/pdf" || name.endsWith(".pdf");
+    const isDocx =
+      candidate.type ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      name.endsWith(".docx");
+    if (!isPdf && !isDocx) {
+      onError("Please choose a PDF or DOCX file.");
+      onFileSelected(null);
+      return;
+    }
+    if (candidate.size > MAX_UPLOAD_BYTES) {
+      onError(`File is too large. Maximum size is ${MAX_UPLOAD_MB} MB.`);
       onFileSelected(null);
       return;
     }
@@ -249,7 +352,7 @@ const FileDropzone = ({
         }
         role="button"
         tabIndex={0}
-        aria-label={labelledBy ? undefined : "Upload résumé PDF"}
+        aria-label={labelledBy ? undefined : "Upload résumé PDF or DOCX"}
         aria-labelledby={labelledBy}
         onClick={openPicker}
         onKeyDown={onKeyDown}
@@ -266,7 +369,7 @@ const FileDropzone = ({
         <input
           ref={inputRef}
           type="file"
-          accept="application/pdf,.pdf"
+          accept={FILE_ACCEPT_ATTR}
           className="dropzone__input"
           onChange={handleChange}
           disabled={disabled}
@@ -290,7 +393,7 @@ const FileDropzone = ({
               ⬆
             </span>
             <p className="dropzone__title">
-              Drag &amp; drop your résumé PDF here
+              Drag &amp; drop your résumé (PDF or DOCX) here
             </p>
             <p className="dropzone__hint">or click to browse</p>
           </div>
@@ -417,6 +520,66 @@ const ScoreBar = ({ score }: ScoreBarProps) => {
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+// 2b. ScoreBreakdown Component — small bars for the components behind the score.
+const bandColorFor = (value: number): string => {
+  const v = Math.max(0, Math.min(100, Number(value) || 0));
+  return v >= 75
+    ? "var(--matched)"
+    : v >= 50
+    ? "var(--moderate)"
+    : "var(--missing)";
+};
+
+interface BreakdownBarProps {
+  label: string;
+  value: number;
+}
+
+const BreakdownBar = ({ label, value }: BreakdownBarProps) => {
+  const v = Math.max(0, Math.min(100, Number(value) || 0));
+  return (
+    <div className="breakdown__row">
+      <div className="breakdown__head">
+        <span className="breakdown__label">{label}</span>
+        <span className="breakdown__value tnum">{v.toFixed(1)}%</span>
+      </div>
+      <div className="breakdown__track">
+        <div
+          className="breakdown__fill"
+          style={{ width: `${v}%`, background: bandColorFor(v) }}
+        />
+      </div>
+    </div>
+  );
+};
+
+interface ScoreBreakdownViewProps {
+  breakdown: ScoreBreakdown;
+}
+
+const ScoreBreakdownView = ({ breakdown }: ScoreBreakdownViewProps) => {
+  if (!breakdown) return null;
+  const sections = breakdown.sections ?? [];
+  return (
+    <div className="breakdown">
+      <h3 className="breakdown__title">Score breakdown</h3>
+      <BreakdownBar
+        label="Semantic similarity"
+        value={breakdown.semantic_similarity}
+      />
+      <BreakdownBar label="Skills coverage" value={breakdown.skills_coverage} />
+      {sections.length > 0 && (
+        <div className="breakdown__sections">
+          <p className="breakdown__subhead">Résumé sections vs. job</p>
+          {sections.map((s) => (
+            <BreakdownBar key={s.section} label={s.section} value={s.score} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -596,9 +759,18 @@ interface ChatBoxProps {
   onSend: (text: string) => void;
   loading: boolean;
   error: string;
+  suggestions?: string[];
 }
 
-const ChatBox = ({ messages, onSend, loading, error }: ChatBoxProps) => {
+const ChatBox = ({
+  messages,
+  onSend,
+  loading,
+  error,
+  suggestions,
+}: ChatBoxProps) => {
+  const chips =
+    suggestions && suggestions.length > 0 ? suggestions : DEFAULT_CHAT_PROMPTS;
   const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -645,7 +817,7 @@ const ChatBox = ({ messages, onSend, loading, error }: ChatBoxProps) => {
 
       {messages.length <= 1 && !loading && (
         <div className="chat__suggestions">
-          {CHAT_PROMPTS.map((s) => (
+          {chips.map((s) => (
             <button
               key={s}
               type="button"
@@ -750,7 +922,7 @@ const ResumeScreener = () => {
     setChatError("");
 
     if (!file) {
-      setError("Please upload a résumé PDF.");
+      setError("Please upload a résumé (PDF or DOCX).");
       return;
     }
     if (!jobDescription.trim()) {
@@ -941,7 +1113,7 @@ const ResumeScreener = () => {
             <section className="card form-card">
               <form onSubmit={handleSubmit} className="form">
                 <span className="form__label" id="resume-label">
-                  Résumé (PDF)
+                  Résumé (PDF or DOCX)
                 </span>
                 <FileDropzone
                   file={file}
@@ -1044,6 +1216,31 @@ const ResumeScreener = () => {
                   {/* Conic Score Gauge */}
                   <ScoreBar score={result.match_score} />
 
+                  {result.score_breakdown && (
+                    <ScoreBreakdownView breakdown={result.score_breakdown} />
+                  )}
+
+                  {result.skills.quick_wins &&
+                    result.skills.quick_wins.length > 0 && (
+                      <div className="quick-wins">
+                        <h3 className="quick-wins__title">
+                          <span aria-hidden>⚡</span> Quick wins
+                        </h3>
+                        <p className="quick-wins__hint">
+                          Highest-impact skills to add — most frequent in the
+                          job description.
+                        </p>
+                        <ul className="quick-wins__list">
+                          {result.skills.quick_wins.map((skill, i) => (
+                            <li key={skill} className="quick-wins__item">
+                              <span className="quick-wins__rank">#{i + 1}</span>
+                              {skill}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
                   {/* Skills lists */}
                   <div className="results__skills">
                     <SkillList
@@ -1064,6 +1261,18 @@ const ResumeScreener = () => {
                       variant="neutral"
                       emptyText="No known skills detected in the job description."
                     />
+                  </div>
+
+                  <div className="results__actions">
+                    <button
+                      type="button"
+                      className="btn btn--ghost"
+                      onClick={() =>
+                        downloadReport(result, jobDescription, suggestions)
+                      }
+                    >
+                      ⬇ Export report (JSON)
+                    </button>
                   </div>
 
                   <p className="results__meta">
@@ -1093,6 +1302,7 @@ const ResumeScreener = () => {
                 onSend={handleSendChat}
                 loading={chatLoading}
                 error={chatError}
+                suggestions={buildChatPrompts(result)}
               />
             </div>
           )}

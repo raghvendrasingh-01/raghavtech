@@ -1,0 +1,224 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]: Semantic résumé intelligence
+    - heading "Resume Screening System" [level=1] [ref=e7]
+    - paragraph [ref=e8]: Upload a résumé and paste a job description to get a semantic match score, a skill-gap breakdown, and AI-powered career guidance.
+  - main [ref=e9]:
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - generic [ref=e13]: "1"
+        - text: Résumé (PDF or DOCX)
+      - button "Résumé (PDF or DOCX)" [ref=e15] [cursor=pointer]:
+        - generic [ref=e16]:
+          - generic [ref=e17]: 📄
+          - generic [ref=e114]:
+            - generic [ref=e115]: sample_resume.docx
+            - generic [ref=e116]: ✓Ready · 36 KB · click to replace
+          - button "Remove sample_resume.docx" [ref=e117]: ✕
+      - generic [ref=e20]:
+        - generic [ref=e21]: "2"
+        - text: Job description
+      - textbox "Job description" [ref=e22]:
+        - /placeholder: Paste the job description here…
+        - text: "We are hiring a Senior Machine Learning Engineer to build and deploy NLP systems at scale. Requirements: strong Python skills, experience with PyTorch or TensorFlow, hands-on with transformers and embeddings, FastAPI or Flask for serving models, Docker and Kubernetes for deployment, SQL and data pipelines, AWS or GCP cloud experience. Nice to have: React for internal tools, MLOps practices, CI/CD, vector databases."
+      - generic [ref=e23]:
+        - generic [ref=e24]: "3"
+        - text: AI model
+      - 'button "AI model: Llama 3.3 70B Instruct by Meta. Change model." [ref=e113] [cursor=pointer]':
+        - generic [ref=e39]:
+          - generic [ref=e40]: Llama 3.3 70B Instruct
+          - generic [ref=e41]:
+            - text: Meta
+            - generic [ref=e42]: Free
+      - generic [ref=e26]:
+        - button "Analyze résumé" [ref=e138] [cursor=pointer]:
+          - generic [ref=e28]: "4"
+          - text: Analyze résumé
+        - button "Reset" [ref=e29] [cursor=pointer]
+    - generic [ref=e139]:
+      - generic [ref=e140]:
+        - generic [ref=e141]: Match score
+        - progressbar "Match score" [ref=e142]:
+          - generic [ref=e145]:
+            - generic [ref=e146]: 57.8%
+            - generic [ref=e147]: Moderate match
+      - generic [ref=e148]:
+        - heading "Score breakdown" [level=3] [ref=e149]
+        - generic [ref=e151]:
+          - generic [ref=e152]: Semantic similarity
+          - generic [ref=e153]: 57.8%
+        - generic [ref=e157]:
+          - generic [ref=e158]: Skills coverage
+          - generic [ref=e159]: 33.3%
+        - generic [ref=e162]:
+          - generic [ref=e163]: By résumé section
+          - generic [ref=e165]:
+            - generic [ref=e166]: Summary
+            - generic [ref=e167]: 40.7%
+          - generic [ref=e171]:
+            - generic [ref=e172]: Experience
+            - generic [ref=e173]: 38.1%
+          - generic [ref=e177]:
+            - generic [ref=e178]: Skills
+            - generic [ref=e179]: 37.9%
+          - generic [ref=e183]:
+            - generic [ref=e184]: Education
+            - generic [ref=e185]: 28.6%
+      - generic [ref=e188]:
+        - heading "Quick wins" [level=3] [ref=e189]:
+          - generic [ref=e190]: ⚡
+          - text: Quick wins
+        - paragraph [ref=e191]: Highest-impact skills to add — most frequent in the job description.
+        - list [ref=e192]:
+          - listitem [ref=e193]:
+            - generic [ref=e194]: "#1"
+            - text: Flask
+          - listitem [ref=e195]:
+            - generic [ref=e196]: "#2"
+            - text: CI/CD
+          - listitem [ref=e197]:
+            - generic [ref=e198]: "#3"
+            - text: Hugging Face
+      - generic [ref=e199]:
+        - generic [ref=e200]:
+          - heading "Matched skills 5" [level=3] [ref=e201]:
+            - text: Matched skills
+            - generic [ref=e202]: "5"
+          - list [ref=e203]:
+            - listitem [ref=e204]:
+              - generic [ref=e205]: ✓
+              - text: AWS
+            - listitem [ref=e206]:
+              - generic [ref=e207]: ✓
+              - text: Docker
+            - listitem [ref=e208]:
+              - generic [ref=e209]: ✓
+              - text: FastAPI
+            - listitem [ref=e210]:
+              - generic [ref=e211]: ✓
+              - text: Kubernetes
+            - listitem [ref=e212]:
+              - generic [ref=e213]: ✓
+              - text: Python
+        - generic [ref=e214]:
+          - heading "Missing skills 10" [level=3] [ref=e215]:
+            - text: Missing skills
+            - generic [ref=e216]: "10"
+          - list [ref=e217]:
+            - listitem [ref=e218]:
+              - generic [ref=e219]: ✕
+              - text: CI/CD
+            - listitem [ref=e220]:
+              - generic [ref=e221]: ✕
+              - text: Flask
+            - listitem [ref=e222]:
+              - generic [ref=e223]: ✕
+              - text: GCP
+            - listitem [ref=e224]:
+              - generic [ref=e225]: ✕
+              - text: Hugging Face
+            - listitem [ref=e226]:
+              - generic [ref=e227]: ✕
+              - text: Machine Learning
+            - listitem [ref=e228]:
+              - generic [ref=e229]: ✕
+              - text: NLP
+            - listitem [ref=e230]:
+              - generic [ref=e231]: ✕
+              - text: PyTorch
+            - listitem [ref=e232]:
+              - generic [ref=e233]: ✕
+              - text: React
+            - listitem [ref=e234]:
+              - generic [ref=e235]: ✕
+              - text: SQL
+            - listitem [ref=e236]:
+              - generic [ref=e237]: ✕
+              - text: TensorFlow
+        - generic [ref=e238]:
+          - heading "All JD skills detected 15" [level=3] [ref=e239]:
+            - text: All JD skills detected
+            - generic [ref=e240]: "15"
+          - list [ref=e241]:
+            - listitem [ref=e242]: AWS
+            - listitem [ref=e243]: CI/CD
+            - listitem [ref=e244]: Docker
+            - listitem [ref=e245]: FastAPI
+            - listitem [ref=e246]: Flask
+            - listitem [ref=e247]: GCP
+            - listitem [ref=e248]: Hugging Face
+            - listitem [ref=e249]: Kubernetes
+            - listitem [ref=e250]: Machine Learning
+            - listitem [ref=e251]: NLP
+            - listitem [ref=e252]: PyTorch
+            - listitem [ref=e253]: Python
+            - listitem [ref=e254]: React
+            - listitem [ref=e255]: SQL
+            - listitem [ref=e256]: TensorFlow
+      - button "⬇ Export report (JSON)" [ref=e258] [cursor=pointer]
+      - paragraph [ref=e259]:
+        - text: Parsed
+        - strong [ref=e260]: "300"
+        - text: characters from "sample_resume.docx".
+  - generic [ref=e261]:
+    - status [ref=e262]:
+      - generic [ref=e263]: ↻
+      - text: Llama 3.3 70B Instruct was busy, so Gemma 4 26B (MoE) answered instead.
+    - generic [ref=e264]:
+      - heading "AI career guidance" [level=2] [ref=e265]:
+        - generic [ref=e266]: 🤖
+        - text: AI career guidance
+      - generic [ref=e267]:
+        - paragraph [ref=e268]: You are a strong backend engineer with the necessary infrastructure skills, but you currently lack the core machine learning and NLP expertise required for this specific role.
+        - generic [ref=e269]:
+          - heading "Strengths" [level=3] [ref=e270]:
+            - generic [ref=e271]: 💪
+            - text: Strengths
+          - list [ref=e272]:
+            - listitem [ref=e273]: Proficiency in Python and FastAPI for model serving
+            - listitem [ref=e274]: Strong containerization and orchestration skills with Docker and Kubernetes
+            - listitem [ref=e275]: Cloud experience with AWS and relational database management
+        - generic [ref=e276]:
+          - heading "Closing the gaps" [level=3] [ref=e277]:
+            - generic [ref=e278]: 🎯
+            - text: Closing the gaps
+          - list [ref=e279]:
+            - listitem [ref=e280]:
+              - strong [ref=e281]: "Machine Learning Frameworks (PyTorch/TensorFlow):"
+              - text: Complete a specialized course in Deep Learning and implement a project involving neural network architecture.
+            - listitem [ref=e282]:
+              - strong [ref=e283]: "NLP & Transformers:"
+              - text: Build a project using Hugging Face libraries to perform tasks like sentiment analysis or NER to demonstrate NLP competency.
+            - listitem [ref=e284]:
+              - strong [ref=e285]: "MLOps & CI/CD:"
+              - text: Implement automated testing and deployment pipelines for a machine learning model using GitHub Actions or GitLab CI.
+        - generic [ref=e286]:
+          - heading "Résumé improvements" [level=3] [ref=e287]:
+            - generic [ref=e288]: 📝
+            - text: Résumé improvements
+          - list [ref=e289]:
+            - listitem [ref=e290]: Transition your professional summary from 'Backend Engineer' to 'Backend Engineer with an interest in ML Systems' or similar to signal intent.
+            - listitem [ref=e291]: Explicitly mention any experience with data pipelines or SQL-based data manipulation to bridge the gap to ML data engineering.
+            - listitem [ref=e292]: Add a 'Projects' section highlighting any work involving data science, model deployment, or large-scale data processing.
+        - generic [ref=e293]:
+          - heading "Next steps" [level=3] [ref=e294]:
+            - generic [ref=e295]: 🚀
+            - text: Next steps
+          - list [ref=e296]:
+            - listitem [ref=e297]: Acquire hands-on experience with Hugging Face and PyTorch through a dedicated ML project.
+            - listitem [ref=e298]: Bridge the gap between backend and ML by implementing an MLOps workflow (CI/CD for models).
+            - listitem [ref=e299]: Target 'Machine Learning Platform Engineer' or 'ML Infrastructure Engineer' roles where your backend skills are more directly applicable.
+        - paragraph [ref=e300]: Generated by google/gemma-4-26b-a4b-it:free via OpenRouter
+    - generic [ref=e301]:
+      - heading "Ask the AI assistant" [level=2] [ref=e302]:
+        - generic [ref=e303]: 💬
+        - text: Ask the AI assistant
+      - paragraph [ref=e304]: Ask anything — and since it has your résumé, this job, and your score, it can also give tailored interview, ATS, and career advice.
+      - log [ref=e305]:
+        - generic [ref=e306]: Hi! Ask me anything. I also have your résumé, this job, and your match results on hand, so I can give tailored advice when you need it.
+        - generic [ref=e314]: How do I gain and show Flask experience?
+      - generic [ref=e311]:
+        - textbox "Chat message" [disabled] [ref=e312]:
+          - /placeholder: Type your question…  (Enter to send · Shift+Enter for a new line)
+        - button "Send message" [disabled] [ref=e313]: Send
+  - contentinfo [ref=e35]: Built with FastAPI · sentence-transformers · React + Vite

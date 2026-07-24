@@ -21,10 +21,15 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Bake the sentence-transformers model into the image so cold starts don't pay
+# a ~90 MB download on first request (and can't fail on a flaky network). The
+# model is cached under the default HF home inside the image layer.
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+
 # Copy the actual application code
 COPY ./app ./app
 
-# Expose the port Koyeb (or Render) expects
+# Expose the port the platform expects (Render/Koyeb set $PORT).
 EXPOSE $PORT
 
 # Start the application

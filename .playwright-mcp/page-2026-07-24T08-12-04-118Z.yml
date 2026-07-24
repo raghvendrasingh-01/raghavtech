@@ -1,0 +1,49 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]: Semantic résumé intelligence
+    - heading "Resume Screening System" [level=1] [ref=e7]
+    - paragraph [ref=e8]: Upload a résumé and paste a job description to get a semantic match score, a skill-gap breakdown, and AI-powered career guidance.
+  - main [ref=e9]:
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - generic [ref=e13]: "1"
+        - text: Résumé (PDF or DOCX)
+      - button "Résumé (PDF or DOCX)" [ref=e15]:
+        - generic [ref=e16]:
+          - generic [ref=e17]: 📄
+          - generic [ref=e114]:
+            - generic [ref=e115]: sample_resume.docx
+            - generic [ref=e116]: ✓Ready · 36 KB · click to replace
+          - button "Remove sample_resume.docx" [disabled] [ref=e117] [cursor=pointer]: ✕
+      - generic [ref=e20]:
+        - generic [ref=e21]: "2"
+        - text: Job description
+      - textbox "Job description" [disabled] [ref=e22]:
+        - /placeholder: Paste the job description here…
+        - text: "We are hiring a Senior Machine Learning Engineer to build and deploy NLP systems at scale. Requirements: strong Python skills, experience with PyTorch or TensorFlow, hands-on with transformers and embeddings, FastAPI or Flask for serving models, Docker and Kubernetes for deployment, SQL and data pipelines, AWS or GCP cloud experience. Nice to have: React for internal tools, MLOps practices, CI/CD, vector databases."
+      - generic [ref=e23]:
+        - generic [ref=e24]: "3"
+        - text: AI model
+      - 'button "AI model: Llama 3.3 70B Instruct by Meta. Change model." [disabled] [ref=e113]':
+        - generic [ref=e39]:
+          - generic [ref=e40]: Llama 3.3 70B Instruct
+          - generic [ref=e41]:
+            - text: Meta
+            - generic [ref=e42]: Free
+      - generic [ref=e26]:
+        - button "Analyzing…" [disabled] [ref=e118]
+        - button "Reset" [disabled] [ref=e29]
+    - generic [ref=e119]:
+      - paragraph [ref=e121]: Analyzing your résumé…
+      - list "Analysis progress" [ref=e122]:
+        - listitem [ref=e123]:
+          - generic [ref=e125]: Reading your résumé
+        - listitem [ref=e126]:
+          - generic [ref=e128]: Analyzing the job description
+        - listitem [ref=e129]:
+          - generic [ref=e131]: Computing semantic match
+        - listitem [ref=e132]:
+          - generic [ref=e134]: Identifying skills
+        - listitem [ref=e135]:
+          - generic [ref=e137]: Preparing your results
+  - contentinfo [ref=e35]: Built with FastAPI · sentence-transformers · React + Vite

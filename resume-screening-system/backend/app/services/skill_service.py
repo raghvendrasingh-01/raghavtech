@@ -42,15 +42,23 @@ SKILL_BANK: dict[str, list[str]] = {
     # A bare "r" matches far too much English; require explicit context.
     "R": ["r programming", "r language", "rstats", "rlang"],
     "Scala": ["scala"],
+    "Bash": ["bash", "shell scripting", "shell script"],
+    "Perl": ["perl"],
+    "Lua": ["lua"],
+    "Elixir": ["elixir"],
+    "Haskell": ["haskell"],
     # Frontend
     "React": ["react", "react.js", "reactjs"],
     "Vue": ["vue", "vue.js", "vuejs"],
     "Angular": ["angular"],
     "Next.js": ["next.js", "nextjs"],
+    "Svelte": ["svelte", "sveltekit"],
     "HTML": ["html", "html5"],
     "CSS": ["css", "css3"],
     "Tailwind CSS": ["tailwind", "tailwindcss", "tailwind css"],
     "Redux": ["redux"],
+    "Webpack": ["webpack"],
+    "Vite": ["vite"],
     # Backend / frameworks
     "FastAPI": ["fastapi", "fast api"],
     "Flask": ["flask"],
@@ -61,6 +69,9 @@ SKILL_BANK: dict[str, list[str]] = {
     ".NET": [r"\.net", "dotnet", "asp.net"],
     "GraphQL": ["graphql"],
     "REST": ["restful", "rest api", "rest apis"],
+    "gRPC": ["grpc"],
+    "Celery": ["celery"],
+    "SQLAlchemy": ["sqlalchemy"],
     # Data / ML
     "Pandas": ["pandas"],
     "NumPy": ["numpy"],
@@ -70,9 +81,18 @@ SKILL_BANK: dict[str, list[str]] = {
     "Machine Learning": ["machine learning"],
     "Deep Learning": ["deep learning"],
     "NLP": ["nlp", "natural language processing"],
+    "LangChain": ["langchain", "lang chain"],
+    "LlamaIndex": ["llamaindex", "llama index", "llama-index"],
+    "Hugging Face": ["hugging face", "huggingface", "transformers"],
     "Spark": ["spark", "apache spark", "pyspark"],
     "Kafka": ["kafka", "apache kafka"],
     "Airflow": ["airflow", "apache airflow"],
+    "dbt": ["dbt", "data build tool"],
+    "Databricks": ["databricks"],
+    "Snowflake": ["snowflake"],
+    "Tableau": ["tableau"],
+    "Power BI": ["power bi", "powerbi"],
+    "Looker": ["looker"],
     # Databases
     "PostgreSQL": ["postgresql", "postgres"],
     "MySQL": ["mysql"],
@@ -80,20 +100,43 @@ SKILL_BANK: dict[str, list[str]] = {
     "Redis": ["redis"],
     "Elasticsearch": ["elasticsearch", "elastic search"],
     "SQLite": ["sqlite"],
+    "Cassandra": ["cassandra", "apache cassandra"],
+    "DynamoDB": ["dynamodb"],
+    "Neo4j": ["neo4j"],
+    "Pinecone": ["pinecone"],
+    "Weaviate": ["weaviate"],
     # DevOps / cloud
     "Docker": ["docker"],
     "Kubernetes": ["kubernetes", "k8s"],
     "AWS": ["aws", "amazon web services"],
-    "Azure": ["azure"],
+    "Azure": ["azure", "microsoft azure"],
     "GCP": ["gcp", "google cloud"],
     "Terraform": ["terraform"],
+    "Ansible": ["ansible"],
+    "Pulumi": ["pulumi"],
     "CI/CD": ["ci/cd", "cicd", "continuous integration"],
     "Jenkins": ["jenkins"],
+    "GitHub Actions": ["github actions"],
+    "GitLab CI": ["gitlab ci", "gitlab-ci"],
     "Linux": ["linux"],
     "Git": ["git"],
+    "Nginx": ["nginx"],
+    # Testing
+    "pytest": ["pytest"],
+    "Jest": ["jest"],
+    "Playwright": ["playwright"],
+    "Selenium": ["selenium"],
+    "Cypress": ["cypress"],
+    # Project / process
+    "Jira": ["jira"],
+    "Confluence": ["confluence"],
+    "Figma": ["figma"],
     # Practices / misc
     "Microservices": ["microservices", "microservice"],
     "Agile": ["agile", "scrum"],
+    "System Design": ["system design"],
+    "Data Structures": ["data structures"],
+    "Algorithms": ["algorithms"],
 }
 
 
@@ -131,6 +174,14 @@ def extract_known_skills(text: str) -> set[str]:
     return found
 
 
+def _count_skill_frequency(skill: str, text: str) -> int:
+    """Count how many times a canonical skill appears in ``text``."""
+    for canonical, pattern in _compiled_bank():
+        if canonical == skill:
+            return len(pattern.findall(text))
+    return 0
+
+
 def analyze_skills(resume_text: str, jd_text: str) -> dict:
     """Compare JD-required skills against the résumé.
 
@@ -139,13 +190,20 @@ def analyze_skills(resume_text: str, jd_text: str) -> dict:
         jd_text: Plain text of the job description.
 
     Returns:
-        A dict with three sorted string lists::
+        A dict with five fields::
 
             {
-                "required": [...],  # skills detected in the JD
-                "matched":  [...],  # required skills found in the résumé
-                "missing":  [...],  # required skills absent from the résumé
+                "required": [...],          # skills detected in the JD (sorted)
+                "matched":  [...],          # required skills found in the résumé
+                "missing":  [...],          # required skills absent from the résumé
+                "missing_ranked": [         # missing skills sorted by JD frequency
+                    {"skill": str, "jd_frequency": int}, ...
+                ],
+                "quick_wins": [...],        # top-3 missing skills by JD frequency
             }
+
+        The first three lists are unchanged from the original contract so
+        existing clients keep working. The last two are additive.
     """
     jd_skills = extract_known_skills(jd_text)
     resume_skills = extract_known_skills(resume_text)
@@ -153,8 +211,22 @@ def analyze_skills(resume_text: str, jd_text: str) -> dict:
     matched = jd_skills & resume_skills
     missing = jd_skills - resume_skills
 
+    # Rank missing skills by how often they appear in the JD (higher = more
+    # important to the employer).
+    missing_ranked = sorted(
+        [
+            {"skill": s, "jd_frequency": _count_skill_frequency(s, jd_text)}
+            for s in missing
+        ],
+        key=lambda x: x["jd_frequency"],
+        reverse=True,
+    )
+    quick_wins = [item["skill"] for item in missing_ranked[:3]]
+
     return {
         "required": sorted(jd_skills),
         "matched": sorted(matched),
         "missing": sorted(missing),
+        "missing_ranked": missing_ranked,
+        "quick_wins": quick_wins,
     }

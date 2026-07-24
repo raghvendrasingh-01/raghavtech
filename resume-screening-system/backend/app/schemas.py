@@ -11,6 +11,49 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
+class RankedSkill(BaseModel):
+    """A missing skill together with its frequency in the job description."""
+
+    skill: str = Field(..., description="Canonical skill name.")
+    jd_frequency: int = Field(
+        0, ge=0, description="How many times the skill appears in the JD."
+    )
+
+
+class SectionScore(BaseModel):
+    """Similarity of one résumé section against the job description."""
+
+    section: str = Field(..., description="Section label (e.g. 'Experience').")
+    score: float = Field(
+        ..., ge=0.0, le=100.0, description="Section-vs-JD similarity (0–100)."
+    )
+
+
+class ScoreBreakdown(BaseModel):
+    """Component scores behind the headline ``match_score`` (all 0–100).
+
+    Additive diagnostic detail — the primary ``match_score`` is unchanged. Lets
+    the UI explain *why* a résumé scored the way it did.
+    """
+
+    semantic_similarity: float = Field(
+        ...,
+        ge=0.0,
+        le=100.0,
+        description="Whole-document cosine similarity (same basis as match_score).",
+    )
+    skills_coverage: float = Field(
+        ...,
+        ge=0.0,
+        le=100.0,
+        description="Percentage of JD-required skills present in the résumé.",
+    )
+    sections: list[SectionScore] = Field(
+        default_factory=list,
+        description="Per-section résumé-vs-JD similarity (Experience, Skills, …).",
+    )
+
+
 class SkillReport(BaseModel):
     """Breakdown of JD-required skills versus what the résumé contains."""
 
@@ -25,6 +68,16 @@ class SkillReport(BaseModel):
     missing: list[str] = Field(
         default_factory=list,
         description="Required skills that are absent from the résumé.",
+    )
+    missing_ranked: list[RankedSkill] = Field(
+        default_factory=list,
+        description="Missing skills ordered by how often they appear in the JD "
+        "(most-emphasised first). Additive; clients may ignore it.",
+    )
+    quick_wins: list[str] = Field(
+        default_factory=list,
+        description="The top few missing skills the candidate should prioritise, "
+        "by JD frequency. Additive; clients may ignore it.",
     )
 
 
@@ -48,6 +101,11 @@ class AnalyzeResponse(BaseModel):
     )
     filename: str | None = Field(
         default=None, description="Original uploaded résumé filename."
+    )
+    score_breakdown: ScoreBreakdown | None = Field(
+        default=None,
+        description="Optional component breakdown behind match_score. Additive; "
+        "clients may ignore it.",
     )
 
 

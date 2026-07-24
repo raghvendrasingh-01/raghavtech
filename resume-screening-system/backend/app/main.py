@@ -1,25 +1,55 @@
 """FastAPI application entry point.
 
-Step 2 wires up the application skeleton:
-    * an app factory (``create_app``) that configures CORS,
+Wires up the application:
+    * an app factory (``create_app``) that configures CORS and rate limiting,
+    * a background model warmup on startup (via ``lifespan``) plus a manual
+      ``GET /warmup`` endpoint,
     * a ``GET /health`` liveness probe, and
     * a ``GET /`` welcome/info route.
 
-The ``/analyze`` endpoint and supporting NLP/PDF logic are added in later
-steps. Run locally with::
+Run locally with::
 
     uvicorn app.main:app --reload
 """
 
 from __future__ import annotations
 
+import logging
+import threading
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
+from app.rate_limit import install_rate_limiting
 from app.routes import router as analysis_router
 
+logger = logging.getLogger(__name__)
 settings = get_settings()
+
+
+def _warm_model() -> None:
+    """Load the embedding model so the first real request isn't slow.
+
+    Runs in a background thread on startup. Failures are logged but never crash
+    the app — the model will simply load lazily on first use instead.
+    """
+    try:
+        from app.services.nlp_service import get_model
+
+        get_model()
+        logger.info("Embedding model warmed up.")
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning("Model warmup failed (will load lazily): %s", exc)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Kick off a non-blocking model warmup at startup."""
+    thread = threading.Thread(target=_warm_model, name="model-warmup", daemon=True)
+    thread.start()
+    yield
 
 
 def create_app() -> FastAPI:
@@ -29,7 +59,11 @@ def create_app() -> FastAPI:
         version=settings.VERSION,
         description="Upload a résumé and a job description to get a semantic "
         "match score and a list of missing skills.",
+        lifespan=lifespan,
     )
+
+    # Per-IP rate limiting (slowapi). No-op when RATE_LIMIT_ENABLED is false.
+    install_rate_limiting(app)
 
     # Allow the React dev frontend to call the API from the browser.
     # The API is stateless and uses no cookies/credentials, so we keep
@@ -65,7 +99,20 @@ def create_app() -> FastAPI:
             "version": settings.VERSION,
         }
 
-    # Mount the analysis routes (POST /analyze).
+    @app.get("/warmup", tags=["meta"])
+    async def warmup() -> dict:
+        """Force-load the embedding model (idempotent) and report readiness.
+
+        Useful to warm a cold instance before sending real traffic. The model is
+        a cached singleton, so repeated calls are cheap after the first.
+        """
+        from fastapi.concurrency import run_in_threadpool
+        from app.services.nlp_service import get_model
+
+        await run_in_threadpool(get_model)
+        return {"status": "ready", "model": settings.EMBEDDING_MODEL}
+
+    # Mount the analysis routes (POST /analyze, /suggest, /chat, GET /models).
     app.include_router(analysis_router)
 
     return app

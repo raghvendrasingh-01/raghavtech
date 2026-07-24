@@ -62,4 +62,52 @@ def test_contextual_aliases_still_match():
 
 def test_empty_inputs():
     result = analyze_skills("", "")
-    assert result == {"required": [], "matched": [], "missing": []}
+    assert result == {
+        "required": [],
+        "matched": [],
+        "missing": [],
+        "missing_ranked": [],
+        "quick_wins": [],
+    }
+
+
+def test_missing_ranked_is_ordered_by_jd_frequency():
+    # Kubernetes appears three times in the JD, GraphQL once → Kubernetes ranks
+    # first. Neither is in the résumé, so both are missing.
+    resume = "Python and FastAPI developer."
+    jd = (
+        "We need Python, FastAPI and Kubernetes. Kubernetes experience is a must; "
+        "day-to-day Kubernetes operations. Some GraphQL is a plus."
+    )
+    result = analyze_skills(resume, jd)
+
+    ranked = result["missing_ranked"]
+    # Every entry has the expected shape.
+    assert all({"skill", "jd_frequency"} == set(item) for item in ranked)
+    # Sorted by descending frequency.
+    freqs = [item["jd_frequency"] for item in ranked]
+    assert freqs == sorted(freqs, reverse=True)
+    # Kubernetes (freq 3) must precede GraphQL (freq 1).
+    skills_in_order = [item["skill"] for item in ranked]
+    assert skills_in_order.index("Kubernetes") < skills_in_order.index("GraphQL")
+    assert next(i["jd_frequency"] for i in ranked if i["skill"] == "Kubernetes") >= 3
+
+
+def test_quick_wins_are_top_three_missing():
+    resume = "Python developer."
+    jd = "Need Python, Kubernetes, GraphQL, Kafka, Terraform and Snowflake."
+    result = analyze_skills(resume, jd)
+
+    quick = result["quick_wins"]
+    assert len(quick) <= 3
+    # quick_wins mirror the head of missing_ranked.
+    assert quick == [item["skill"] for item in result["missing_ranked"][:3]]
+    # All quick wins are genuinely missing.
+    assert set(quick) <= set(result["missing"])
+
+
+def test_expanded_bank_detects_new_skills():
+    found = extract_known_skills(
+        "Built pipelines with dbt, Airflow and Snowflake; dashboards in Tableau."
+    )
+    assert {"dbt", "Airflow", "Snowflake", "Tableau"} <= found

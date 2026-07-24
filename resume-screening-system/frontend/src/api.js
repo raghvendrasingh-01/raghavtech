@@ -11,9 +11,34 @@ const API_BASE_URL =
   "http://127.0.0.1:8000";
 
 /**
- * Send a résumé PDF and a job description to the backend for analysis.
+ * Fetch the curated list of AI models the backend can use.
  *
- * @param {File} resumeFile - The PDF file selected by the user.
+ * The backend is the single source of truth for which OpenRouter models are
+ * offered (`GET /models`). On any failure this resolves to an empty list rather
+ * than throwing, so the UI degrades gracefully (the selector shows a
+ * "loading/unavailable" placeholder and analysis still works with the server
+ * default).
+ *
+ * @returns {Promise<{models: Array<{id:string,name:string,provider:string}>, default: string}>}
+ */
+export async function getModels() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/models`);
+    if (!response.ok) return { models: [], default: "" };
+    const data = await response.json();
+    return {
+      models: Array.isArray(data?.models) ? data.models : [],
+      default: typeof data?.default === "string" ? data.default : "",
+    };
+  } catch {
+    return { models: [], default: "" };
+  }
+}
+
+/**
+ * Send a résumé (PDF or DOCX) and a job description to the backend for analysis.
+ *
+ * @param {File} resumeFile - The PDF/DOCX file selected by the user.
  * @param {string} jobDescription - The job description text.
  * @returns {Promise<object>} Resolves to the AnalyzeResponse JSON.
  * @throws {Error} With a human-readable message on validation/server errors.
@@ -78,10 +103,12 @@ export async function analyzeResume(resumeFile, jobDescription) {
  *
  * @param {object} analysis - The AnalyzeResponse returned by {@link analyzeResume}.
  * @param {string} jobDescription - The job description text.
- * @returns {Promise<object>} Resolves to the `suggestions` object.
+ * @param {string} [model] - Optional model id to override the server default.
+ * @returns {Promise<object>} Resolves to the `suggestions` object (includes
+ *   `model`, the model that actually ran, which may differ on fallback).
  * @throws {Error} With a human-readable message on failure.
  */
-export async function getSuggestions(analysis, jobDescription) {
+export async function getSuggestions(analysis, jobDescription, model = "") {
   const payload = {
     resume_text: analysis.resume_text || "",
     job_description: jobDescription,
@@ -89,6 +116,7 @@ export async function getSuggestions(analysis, jobDescription) {
     matched_skills: analysis.skills?.matched ?? [],
     missing_skills: analysis.skills?.missing ?? [],
   };
+  if (model) payload.model = model;
 
   let response;
   try {
@@ -123,10 +151,18 @@ export async function getSuggestions(analysis, jobDescription) {
  * @param {Array<{role: string, content: string}>} messages - Conversation so far.
  * @param {object} analysis - The AnalyzeResponse (for résumé/score/skills context).
  * @param {string} jobDescription - The job description text.
- * @returns {Promise<string>} The assistant's reply text.
+ * @param {string} [model] - Optional model id to override the server default.
+ * @returns {Promise<{reply: string, model: string}>} The assistant's reply text
+ *   and the model that actually produced it (may differ from the request on
+ *   fallback).
  * @throws {Error} With a human-readable message on failure.
  */
-export async function sendChatMessage(messages, analysis, jobDescription) {
+export async function sendChatMessage(
+  messages,
+  analysis,
+  jobDescription,
+  model = ""
+) {
   const payload = {
     messages,
     resume_text: analysis.resume_text || "",
@@ -135,6 +171,7 @@ export async function sendChatMessage(messages, analysis, jobDescription) {
     matched_skills: analysis.skills?.matched ?? [],
     missing_skills: analysis.skills?.missing ?? [],
   };
+  if (model) payload.model = model;
 
   let response;
   try {
@@ -159,7 +196,7 @@ export async function sendChatMessage(messages, analysis, jobDescription) {
   }
 
   const data = await response.json();
-  return data.reply ?? "";
+  return { reply: data.reply ?? "", model: data.model ?? "" };
 }
 
 export { API_BASE_URL };

@@ -21,7 +21,10 @@ on **Vercel**) talking to a **FastAPI** backend (deployed on **Render**).
 
 ## 1. Deploy the backend to Render
 
-The repo ships a `render.yaml` blueprint at the project root.
+The repo ships a `render.yaml` blueprint at the **git repository root** (one
+level above this `resume-screening-system/` folder), not beside this file. It
+sets `rootDir: resume-screening-system/backend` so Render builds only the
+backend.
 
 ### Option A — Blueprint (recommended)
 1. Push this repo to GitHub (Render deploys from the repo, so `render.yaml` and

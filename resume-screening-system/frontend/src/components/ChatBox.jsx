@@ -11,8 +11,22 @@ import { useEffect, useRef, useState } from "react";
  * @param {(text: string) => void} props.onSend   Called with the user's text.
  * @param {boolean}  props.loading   Whether a reply is in flight.
  * @param {string}   [props.error]   Error message, if the last send failed.
+ * @param {string[]} [props.suggestions]  Contextual starter prompts; falls back
+ *   to a generic set when omitted or empty.
  */
-export default function ChatBox({ messages, onSend, loading, error }) {
+const DEFAULT_SUGGESTIONS = [
+  "How can I improve my résumé for this role?",
+  "What interview questions should I prepare for?",
+  "How do I optimize for ATS?",
+];
+
+export default function ChatBox({
+  messages,
+  onSend,
+  loading,
+  error,
+  suggestions,
+}) {
   const [input, setInput] = useState("");
   const endRef = useRef(null);
 
@@ -29,11 +43,18 @@ export default function ChatBox({ messages, onSend, loading, error }) {
     setInput("");
   };
 
-  const suggestions = [
-    "How can I improve my résumé for this role?",
-    "What interview questions should I prepare for?",
-    "How do I optimize for ATS?",
-  ];
+  // Enter sends; Shift+Enter inserts a newline (standard chat convention).
+  const onKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      submit(e);
+    }
+  };
+
+  // Use the contextual chips the parent computed from the score/missing skills;
+  // fall back to the generic set when none were provided.
+  const chips =
+    suggestions && suggestions.length > 0 ? suggestions : DEFAULT_SUGGESTIONS;
 
   return (
     <section className="chat card">
@@ -66,7 +87,7 @@ export default function ChatBox({ messages, onSend, loading, error }) {
 
       {messages.length <= 1 && !loading && (
         <div className="chat__suggestions">
-          {suggestions.map((s) => (
+          {chips.map((s) => (
             <button
               key={s}
               type="button"
@@ -82,19 +103,21 @@ export default function ChatBox({ messages, onSend, loading, error }) {
       {error && <p className="alert alert--warn">{error}</p>}
 
       <form className="chat__form" onSubmit={submit}>
-        <input
-          type="text"
+        <textarea
           className="chat__input"
-          placeholder="Type your question…"
+          placeholder="Type your question…  (Enter to send · Shift+Enter for a new line)"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={onKeyDown}
           disabled={loading}
+          rows={1}
           aria-label="Chat message"
         />
         <button
           type="submit"
           className="btn btn--primary chat__send"
           disabled={loading || !input.trim()}
+          aria-label="Send message"
         >
           Send
         </button>

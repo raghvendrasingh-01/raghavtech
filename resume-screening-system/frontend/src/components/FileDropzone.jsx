@@ -1,7 +1,9 @@
 import { useRef, useState } from "react";
+import { FILE_ACCEPT_ATTR, validateResumeFile } from "../constants";
 
 /**
- * Drag-and-drop (and click-to-browse) dropzone for a single PDF file.
+ * Drag-and-drop (and click-to-browse) dropzone for a single résumé file
+ * (PDF or DOCX).
  *
  * Validation errors are owned by the parent (passed in via `error` and reported
  * via `onError`) so there is a single source of truth and the parent's Reset
@@ -28,11 +30,9 @@ export default function FileDropzone({
 
   const validateAndSelect = (candidate) => {
     if (!candidate) return;
-    const isPdf =
-      candidate.type === "application/pdf" ||
-      candidate.name.toLowerCase().endsWith(".pdf");
-    if (!isPdf) {
-      onError("Please choose a PDF file.");
+    const validationError = validateResumeFile(candidate);
+    if (validationError) {
+      onError(validationError);
       onFileSelected(null);
       return;
     }
@@ -71,7 +71,7 @@ export default function FileDropzone({
         }
         role="button"
         tabIndex={0}
-        aria-label={labelledBy ? undefined : "Upload résumé PDF"}
+        aria-label={labelledBy ? undefined : "Upload résumé PDF or DOCX"}
         aria-labelledby={labelledBy}
         onClick={openPicker}
         onKeyDown={onKeyDown}
@@ -89,7 +89,7 @@ export default function FileDropzone({
         <input
           ref={inputRef}
           type="file"
-          accept="application/pdf,.pdf"
+          accept={FILE_ACCEPT_ATTR}
           className="dropzone__input"
           onChange={handleChange}
           disabled={disabled}
@@ -100,12 +100,30 @@ export default function FileDropzone({
             <span className="dropzone__file-chip" aria-hidden>
               📄
             </span>
-            <div>
+            <div className="dropzone__file-meta">
               <div className="dropzone__filename">{file.name}</div>
               <div className="dropzone__hint">
-                {(file.size / 1024).toFixed(0)} KB · click to replace
+                <span className="dropzone__status" aria-hidden>
+                  ✓
+                </span>
+                Ready · {(file.size / 1024).toFixed(0)} KB · click to replace
               </div>
             </div>
+            <button
+              type="button"
+              className="dropzone__remove"
+              aria-label={`Remove ${file.name}`}
+              disabled={disabled}
+              onClick={(e) => {
+                // Don't trigger the zone's click-to-browse handler.
+                e.stopPropagation();
+                onError("");
+                onFileSelected(null);
+                if (inputRef.current) inputRef.current.value = "";
+              }}
+            >
+              ✕
+            </button>
           </div>
         ) : (
           <div className="dropzone__empty">
@@ -113,9 +131,9 @@ export default function FileDropzone({
               ⬆
             </span>
             <p className="dropzone__title">
-              Drag &amp; drop your résumé PDF here
+              Drag &amp; drop your résumé here
             </p>
-            <p className="dropzone__hint">or click to browse</p>
+            <p className="dropzone__hint">PDF or DOCX · click to browse</p>
           </div>
         )}
       </div>

@@ -169,10 +169,19 @@ def test_chat_happy_path_mocked(monkeypatch):
 
     captured = {}
 
-    async def fake_reply(*, messages, match_score, matched_skills, missing_skills, snippets):
+    async def fake_reply(
+        *,
+        messages,
+        match_score,
+        matched_skills,
+        missing_skills,
+        snippets,
+        model_override=None,
+    ):
         captured["messages"] = messages
         captured["missing"] = missing_skills
-        return "Focus on learning Kubernetes for this role."
+        # The route now returns (reply, final_model); mirror that shape.
+        return "Focus on learning Kubernetes for this role.", "openai/gpt-4o-mini"
 
     # Avoid loading the embedding model in tests by stubbing retrieval too.
     monkeypatch.setattr(routes, "generate_chat_reply", fake_reply)

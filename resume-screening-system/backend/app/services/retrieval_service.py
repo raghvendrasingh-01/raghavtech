@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import re
 
-from app.services.nlp_service import get_model
+from app.services.nlp_service import _st_util, encode, encode_cached
 
 
 def _chunk(text: str, source: str, max_chars: int = 400) -> list[tuple[str, str]]:
@@ -59,23 +59,15 @@ def retrieve_context(
         A list of ``(source_label, chunk_text)`` tuples, highest-relevance first.
         Empty if there is nothing to search.
     """
-    from sentence_transformers import util
     chunks = _chunk(resume_text, "Résumé") + _chunk(jd_text, "Job description")
     if not chunks:
         return []
     if not query or not query.strip():
         return chunks[:k]
 
-    model = get_model()
-    chunk_embeddings = model.encode(
-        [c[1] for c in chunks],
-        convert_to_tensor=True,
-        normalize_embeddings=True,
-    )
-    query_embedding = model.encode(
-        [query], convert_to_tensor=True, normalize_embeddings=True
-    )
-    scores = util.cos_sim(query_embedding, chunk_embeddings)[0]
+    chunk_embeddings = encode_cached([c[1] for c in chunks])
+    query_embedding = encode([query])
+    scores = _st_util().cos_sim(query_embedding, chunk_embeddings)[0]
     ranked = sorted(
         range(len(chunks)), key=lambda i: float(scores[i]), reverse=True
     )

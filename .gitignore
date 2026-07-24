@@ -11,3 +11,7 @@ dist
 # Local IDE / Claude settings
 .claude/
 
+# TaskForge is its own standalone git repository (github.com/…/taskforge),
+# nested here only for local convenience. The portfolio repo must not track it.
+taskForge/
+
