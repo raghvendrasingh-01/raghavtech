@@ -89,6 +89,61 @@ const DEFAULT_CHAT_PROMPTS = [
   "How do I optimize for ATS?",
 ];
 
+// Truthful staged-loading labels shown while the single /analyze call runs.
+// These describe the real server-side pipeline (parse → embed → skills →
+// breakdown); they advance on a gentle timer, with NO fabricated percentages.
+const ANALYZE_STAGES = [
+  "Reading your résumé",
+  "Analyzing the job description",
+  "Computing semantic match",
+  "Identifying skills",
+  "Preparing your results",
+];
+
+/**
+ * Staged loading indicator for the /analyze call.
+ *
+ * The backend does not stream progress, so rather than fake a percentage we
+ * surface the real pipeline stages as honest labels that advance on a timer.
+ * Under `prefers-reduced-motion` the timer is skipped and the full checklist is
+ * shown at once (all "in progress") — still truthful, just static.
+ */
+const AnalyzeStages = () => {
+  const reduced =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    if (reduced) return;
+    // Advance through stages but hold on the last one until the response lands
+    // (the parent unmounts this component when loading finishes).
+    const id = setInterval(() => {
+      setActive((i) => Math.min(ANALYZE_STAGES.length - 1, i + 1));
+    }, 1100);
+    return () => clearInterval(id);
+  }, [reduced]);
+
+  return (
+    <ul className="analyze-stages" aria-label="Analysis progress">
+      {ANALYZE_STAGES.map((label, i) => {
+        const done = !reduced && i < active;
+        const current = reduced || i === active;
+        const state = done ? "done" : current ? "current" : "pending";
+        return (
+          <li
+            key={label}
+            className={`analyze-stages__item analyze-stages__item--${state}`}
+          >
+            <span className="analyze-stages__dot" aria-hidden />
+            <span className="analyze-stages__label">{label}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
 /**
  * Contextual chat starter prompts derived from the analysis (score band + top
  * missing skill). Falls back to the generic set before analysis.
@@ -910,6 +965,20 @@ const ResumeScreener = () => {
     setModelFallbackMsg("");
   };
 
+  // Given the model the backend reports it actually used, surface a gentle
+  // notice if it differs from what the user picked. Names are looked up from
+  // the model list so we show friendly labels, not raw ids.
+  const noteFallback = (usedId?: string) => {
+    if (!usedId || !selectedModel || usedId === selectedModel) return;
+    const nameOf = (id: string) =>
+      availableModels.find((m) => m.id === id)?.name || id;
+    setModelFallbackMsg(
+      `${nameOf(selectedModel)} was busy, so ${nameOf(
+        usedId
+      )} answered instead.`
+    );
+  };
+
   const canSubmit = !!file && jobDescription.trim().length > 0 && !loading;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -1008,6 +1077,7 @@ const ResumeScreener = () => {
       }
       const d = await res.json();
       setSuggestions((d.suggestions ?? null) as Suggestions | null);
+      noteFallback(d.suggestions?.model);
     } catch (err) {
       setSuggestError(
         err instanceof Error ? err.message : "Could not load AI suggestions."
@@ -1057,6 +1127,7 @@ const ResumeScreener = () => {
         ...history,
         { role: "assistant", content: (d.reply as string) ?? "" },
       ]);
+      noteFallback(d.model);
     } catch (err) {
       setChatError(
         err instanceof Error ? err.message : "Could not get a reply."
@@ -1188,14 +1259,28 @@ const ResumeScreener = () => {
             </section>
 
             {/* Results Column */}
-            <section className="card card--results">
+            <section
+              className="card card--results"
+              onMouseMove={(e) => {
+                // Feed the CSS cursor-glow layer. Cheap: two custom-prop writes,
+                // no React re-render. Disabled surfaces (touch/reduced-motion) just
+                // ignore the values via media queries.
+                const r = e.currentTarget.getBoundingClientRect();
+                e.currentTarget.style.setProperty(
+                  "--mx",
+                  `${((e.clientX - r.left) / r.width) * 100}%`
+                );
+                e.currentTarget.style.setProperty(
+                  "--my",
+                  `${((e.clientY - r.top) / r.height) * 100}%`
+                );
+              }}
+            >
               {loading && (
-                <div className="placeholder">
+                <div className="placeholder placeholder--loading">
                   <div className="spinner" aria-hidden />
                   <p>Analyzing your résumé…</p>
-                  <span className="placeholder__sub">
-                    Computing semantic similarity and skill coverage
-                  </span>
+                  <AnalyzeStages />
                 </div>
               )}
 

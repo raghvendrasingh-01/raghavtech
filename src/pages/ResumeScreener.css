@@ -1572,3 +1572,65 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+
+/* ---- Analyze Stages ---- */
+.resume-screener-scope .analyze-stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  width: 100%;
+  max-width: 280px;
+}
+.resume-screener-scope .analyze-stages__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+  transition: color 0.3s, opacity 0.3s;
+}
+.resume-screener-scope .analyze-stages__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--ring-track);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.resume-screener-scope .analyze-stages__item--pending {
+  color: var(--muted);
+  opacity: 0.55;
+}
+.resume-screener-scope .analyze-stages__item--current {
+  color: var(--text-heading);
+  font-weight: 600;
+}
+.resume-screener-scope .analyze-stages__item--current .analyze-stages__dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+  animation: stage-pulse 1.2s ease-in-out infinite;
+}
+.resume-screener-scope .analyze-stages__item--done {
+  color: var(--matched);
+}
+.resume-screener-scope .analyze-stages__item--done .analyze-stages__dot {
+  background: var(--matched);
+}
+@keyframes stage-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(124, 108, 240, 0.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resume-screener-scope .analyze-stages__item--current .analyze-stages__dot {
+    animation: none;
+  }
+}
